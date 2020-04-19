@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name"> Air Pollution Project </string>
+    <string name="sensor_icon">sensor icon</string>
+    <string name="camera_icon">camera icon</string>
+    <string name="charts_icon">charts icon</string>
+    <string name="table_icon">table icon</string>
+    <string name="todo">TODO</string>
+    <string name="add_filters_icon">add filters icon</string>
+</resources>

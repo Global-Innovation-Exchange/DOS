@@ -1,0 +1,3 @@
+rootProject.name='AirPolProject'
+include ':app'
+include ':openCVLibrary343'

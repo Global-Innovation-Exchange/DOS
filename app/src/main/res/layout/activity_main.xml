@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/cameraView"
+        android:layout_width="91dp"
+        android:layout_height="101dp"
+        android:layout_marginStart="89dp"
+        android:layout_marginLeft="89dp"
+        android:layout_marginTop="83dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginRight="40dp"
+        android:clickable="true"
+        android:contentDescription="@string/camera_icon"
+        android:onClick="onCameraClick"
+        app:layout_constraintEnd_toStartOf="@+id/sensorView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/camera"
+        tools:srcCompat="@drawable/camera" />
+
+    <ImageView
+        android:id="@+id/sensorView"
+        android:layout_width="91dp"
+        android:layout_height="101dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="75dp"
+        android:layout_marginEnd="89dp"
+        android:layout_marginRight="89dp"
+        android:contentDescription="@string/sensor_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/cameraView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/motion" />
+
+    <ImageView
+        android:id="@+id/chartView"
+        android:layout_width="91dp"
+        android:layout_height="101dp"
+        android:layout_marginStart="107dp"
+        android:layout_marginLeft="107dp"
+        android:layout_marginTop="34dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginRight="40dp"
+        android:contentDescription="@string/charts_icon"
+        app:layout_constraintEnd_toStartOf="@+id/tableView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cameraView"
+        app:srcCompat="@drawable/line" />
+
+    <ImageView
+        android:id="@+id/tableView"
+        android:layout_width="91dp"
+        android:layout_height="101dp"
+        android:layout_marginStart="54dp"
+        android:layout_marginLeft="54dp"
+        android:layout_marginTop="34dp"
+        android:layout_marginEnd="107dp"
+        android:layout_marginRight="107dp"
+        android:contentDescription="@string/table_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/chartView"
+        app:layout_constraintTop_toBottomOf="@+id/sensorView"
+        app:srcCompat="@drawable/table" />
+
+    <ImageView
+        android:id="@+id/locationView"
+        android:layout_width="91dp"
+        android:layout_height="101dp"
+        android:layout_marginStart="107dp"
+        android:layout_marginLeft="107dp"
+        android:layout_marginTop="34dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginRight="40dp"
+        android:contentDescription="@string/todo"
+        app:layout_constraintEnd_toStartOf="@+id/addFView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chartView"
+        app:srcCompat="@drawable/pins" />
+
+    <ImageView
+        android:id="@+id/addFView"
+        android:layout_width="91dp"
+        android:layout_height="101dp"
+        android:layout_marginStart="61dp"
+        android:layout_marginLeft="61dp"
+        android:layout_marginTop="43dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginRight="100dp"
+        android:contentDescription="@string/add_filters_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/locationView"
+        app:layout_constraintTop_toBottomOf="@+id/tableView"
+        app:srcCompat="@drawable/add" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
