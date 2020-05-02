@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "ddos",
-    "slug": "ddos",
+    "name": "dos",
+    "slug": "dos",
     "platforms": [
       "ios",
       "android",
