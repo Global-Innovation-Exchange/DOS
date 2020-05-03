@@ -1,16 +1,16 @@
-# DOS
-This is repository to store DOS
+# dos
 
-## Prerequisite
-- Node.js
-- Yarn
-- Expo CLI
+A new Flutter project.
 
-## Install Prerequisite
-1. Install Node.js
-2. Install expo CLI by `npm install expo-cli --global`
-3. Install Yarn by `npm install -g yarn`
+## Getting Started
 
-## To Run
-1. Navigate to this folder
-2. Run `yarn start`
+This project is a starting point for a Flutter application.
+
+A few resources to get you started if this is your first Flutter project:
+
+- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+
+For help getting started with Flutter, view our
+[online documentation](https://flutter.dev/docs), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
