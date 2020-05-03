@@ -1,3 +1,4 @@
+import 'package:dos/detail.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -98,6 +99,15 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.display1,
             ),
+            RaisedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DetailWidget())
+                );
+              },
+              child: Text('Detail')
+            )
           ],
         ),
       ),
