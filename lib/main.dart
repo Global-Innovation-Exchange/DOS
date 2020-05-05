@@ -1,5 +1,8 @@
-import 'package:dos/detail.dart';
 import 'package:flutter/material.dart';
+
+import 'create_log.dart';
+import 'database.dart';
+import 'detail.dart';
 
 void main() => runApp(MyApp());
 
@@ -21,7 +24,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Emotion logs'),
     );
   }
 }
@@ -45,17 +48,48 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  final EmotionTable _emotionTable = EmotionTable();
+  Future<List<EmotionLog>> _logsFuture;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  Future<List<EmotionLog>> getLogs() async {
+    // TODO: (pref) Don't get all the logs and with all tags here
+    return _emotionTable.getLogs(withTags: true);
+  }
+
+  ListView _buildList(List<EmotionLog> logs) {
+    return ListView.builder(
+      itemCount: logs.length,
+      itemBuilder: (context, position) => Card(
+        elevation: 2.0,
+        child: ListTile(
+          title: Text(logs[position].dateTime.toString()),
+          onTap: () async {
+            bool updated = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EmtionDetail(
+                  log: logs[position],
+                ),
+              ),
+            );
+
+            if (updated != null) {
+              setState(() {
+                // Force update
+                _logsFuture = getLogs();
+              });
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _logsFuture = getLogs();
   }
 
   @override
@@ -92,30 +126,38 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
-            RaisedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => DetailWidget())
-                );
+            FutureBuilder<List<EmotionLog>>(
+              future: _logsFuture,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Expanded(child: _buildList(snapshot.data));
+                } else if (snapshot.hasError) {
+                  return Text('Error');
+                } else {
+                  // Loading...
+                  return Text('Loading');
+                }
               },
-              child: Text('Detail')
             )
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
+        onPressed: () async {
+          bool updated = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CreateLog()),
+          );
+
+          if (updated != null) {
+            setState(() {
+              _logsFuture = getLogs();
+            });
+          }
+        },
+        tooltip: 'Create Log',
         child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }
