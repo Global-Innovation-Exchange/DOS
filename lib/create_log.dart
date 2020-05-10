@@ -4,8 +4,6 @@ import 'package:intl/intl.dart';
 
 import 'database.dart';
 
-double value = 1;
-
 class CreateLog extends StatefulWidget {
   @override
   _CreateLogState createState() => _CreateLogState();
@@ -14,6 +12,7 @@ class CreateLog extends StatefulWidget {
 class _CreateLogState extends State<CreateLog> {
   final _dateTimeFormatter = DateFormat.yMd().add_jm();
   final _table = EmotionTable();
+  int _scale = 1;
   DateTime _logDateTime;
   TextEditingController _jorunalController;
   TextEditingController _dateTimeController;
@@ -119,26 +118,25 @@ class _CreateLogState extends State<CreateLog> {
                 ),
 
                 Slider(
-                  value: value,
+              value: _scale.toDouble(),
                   min: 1.0,
                   max: 5.0,
-                  activeColor: colorCustom,
+              activeColor: colorSwatch,
                   inactiveColor: Colors.black12,
                   divisions: 4,
-                  label: value.toInt().toString(),
-                  onChanged: (_value) {
+              label: _scale.toString(),
+              onChanged: (v) {
                     setState(() {
-                      value = _value;
+                  _scale = v.toInt();
                     });
-                    print(_value);
                   },
                 ),
                 Padding(
                     padding: const EdgeInsets.all(6),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: List.generate(values.length,
-                          (index) => Text(values[index].toString())),
+                  children: List.generate(
+                      values.length, (index) => Text(values[index].toString())),
                     )),
                 Container(
                   margin: EdgeInsets.symmetric(vertical: 20.0, horizontal: 10),
@@ -153,8 +151,8 @@ class _CreateLogState extends State<CreateLog> {
                           border: Border.all(
                               color: Colors.white, // set border color
                               width: 3.0), // set border width
-                          borderRadius: BorderRadius.all(Radius.circular(
-                              10.0)), // set rounded corner radius
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(10.0)), // set rounded corner radius
                         ),
                         margin: EdgeInsets.only(right: 20.0),
                         child: Image.asset('assets/images/2.png'),
@@ -166,8 +164,8 @@ class _CreateLogState extends State<CreateLog> {
                           border: Border.all(
                               color: Colors.white, // set border color
                               width: 3.0), // set border width
-                          borderRadius: BorderRadius.all(Radius.circular(
-                              10.0)), // set rounded corner radius
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(10.0)), // set rounded corner radius
                         ),
                         margin: EdgeInsets.only(right: 20.0),
                         child: Image.asset('assets/images/3.png'),
@@ -179,8 +177,8 @@ class _CreateLogState extends State<CreateLog> {
                           border: Border.all(
                               color: Colors.white, // set border color
                               width: 3.0), // set border width
-                          borderRadius: BorderRadius.all(Radius.circular(
-                              10.0)), // set rounded corner radius
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(10.0)), // set rounded corner radius
                         ),
                         margin: EdgeInsets.only(right: 20.0),
                         child: Image.asset('assets/images/4.png'),
@@ -192,8 +190,8 @@ class _CreateLogState extends State<CreateLog> {
                           border: Border.all(
                               color: Colors.white, // set border color
                               width: 3.0), // set border width
-                          borderRadius: BorderRadius.all(Radius.circular(
-                              10.0)), // set rounded corner radius
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(10.0)), // set rounded corner radius
                         ),
                         margin: EdgeInsets.only(right: 20.0),
                         child: Image.asset('assets/images/5.png'),
@@ -205,8 +203,8 @@ class _CreateLogState extends State<CreateLog> {
                           border: Border.all(
                               color: Colors.white, // set border color
                               width: 3.0), // set border width
-                          borderRadius: BorderRadius.all(Radius.circular(
-                              10.0)), // set rounded corner radius
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(10.0)), // set rounded corner radius
                         ),
                         margin: EdgeInsets.only(right: 20.0),
                         child: Image.asset('assets/images/6.png'),
@@ -215,7 +213,9 @@ class _CreateLogState extends State<CreateLog> {
                   ),
                 ),
               ],
-            )));
+        ),
+      ),
+    );
   }
 
   void dispose() {
