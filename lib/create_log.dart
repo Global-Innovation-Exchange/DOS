@@ -1,8 +1,8 @@
-import 'package:dos/main.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'database.dart';
+import 'utils.dart';
 
 class CreateLog extends StatefulWidget {
   @override
@@ -82,7 +82,7 @@ class _CreateLogState extends State<CreateLog> {
             )
           ],
         ),
-        backgroundColor: Color(0xffFEEFE6),
+      backgroundColor: backgroundColor,
         body: Padding(
             padding: EdgeInsets.all(20),
             child: Column(

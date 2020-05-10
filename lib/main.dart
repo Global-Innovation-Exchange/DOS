@@ -3,22 +3,7 @@ import 'package:flutter/material.dart';
 import 'create_log.dart';
 import 'database.dart';
 import 'detail.dart';
-
-//theme color to be used cross the app
-
-Map<int, Color> color = {
-  50: Color.fromRGBO(255, 182, 153, .1),
-  100: Color.fromRGBO(255, 182, 153, .2),
-  200: Color.fromRGBO(255, 182, 153, .3),
-  300: Color.fromRGBO(255, 182, 153, .4),
-  400: Color.fromRGBO(255, 182, 153, .5),
-  500: Color.fromRGBO(255, 182, 153, .6),
-  600: Color.fromRGBO(255, 182, 153, .7),
-  700: Color.fromRGBO(255, 182, 153, .8),
-  800: Color.fromRGBO(255, 182, 153, .9),
-  900: Color.fromRGBO(255, 182, 153, 1),
-};
-MaterialColor colorCustom = MaterialColor(0xFFE1B699, color);
+import 'utils.dart';
 
 //calling main function when app started
 void main() => runApp(MyApp());
@@ -31,9 +16,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         // This is the theme of the application.
-
-        //theme color for the bar
-        primarySwatch: colorCustom,
+        primarySwatch: colorSwatch,
       ),
       home: MyHomePage(title: 'Emotion logs'),
     );
