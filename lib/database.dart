@@ -176,7 +176,7 @@ class EmotionLog {
   Emotion emotion;
   int scale;
   String jorunal;
-  List<String> tags;
+  List<String> tags = [];
 
   EmotionLog(
       {this.id,

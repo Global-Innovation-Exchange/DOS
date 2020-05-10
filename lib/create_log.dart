@@ -13,23 +13,21 @@ class CreateLog extends StatefulWidget {
 class _CreateLogState extends State<CreateLog> {
   final _dateTimeFormatter = DateFormat.yMd().add_jm();
   final _table = EmotionTable();
-  int _scale = 1;
-  DateTime _logDateTime;
-  TextEditingController _jorunalController;
+  EmotionLog _log;
   TextEditingController _dateTimeController;
 
   Future _selectDateTime(BuildContext context) async {
     final DateTime selectedDate = await showDatePicker(
       context: context,
-      initialDate: _logDateTime,
-      firstDate: DateTime(_logDateTime.year - 10),
-      lastDate: _logDateTime,
+      initialDate: _log.dateTime,
+      firstDate: DateTime(_log.dateTime.year - 10),
+      lastDate: _log.dateTime,
     );
     if (selectedDate == null) return;
 
     final TimeOfDay selectedTime = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.fromDateTime(_logDateTime),
+      initialTime: TimeOfDay.fromDateTime(_log.dateTime),
     );
     if (selectedTime == null) return;
 
@@ -41,20 +39,24 @@ class _CreateLogState extends State<CreateLog> {
       selectedTime.minute,
     );
     setState(() {
-      _logDateTime = newDateTime;
-      _dateTimeController.text = _dateTimeFormatter.format(_logDateTime);
+      _log.dateTime = newDateTime;
+      _dateTimeController.text = _dateTimeFormatter.format(_log.dateTime);
     });
   }
 
   @override
   void initState() {
     super.initState();
-    final now = DateTime.now();
+    var now = DateTime.now();
     // Remove any component less than minute
-    _logDateTime = DateTime(now.year, now.month, now.day, now.hour, now.minute);
-    _jorunalController = TextEditingController();
+    now = DateTime(now.year, now.month, now.day, now.hour, now.minute);
     _dateTimeController =
-        TextEditingController(text: _dateTimeFormatter.format(_logDateTime));
+        TextEditingController(text: _dateTimeFormatter.format(now));
+
+    _log = EmotionLog();
+    _log.scale = 3;
+    _log.dateTime = now;
+    _log.emotion = Emotion.happy;
   }
 
   @override
@@ -74,10 +76,7 @@ class _CreateLogState extends State<CreateLog> {
             textColor: Colors.white,
             child: Text('SAVE'),
             onPressed: () async {
-              await _table.insertEmotionLog(EmotionLog(
-                  jorunal: _jorunalController.text,
-                  dateTime: _logDateTime,
-                  tags: ['test1', 'test2']));
+              await _table.insertEmotionLog(_log);
               Navigator.pop(context, true);
             },
           )
@@ -102,30 +101,22 @@ class _CreateLogState extends State<CreateLog> {
               },
             ),
             SizedBox(height: 20),
-            //TextFormField(
-            // controller: _jorunalController,
-            // decoration: InputDecoration(
-            //   labelText: "Journal",
-            // ),
-            // ),
-            //SizedBox(height: 20),
             Container(
               child: Image.asset('assets/images/1.png'),
               height: 180,
               width: 180,
             ),
-
             Slider(
-              value: _scale.toDouble(),
+              value: _log.scale.toDouble(),
               min: 1.0,
               max: 5.0,
               activeColor: colorSwatch,
               inactiveColor: Colors.black12,
               divisions: 4,
-              label: _scale.toString(),
+              label: _log.scale.toString(),
               onChanged: (v) {
                 setState(() {
-                  _scale = v.toInt();
+                  _log.scale = v.toInt();
                 });
               },
             ),
@@ -212,9 +203,13 @@ class _CreateLogState extends State<CreateLog> {
             ),
             RaisedButton(
               child: Text('Addition Log'),
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AdditionalLog()));
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AdditionalLog(log: _log),
+                  ),
+                );
               },
             ),
           ],
@@ -224,7 +219,7 @@ class _CreateLogState extends State<CreateLog> {
   }
 
   void dispose() {
-    _jorunalController.dispose();
+    _dateTimeController.dispose();
     super.dispose();
   }
 }

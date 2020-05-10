@@ -4,12 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chips_input/flutter_chips_input.dart';
 
 class AdditionalLog extends StatefulWidget {
+  AdditionalLog({Key key, this.log}) : super(key: key);
+
+  final EmotionLog log;
+
   @override
-  _AdditionalLogState createState() => _AdditionalLogState();
+  _AdditionalLogState createState() => _AdditionalLogState(log);
 }
 
 class _AdditionalLogState extends State<AdditionalLog> {
-  TextEditingController _jorunalController = TextEditingController();
+  _AdditionalLogState(EmotionLog log) {
+    this._log = log;
+    this._jorunalController = TextEditingController(text: log.jorunal);
+  }
+
+  EmotionLog _log;
+  TextEditingController _jorunalController;
   EmotionTable _db = EmotionTable();
 
   @override
@@ -22,9 +32,8 @@ class _AdditionalLogState extends State<AdditionalLog> {
           FlatButton(
             textColor: Colors.white,
             child: Text('Done'),
-            onPressed: () async {
-              // TODO: return the original object
-              Navigator.pop(context, true);
+            onPressed: () {
+              Navigator.pop(context);
             },
           )
         ],
@@ -42,10 +51,14 @@ class _AdditionalLogState extends State<AdditionalLog> {
               ),
               keyboardType: TextInputType.multiline,
               maxLines: null,
+              onChanged: (value) {
+                // Not wrapping in setState because field is manged by controller 
+                _log.jorunal = value;
+              },
             ),
             SizedBox(height: 20),
             ChipsInput(
-              initialValue: ['tag1'],
+              initialValue: _log.tags ?? <String>[],
               decoration: InputDecoration(
                 labelText: "Tags",
                 border: inputBorder,
@@ -59,7 +72,9 @@ class _AdditionalLogState extends State<AdditionalLog> {
                 }
                 return results;
               },
-              onChanged: (data) {
+              onChanged: (tags) {
+                // Don't need to wrap it setState because UI change is managed by ChipsInput
+                _log.tags = tags;
               },
               chipBuilder: (context, state, tagString) {
                 return InputChip(
