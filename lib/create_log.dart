@@ -59,7 +59,7 @@ class _CreateLogState extends State<CreateLog> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> values = ["Strong", "2", "3", "4", "Weak"];
+    List<String> values = ["Weak", "2", "3", "4", "Strong"];
     return Scaffold(
         appBar: AppBar(
           title: Text('Create Log'),
