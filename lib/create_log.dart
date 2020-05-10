@@ -1,7 +1,10 @@
+import 'package:dos/main.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'database.dart';
+
+double value = 1;
 
 class CreateLog extends StatefulWidget {
   @override
@@ -56,56 +59,163 @@ class _CreateLogState extends State<CreateLog> {
 
   @override
   Widget build(BuildContext context) {
+    List<String> values = ["Strong", "2", "3", "4", "Weak"];
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Create Log'),
-        leading: IconButton(
-          icon: Icon(Icons.clear),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        actions: <Widget>[
-          FlatButton(
-            textColor: Colors.white,
-            child: Text('SAVE'),
-            onPressed: () async {
-              await _table.insertEmotionLog(EmotionLog(
-                  jorunal: _jorunalController.text, dateTime: _logDateTime, tags: ['test1', 'test2']));
-              Navigator.pop(context, true);
+        appBar: AppBar(
+          title: Text('Create Log'),
+          leading: IconButton(
+            icon: Icon(Icons.clear),
+            onPressed: () {
+              Navigator.pop(context);
             },
-          )
-        ],
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          children: <Widget>[
-            TextFormField(
-              controller: _dateTimeController,
-              readOnly: true,
-              decoration: InputDecoration(
-                icon: Icon(Icons.calendar_today),
-                labelText: "Date",
-                border: OutlineInputBorder(),
-              ),
-              onTap: () {
-                _selectDateTime(context);
+          ),
+          actions: <Widget>[
+            FlatButton(
+              textColor: Colors.white,
+              child: Text('SAVE'),
+              onPressed: () async {
+                await _table.insertEmotionLog(EmotionLog(
+                    jorunal: _jorunalController.text,
+                    dateTime: _logDateTime,
+                    tags: ['test1', 'test2']));
+                Navigator.pop(context, true);
               },
-            ),
-            SizedBox(height: 20),
-            TextFormField(
-              controller: _jorunalController,
-              decoration: InputDecoration(
-                labelText: "Journal",
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 20),
+            )
           ],
         ),
-      ),
-    );
+        backgroundColor: Color(0xffFEEFE6),
+        body: Padding(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              children: <Widget>[
+                TextFormField(
+                  controller: _dateTimeController,
+                  readOnly: true,
+                  textAlign: TextAlign.center,
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.calendar_today),
+                    prefixText: "Enter Date",
+                    border: new OutlineInputBorder(
+                      borderRadius: new BorderRadius.circular(10.0),
+                      borderSide: new BorderSide(),
+                    ),
+                  ),
+                  onTap: () {
+                    _selectDateTime(context);
+                  },
+                ),
+                SizedBox(height: 20),
+                //TextFormField(
+                // controller: _jorunalController,
+                // decoration: InputDecoration(
+                //   labelText: "Journal",
+                // ),
+                // ),
+                //SizedBox(height: 20),
+                Container(
+                  child: Image.asset('assets/images/1.png'),
+                  height: 180,
+                  width: 180,
+                ),
+
+                Slider(
+                  value: value,
+                  min: 1.0,
+                  max: 5.0,
+                  activeColor: colorCustom,
+                  inactiveColor: Colors.black12,
+                  divisions: 4,
+                  label: value.toInt().toString(),
+                  onChanged: (_value) {
+                    setState(() {
+                      value = _value;
+                    });
+                    print(_value);
+                  },
+                ),
+                Padding(
+                    padding: const EdgeInsets.all(6),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: List.generate(values.length,
+                          (index) => Text(values[index].toString())),
+                    )),
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 20.0, horizontal: 10),
+                  height: 90.0,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: <Widget>[
+                      Container(
+                        width: 100.0,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                              color: Colors.white, // set border color
+                              width: 3.0), // set border width
+                          borderRadius: BorderRadius.all(Radius.circular(
+                              10.0)), // set rounded corner radius
+                        ),
+                        margin: EdgeInsets.only(right: 20.0),
+                        child: Image.asset('assets/images/2.png'),
+                      ),
+                      Container(
+                        width: 100.0,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                              color: Colors.white, // set border color
+                              width: 3.0), // set border width
+                          borderRadius: BorderRadius.all(Radius.circular(
+                              10.0)), // set rounded corner radius
+                        ),
+                        margin: EdgeInsets.only(right: 20.0),
+                        child: Image.asset('assets/images/3.png'),
+                      ),
+                      Container(
+                        width: 100.0,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                              color: Colors.white, // set border color
+                              width: 3.0), // set border width
+                          borderRadius: BorderRadius.all(Radius.circular(
+                              10.0)), // set rounded corner radius
+                        ),
+                        margin: EdgeInsets.only(right: 20.0),
+                        child: Image.asset('assets/images/4.png'),
+                      ),
+                      Container(
+                        width: 100.0,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                              color: Colors.white, // set border color
+                              width: 3.0), // set border width
+                          borderRadius: BorderRadius.all(Radius.circular(
+                              10.0)), // set rounded corner radius
+                        ),
+                        margin: EdgeInsets.only(right: 20.0),
+                        child: Image.asset('assets/images/5.png'),
+                      ),
+                      Container(
+                        width: 100.0,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                              color: Colors.white, // set border color
+                              width: 3.0), // set border width
+                          borderRadius: BorderRadius.all(Radius.circular(
+                              10.0)), // set rounded corner radius
+                        ),
+                        margin: EdgeInsets.only(right: 20.0),
+                        child: Image.asset('assets/images/6.png'),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            )));
   }
 
   void dispose() {

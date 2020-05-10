@@ -4,25 +4,36 @@ import 'create_log.dart';
 import 'database.dart';
 import 'detail.dart';
 
+//theme color to be used cross the app
+
+Map<int, Color> color = {
+  50: Color.fromRGBO(255, 182, 153, .1),
+  100: Color.fromRGBO(255, 182, 153, .2),
+  200: Color.fromRGBO(255, 182, 153, .3),
+  300: Color.fromRGBO(255, 182, 153, .4),
+  400: Color.fromRGBO(255, 182, 153, .5),
+  500: Color.fromRGBO(255, 182, 153, .6),
+  600: Color.fromRGBO(255, 182, 153, .7),
+  700: Color.fromRGBO(255, 182, 153, .8),
+  800: Color.fromRGBO(255, 182, 153, .9),
+  900: Color.fromRGBO(255, 182, 153, 1),
+};
+MaterialColor colorCustom = MaterialColor(0xFFE1B699, color);
+
+//calling main function when app started
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+  // This widget is the root of application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+        // This is the theme of the application.
+
+        //theme color for the bar
+        primarySwatch: colorCustom,
       ),
       home: MyHomePage(title: 'Emotion logs'),
     );
@@ -117,8 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // Invoke "debug painting" (press "p" in the console, choose the
           // "Toggle Debug Paint" action from the Flutter Inspector in Android
           // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
+          // to see the wireframe for each widget
           // Column has various properties to control how it sizes itself and
           // how it positions its children. Here we use mainAxisAlignment to
           // center the children vertically; the main axis here is the vertical
@@ -142,6 +152,8 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
+
+      // ActionButton "plus" code
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           bool updated = await Navigator.push(
