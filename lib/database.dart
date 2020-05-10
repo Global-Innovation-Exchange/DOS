@@ -82,8 +82,7 @@ class EmotionTable {
       // Insert all tags. If there is conflict in insertion the row id
       // might be null, so we can't use the return value to create log_tags.
       // https://github.com/tekartik/sqflite/issues/402
-      await Future.wait(log.tags.map((t) => txn.insert(
-          tableTags, {'tag': t},
+      await Future.wait(log.tags.map((t) => txn.insert(tableTags, {'tag': t},
           conflictAlgorithm: ConflictAlgorithm.ignore)));
 
       // TODO: Limit where in count for safety
@@ -102,6 +101,20 @@ class EmotionTable {
     var maps = await db.rawQuery(
         'SELECT t.tag FROM log_tags lt INNER JOIN tags t ON lt.tag_id = t.id WHERE lt.log_id = ?',
         [logId]);
+    return List.generate(maps.length, (i) => maps[i]['tag']);
+  }
+
+  Future<List<String>> getTagsStartWith(String str, int limit) async {
+    if (str == null) {
+      return <String>[];
+    }
+    final Database db = await database;
+    var maps = await db.query(tableTags,
+        columns: ['tag'],
+        where: 'tag LIKE ?',
+        whereArgs: ['$str%'],
+        limit: limit,
+        orderBy: 'id DESC');
     return List.generate(maps.length, (i) => maps[i]['tag']);
   }
 
@@ -163,7 +176,7 @@ class EmotionLog {
   Emotion emotion;
   int scale;
   String jorunal;
-  List<String> tags;
+  List<String> tags = [];
 
   EmotionLog(
       {this.id,

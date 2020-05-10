@@ -26,7 +26,7 @@ class EmtionDetail extends StatelessWidget {
             onPressed: () async {
               if (log.id != null) {
                 await _table.deleteEmotionLog(log.id);
-                 Navigator.pop(context, true);
+                Navigator.pop(context, true);
               }
             },
           ),
