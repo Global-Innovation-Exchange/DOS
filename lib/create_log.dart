@@ -56,7 +56,7 @@ class _CreateLogState extends State<CreateLog> {
     _log = EmotionLog();
     _log.scale = 3;
     _log.dateTime = now;
-    _log.emotion = Emotion.happy;
+    _log.emotion = Emotion.joy;
   }
 
   @override
@@ -85,7 +85,7 @@ class _CreateLogState extends State<CreateLog> {
     );
     Widget selectedEmotionIcon = new Expanded(
       flex: 7,
-      child: Image.asset('assets/images/1.png'),
+      child: Image.asset('assets/images/${_log.emotion.index}.png'),
     );
 
     Widget selectedEmotionScale = new Expanded(
@@ -122,15 +122,27 @@ class _CreateLogState extends State<CreateLog> {
     );
 
     Widget iconsList = new Expanded(
-        flex: 7,
-        child: new GridView.count(
-            scrollDirection: Axis.horizontal,
-            childAspectRatio: 0.77,
-            crossAxisCount: 2,
-            crossAxisSpacing: 1.0,
-            children: _generateGridItems().map((String value) {
-              return _displayGridItem(value);
-            }).toList()));
+      flex: 7,
+      child: new GridView.count(
+        scrollDirection: Axis.horizontal,
+        childAspectRatio: 0.77,
+        crossAxisCount: 2,
+        crossAxisSpacing: 1.0,
+        children: Emotion.values
+            .sublist(1)
+            .map(
+              (e) => _displayGridItem(
+                emotion: e,
+                onTap: () {
+                  setState(() {
+                    _log.emotion = e;
+                  });
+                },
+              ),
+            )
+            .toList(),
+      ),
+    );
 
     Widget saveButton = new Expanded(
       flex: 2,
@@ -140,12 +152,12 @@ class _CreateLogState extends State<CreateLog> {
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
           child: RaisedButton(
             onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AdditionalLog(log: _log),
-                  ),
-                );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AdditionalLog(log: _log),
+                ),
+              );
             },
             child: Text('Write in Journal'),
           ),
@@ -202,25 +214,18 @@ class _CreateLogState extends State<CreateLog> {
   }
 }
 
-Widget _displayGridItem(String value) {
+Widget _displayGridItem({Emotion emotion, GestureTapCallback onTap}) {
   return new InkWell(
-      child: new Container(
-        padding: new EdgeInsets.all(0),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(
-              Radius.circular(10.0)), // set rounded corner radius
-        ),
-        margin: EdgeInsets.only(right: 7.5, left: 9, bottom: 9.0),
-        child: new Image(image: AssetImage('assets/images/' + value + ".png")),
+    child: new Container(
+      padding: new EdgeInsets.all(0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.all(
+            Radius.circular(10.0)), // set rounded corner radius
       ),
-      onTap: () {});
-}
-
-List<String> _generateGridItems() {
-  List<String> gridItems = new List<String>();
-  for (int i = 1; i < 13; i++) {
-    gridItems.add(i.toString());
-  }
-  return gridItems;
+      margin: EdgeInsets.only(right: 7.5, left: 9, bottom: 9.0),
+      child: new Image(image: AssetImage('assets/images/${emotion.index}.png')),
+    ),
+    onTap: onTap,
+  );
 }
