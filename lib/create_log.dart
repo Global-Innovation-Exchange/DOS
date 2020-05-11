@@ -94,7 +94,7 @@ class _CreateLogState extends State<CreateLog> {
           value: value,
           min: 1.0,
           max: 5.0,
-          activeColor: themeColor,
+          activeColor: Color(0xffE1B699),
           inactiveColor: Colors.black12,
           divisions: 4,
           label: value.toInt().toString(),

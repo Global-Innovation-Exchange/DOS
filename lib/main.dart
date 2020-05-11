@@ -59,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(15)),
               ),
-              margin: EdgeInsets.only(top: 13, right: 15, left: 15),
+              margin: EdgeInsets.only(top: 14, bottom: 4, right: 15, left: 15),
               child: InkWell(
                 child: Container(
                   height: 100,
