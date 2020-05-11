@@ -36,13 +36,13 @@ class EmtionDetail extends StatelessWidget {
             children: <Widget>[
               getEmotionImage(log.emotion),
               Slider(
-                value: 3,
+                value: log.scale.toDouble(),
                 min: 1.0,
                 max: 5.0,
                 activeColor: Color(0xffE1B699),
                 inactiveColor: Colors.black12,
                 divisions: 4,
-                label: 3.toInt().toString(),
+                label: log.scale.toString(),
                 onChanged: null,
               ),
             ],
