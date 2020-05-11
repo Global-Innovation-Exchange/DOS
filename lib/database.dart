@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:dos/utils.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -68,12 +70,12 @@ class EmotionTable {
   Future<void> insertEmotionLog(EmotionLog log) async {
     // Get a reference to the database.
     final Database db = await database;
-
+    int logId;
     // Insert the EmotionLog into the correct table. Also specify the
     // `conflictAlgorithm`. In this case, if the same log is inserted
     // multiple times, it replaces the previous data.
     await db.transaction((txn) async {
-      var logId = await txn.insert(
+      logId = await txn.insert(
         tableLogs,
         log.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
@@ -95,7 +97,13 @@ class EmotionTable {
                 ")",
             [logId.toString()] + log.tags);
       }
+      if (log.tempAudioPath != null) {
+        File audioFile = await getLogAudioFile(logId);
+        await moveFile(log.tempAudioPath, audioFile.path);
+      }
     });
+
+    return logId;
   }
 
   Future<List<String>> getTagsBy(int logId) async {
@@ -179,6 +187,7 @@ class EmotionLog {
   int scale;
   String journal;
   List<String> tags;
+  String tempAudioPath;
 
   EmotionLog(
       {this.id,
