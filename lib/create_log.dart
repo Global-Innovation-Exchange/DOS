@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'database.dart';
 
 double value = 1;
+var themeColor = Color(0xffFEEFE6);
 
 class CreateLog extends StatefulWidget {
   @override
@@ -93,7 +94,7 @@ class _CreateLogState extends State<CreateLog> {
           value: value,
           min: 1.0,
           max: 5.0,
-          activeColor: Color(0xFFE1B699),
+          activeColor: themeColor,
           inactiveColor: Colors.black12,
           divisions: 4,
           label: value.toInt().toString(),
@@ -198,14 +199,11 @@ class _CreateLogState extends State<CreateLog> {
 }
 
 Widget _displayGridItem(String value) {
-  return new GestureDetector(
+  return new InkWell(
       child: new Container(
         padding: new EdgeInsets.all(0),
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(
-              color: Colors.white, // set border color
-              width: 1.0), // set border width
           borderRadius: BorderRadius.all(
               Radius.circular(10.0)), // set rounded corner radius
         ),

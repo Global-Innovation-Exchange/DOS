@@ -5,6 +5,7 @@ import 'database.dart';
 import 'detail.dart';
 import 'utils.dart';
 
+var themeColor = Color(0xffFEEFE6);
 //calling main function when app started
 void main() => runApp(MyApp());
 
@@ -52,31 +53,71 @@ class _MyHomePageState extends State<MyHomePage> {
 
   ListView _buildList(List<EmotionLog> logs) {
     return ListView.builder(
-      itemCount: logs.length,
-      itemBuilder: (context, position) => Card(
-        elevation: 2.0,
-        child: ListTile(
-          title: Text(logs[position].dateTime.toString()),
-          onTap: () async {
-            bool updated = await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => EmtionDetail(
-                  log: logs[position],
-                ),
+        itemCount: logs.length,
+        itemBuilder: (context, position) => Card(
+              elevation: 2.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
               ),
-            );
+              margin: EdgeInsets.only(top: 13, right: 15, left: 15),
+              child: InkWell(
+                child: Container(
+                  height: 100,
+                  width: 100,
+                  alignment: Alignment(1.0, 0.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(10.0)), // set rounded corner radius
+                  ),
+                  child: Stack(
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(Radius.circular(
+                                    10.0)), // set rounded corner radius
+                              ),
+                              alignment: Alignment(0.0, 0.0),
+                              child: Image.asset(
+                                'assets/images/1.png',
+                              )),
+                          Container(
+                            width: 260,
+                            alignment: Alignment(0.0, 0.0),
+                            child: Text(
+                              logs[position].dateTime.toString(),
+                              style: new TextStyle(
+                                fontSize: 18.0,
+                                color: Colors.black45,
+                              ),
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+                onTap: () async {
+                  bool updated = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EmtionDetail(
+                        log: logs[position],
+                      ),
+                    ),
+                  );
 
-            if (updated != null) {
-              setState(() {
-                // Force update
-                _logsFuture = getLogs();
-              });
-            }
-          },
-        ),
-      ),
-    );
+                  if (updated != null) {
+                    setState(() {
+                      // Force update
+                      _logsFuture = getLogs();
+                    });
+                  }
+                },
+              ),
+            ));
   }
 
   @override
@@ -88,70 +129,66 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    Widget logPreview = new Container(
+        height: 520,
+        decoration: BoxDecoration(
+          color: themeColor,
+          borderRadius: BorderRadius.all(
+              Radius.circular(10.0)), // set rounded corner radius
+        ),
+        child: FutureBuilder<List<EmotionLog>>(
+          future: _logsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Expanded(child: _buildList(snapshot.data));
+            } else if (snapshot.hasError) {
+              return Text('Error');
+            } else {
+              // Loading...
+              return Text('Loading');
+            }
+          },
+        ));
+    Widget floatingButton = new Container(
+        alignment: Alignment(1.0, 1.0),
+        padding: new EdgeInsets.all(12),
+        child: FloatingActionButton(
+          onPressed: () async {
+            bool updated = await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => CreateLog()),
+            );
+
+            if (updated != null) {
+              setState(() {
+                _logsFuture = getLogs();
+              });
+            }
+          },
+          tooltip: 'Create Log',
+          child: Icon(Icons.add),
+        ));
+
+    Widget body = new Column(
+      // This makes each child fill the full width of the screen
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        logPreview,
+        floatingButton,
+      ],
+    );
+
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            FutureBuilder<List<EmotionLog>>(
-              future: _logsFuture,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Expanded(child: _buildList(snapshot.data));
-                } else if (snapshot.hasError) {
-                  return Text('Error');
-                } else {
-                  // Loading...
-                  return Text('Loading');
-                }
-              },
-            )
-          ],
-        ),
-      ),
-
-      // ActionButton "plus" code
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          bool updated = await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => CreateLog()),
-          );
-
-          if (updated != null) {
-            setState(() {
-              _logsFuture = getLogs();
-            });
-          }
-        },
-        tooltip: 'Create Log',
-        child: Icon(Icons.add),
+      backgroundColor: Color(0xffFEEFE6),
+      body: new Padding(
+        padding: new EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
+        child: body,
       ),
     );
   }
