@@ -42,7 +42,7 @@ class EmtionDetail extends StatelessWidget {
                 activeColor: Color(0xffE1B699),
                 inactiveColor: Colors.black12,
                 divisions: 4,
-                label: value.toInt().toString(),
+                label: 3.toInt().toString(),
                 onChanged: null,
               ),
             ],

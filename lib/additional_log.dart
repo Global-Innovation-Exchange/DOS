@@ -38,29 +38,11 @@ class _AdditionalLogState extends State<AdditionalLog> {
           )
         ],
       ),
-      backgroundColor: backgroundColor,
+      backgroundColor: themeColor,
       body: Padding(
         padding: EdgeInsets.all(20),
         child: Column(
           children: <Widget>[
-            Expanded(
-              child: TextFormField(
-                expands: true,
-                maxLines: null,
-                textAlignVertical: TextAlignVertical.top,
-                controller: _jorunalController,
-                decoration: InputDecoration(
-                  labelText: 'Jorunal',
-                  border: inputBorder,
-                ),
-                keyboardType: TextInputType.multiline,
-                onChanged: (value) {
-                  // Not wrapping in setState because field is manged by controller
-                  _log.jorunal = value;
-                },
-              ),
-            ),
-            SizedBox(height: 20),
             ChipsInput(
               initialValue: _log.tags ?? <String>[],
               decoration: InputDecoration(
@@ -97,7 +79,25 @@ class _AdditionalLogState extends State<AdditionalLog> {
                   onTap: () => state.selectSuggestion(tagString),
                 );
               },
-            )
+            ),
+            SizedBox(height: 20),
+            Expanded(
+              child: TextFormField(
+                expands: true,
+                maxLines: null,
+                textAlignVertical: TextAlignVertical.top,
+                controller: _jorunalController,
+                decoration: InputDecoration(
+                  labelText: 'Jorunal',
+                  border: inputBorder,
+                ),
+                keyboardType: TextInputType.multiline,
+                onChanged: (value) {
+                  // Not wrapping in setState because field is manged by controller
+                  _log.jorunal = value;
+                },
+              ),
+            ),
           ],
         ),
       ),

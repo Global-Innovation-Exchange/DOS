@@ -2,10 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'additional_log.dart';
 import 'database.dart';
-
-double value = 1;
-var themeColor = Color(0xffFEEFE6);
 
 class CreateLog extends StatefulWidget {
   @override
@@ -15,22 +13,21 @@ class CreateLog extends StatefulWidget {
 class _CreateLogState extends State<CreateLog> {
   final _dateTimeFormatter = DateFormat.yMd().add_jm();
   final _table = EmotionTable();
-  DateTime _logDateTime;
-  TextEditingController _jorunalController;
+  EmotionLog _log;
   TextEditingController _dateTimeController;
 
   Future _selectDateTime(BuildContext context) async {
     final DateTime selectedDate = await showDatePicker(
       context: context,
-      initialDate: _logDateTime,
-      firstDate: DateTime(_logDateTime.year - 10),
-      lastDate: _logDateTime,
+      initialDate: _log.dateTime,
+      firstDate: DateTime(_log.dateTime.year - 10),
+      lastDate: _log.dateTime,
     );
     if (selectedDate == null) return;
 
     final TimeOfDay selectedTime = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.fromDateTime(_logDateTime),
+      initialTime: TimeOfDay.fromDateTime(_log.dateTime),
     );
     if (selectedTime == null) return;
 
@@ -42,20 +39,24 @@ class _CreateLogState extends State<CreateLog> {
       selectedTime.minute,
     );
     setState(() {
-      _logDateTime = newDateTime;
-      _dateTimeController.text = _dateTimeFormatter.format(_logDateTime);
+      _log.dateTime = newDateTime;
+      _dateTimeController.text = _dateTimeFormatter.format(_log.dateTime);
     });
   }
 
   @override
   void initState() {
     super.initState();
-    final now = DateTime.now();
+    var now = DateTime.now();
     // Remove any component less than minute
-    _logDateTime = DateTime(now.year, now.month, now.day, now.hour, now.minute);
-    _jorunalController = TextEditingController();
+    now = DateTime(now.year, now.month, now.day, now.hour, now.minute);
     _dateTimeController =
-        TextEditingController(text: _dateTimeFormatter.format(_logDateTime));
+        TextEditingController(text: _dateTimeFormatter.format(now));
+
+    _log = EmotionLog();
+    _log.scale = 3;
+    _log.dateTime = now;
+    _log.emotion = Emotion.happy;
   }
 
   @override
@@ -91,18 +92,17 @@ class _CreateLogState extends State<CreateLog> {
       flex: 1,
       child: new Container(
         child: Slider(
-          value: value,
+          value: _log.scale.toDouble(),
           min: 1.0,
           max: 5.0,
           activeColor: Color(0xffE1B699),
           inactiveColor: Colors.black12,
           divisions: 4,
-          label: value.toInt().toString(),
-          onChanged: (_value) {
+          label: _log.scale.toString(),
+          onChanged: (v) {
             setState(() {
-              value = _value;
+              _log.scale = v.toInt();
             });
-            print(_value);
           },
         ),
       ),
@@ -139,7 +139,14 @@ class _CreateLogState extends State<CreateLog> {
           minWidth: double.infinity,
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
           child: RaisedButton(
-            onPressed: () {},
+            onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AdditionalLog(log: _log),
+                  ),
+                );
+            },
             child: Text('Write in Journal'),
           ),
         ),
@@ -175,10 +182,7 @@ class _CreateLogState extends State<CreateLog> {
             textColor: Colors.white,
             child: Text('SAVE'),
             onPressed: () async {
-              await _table.insertEmotionLog(EmotionLog(
-                  jorunal: _jorunalController.text,
-                  dateTime: _logDateTime,
-                  tags: ['test1', 'test2']));
+              await _table.insertEmotionLog(_log);
               Navigator.pop(context, true);
             },
           )
@@ -193,7 +197,7 @@ class _CreateLogState extends State<CreateLog> {
   }
 
   void dispose() {
-    _jorunalController.dispose();
+    _dateTimeController.dispose();
     super.dispose();
   }
 }
