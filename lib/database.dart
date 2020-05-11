@@ -190,7 +190,7 @@ class EmotionLog {
 
   EmotionLog.fomObject(dynamic o) {
     this.id = o['id'];
-    this.dateTime = DateTime.fromMicrosecondsSinceEpoch(o['datetime']);
+    this.dateTime = DateTime.fromMillisecondsSinceEpoch(o['datetime']);
     this.emotion = Emotion.values[o['emotion'] ?? 0];
     this.scale = o['scale'];
     this.jorunal = o['jorunal'];
