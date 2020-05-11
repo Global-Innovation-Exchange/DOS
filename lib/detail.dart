@@ -58,7 +58,7 @@ class EmtionDetail extends StatelessWidget {
             keyboardType: TextInputType.multiline,
             maxLines: 9,
             maxLength: 7000,
-            initialValue: 'bla bla',
+            initialValue: '${log.jorunal}',
             readOnly: true,
             textAlign: TextAlign.left,
             decoration: InputDecoration(
@@ -135,7 +135,7 @@ class EmtionDetail extends StatelessWidget {
     // This makes each child fill the full width of the screen
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detail'),
+        title: Text('Log Details'),
         actions: <Widget>[
           FlatButton(
             //textColor: Colors.white,
