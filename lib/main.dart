@@ -5,7 +5,6 @@ import 'database.dart';
 import 'detail.dart';
 import 'utils.dart';
 
-var themeColor = Color(0xffFEEFE6);
 //calling main function when app started
 void main() => runApp(MyApp());
 
@@ -74,20 +73,19 @@ class _MyHomePageState extends State<MyHomePage> {
                       Row(
                         children: <Widget>[
                           Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.all(Radius.circular(
-                                    10.0)), // set rounded corner radius
-                              ),
-                              alignment: Alignment(0.0, 0.0),
-                              child: Image.asset(
-                                'assets/images/1.png',
-                              )),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.all(Radius.circular(
+                                  10.0)), // set rounded corner radius
+                            ),
+                            alignment: Alignment(0.0, 0.0),
+                            child: getEmotionImage(logs[position].emotion),
+                          ),
                           Container(
                             width: 260,
                             alignment: Alignment(0.0, 0.0),
                             child: Text(
-                              logs[position].dateTime.toString(),
+                              formatDateTime(logs[position].dateTime),
                               style: new TextStyle(
                                 fontSize: 18.0,
                                 color: Colors.black45,
@@ -185,7 +183,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      backgroundColor: Color(0xffFEEFE6),
+      backgroundColor: themeColor,
       body: new Padding(
         padding: new EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
         child: body,

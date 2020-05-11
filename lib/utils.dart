@@ -1,4 +1,15 @@
+import 'package:dos/database.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+final _dateTimeFormatter = DateFormat.yMd().add_jm();
+String formatDateTime(DateTime dt) {
+  return _dateTimeFormatter.format(dt);
+}
+
+Image getEmotionImage(Emotion e) {
+  return Image.asset('assets/images/${e.index}.png');
+}
 
 // Theme color to be used cross the app
 Map<int, Color> color = {

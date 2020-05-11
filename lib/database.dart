@@ -217,4 +217,18 @@ class EmotionLog {
   }
 }
 
-enum Emotion { none, joy, sadness, anticipation, fear, disgust, surpise, trust, anger, test, test1, test2, test3 }
+enum Emotion {
+  none,
+  joy,
+  sadness,
+  anticipation,
+  fear,
+  disgust,
+  surpise,
+  trust,
+  anger,
+  test,
+  test1,
+  test2,
+  test3
+}

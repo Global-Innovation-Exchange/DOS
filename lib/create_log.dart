@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import 'additional_log.dart';
 import 'database.dart';
+import 'utils.dart';
 
 class CreateLog extends StatefulWidget {
   @override
@@ -11,7 +11,6 @@ class CreateLog extends StatefulWidget {
 }
 
 class _CreateLogState extends State<CreateLog> {
-  final _dateTimeFormatter = DateFormat.yMd().add_jm();
   final _table = EmotionTable();
   EmotionLog _log;
   TextEditingController _dateTimeController;
@@ -40,7 +39,7 @@ class _CreateLogState extends State<CreateLog> {
     );
     setState(() {
       _log.dateTime = newDateTime;
-      _dateTimeController.text = _dateTimeFormatter.format(_log.dateTime);
+      _dateTimeController.text = formatDateTime(newDateTime);
     });
   }
 
@@ -51,7 +50,7 @@ class _CreateLogState extends State<CreateLog> {
     // Remove any component less than minute
     now = DateTime(now.year, now.month, now.day, now.hour, now.minute);
     _dateTimeController =
-        TextEditingController(text: _dateTimeFormatter.format(now));
+        TextEditingController(text: formatDateTime(now));
 
     _log = EmotionLog();
     _log.scale = 3;
@@ -85,7 +84,7 @@ class _CreateLogState extends State<CreateLog> {
     );
     Widget selectedEmotionIcon = new Expanded(
       flex: 7,
-      child: Image.asset('assets/images/${_log.emotion.index}.png'),
+      child: getEmotionImage(_log.emotion),
     );
 
     Widget selectedEmotionScale = new Expanded(
@@ -200,7 +199,7 @@ class _CreateLogState extends State<CreateLog> {
           )
         ],
       ),
-      backgroundColor: Color(0xffFEEFE6),
+      backgroundColor: themeColor,
       body: new Padding(
         padding: new EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
         child: body,
@@ -224,7 +223,7 @@ Widget _displayGridItem({Emotion emotion, GestureTapCallback onTap}) {
             Radius.circular(10.0)), // set rounded corner radius
       ),
       margin: EdgeInsets.only(right: 7.5, left: 9, bottom: 9.0),
-      child: new Image(image: AssetImage('assets/images/${emotion.index}.png')),
+      child: getEmotionImage(emotion),
     ),
     onTap: onTap,
   );

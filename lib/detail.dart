@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'create_log.dart';
 import 'database.dart';
+import 'utils.dart';
 
 class EmtionDetail extends StatelessWidget {
   EmtionDetail({Key key, this.log}) : super(key: key);
@@ -14,7 +14,7 @@ class EmtionDetail extends StatelessWidget {
       padding: new EdgeInsets.all(8.0),
       margin: EdgeInsets.only(top: 4),
       child: TextFormField(
-        initialValue: '${log.dateTime}',
+        initialValue: formatDateTime(log.dateTime),
         readOnly: true,
         textAlign: TextAlign.center,
         decoration: InputDecoration(
@@ -34,7 +34,7 @@ class EmtionDetail extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Image.asset('assets/images/1.png'),
+              getEmotionImage(log.emotion),
               Slider(
                 value: 3,
                 min: 1.0,
@@ -144,7 +144,7 @@ class EmtionDetail extends StatelessWidget {
           )
         ],
       ),
-      backgroundColor: Color(0xffFEEFE6),
+      backgroundColor: themeColor,
       body: new Padding(
         padding: new EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
         child: body,
