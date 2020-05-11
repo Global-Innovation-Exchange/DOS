@@ -43,18 +43,22 @@ class _AdditionalLogState extends State<AdditionalLog> {
         padding: EdgeInsets.all(20),
         child: Column(
           children: <Widget>[
-            TextFormField(
-              controller: _jorunalController,
-              decoration: InputDecoration(
-                labelText: 'Jorunal',
-                border: inputBorder,
+            Expanded(
+              child: TextFormField(
+                expands: true,
+                maxLines: null,
+                textAlignVertical: TextAlignVertical.top,
+                controller: _jorunalController,
+                decoration: InputDecoration(
+                  labelText: 'Jorunal',
+                  border: inputBorder,
+                ),
+                keyboardType: TextInputType.multiline,
+                onChanged: (value) {
+                  // Not wrapping in setState because field is manged by controller
+                  _log.jorunal = value;
+                },
               ),
-              keyboardType: TextInputType.multiline,
-              maxLines: null,
-              onChanged: (value) {
-                // Not wrapping in setState because field is manged by controller 
-                _log.jorunal = value;
-              },
             ),
             SizedBox(height: 20),
             ChipsInput(
