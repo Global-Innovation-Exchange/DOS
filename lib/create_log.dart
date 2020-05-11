@@ -143,7 +143,7 @@ class _CreateLogState extends State<CreateLog> {
       ),
     );
 
-    Widget saveButton = Expanded(
+    Widget journalButton = Expanded(
       flex: 2,
       child: Container(
         child: ButtonTheme(
@@ -158,7 +158,7 @@ class _CreateLogState extends State<CreateLog> {
                 ),
               );
             },
-            child: Text('Write in Journal'),
+            child: Text('Write Journal'),
           ),
         ),
       ),
@@ -175,7 +175,7 @@ class _CreateLogState extends State<CreateLog> {
         scaleNumbers,
         SizedBox(height: 25.0),
         iconsList,
-        saveButton,
+        journalButton,
       ],
     );
 
@@ -190,7 +190,6 @@ class _CreateLogState extends State<CreateLog> {
         ),
         actions: <Widget>[
           FlatButton(
-            textColor: Colors.white,
             child: Text('SAVE'),
             onPressed: () async {
               await _table.insertEmotionLog(_log);

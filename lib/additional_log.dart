@@ -89,6 +89,7 @@ class _AdditionalLogState extends State<AdditionalLog> {
                 controller: _jorunalController,
                 decoration: InputDecoration(
                   labelText: 'Jorunal',
+                  alignLabelWithHint: true,
                   border: inputBorder,
                 ),
                 keyboardType: TextInputType.multiline,

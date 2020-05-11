@@ -73,11 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Row(
                         children: <Widget>[
                           Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.all(Radius.circular(
-                                  10.0)), // set rounded corner radius
-                            ),
+                            padding: EdgeInsets.all(10),
                             alignment: Alignment(0.0, 0.0),
                             child: getEmotionImage(logs[position].emotion),
                           ),
