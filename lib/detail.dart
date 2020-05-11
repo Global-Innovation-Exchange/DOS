@@ -10,8 +10,8 @@ class EmtionDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget selectedDate = new Container(
-      padding: new EdgeInsets.all(8.0),
+    Widget selectedDate = Container(
+      padding: EdgeInsets.all(8.0),
       margin: EdgeInsets.only(top: 4),
       child: TextFormField(
         initialValue: formatDateTime(log.dateTime),
@@ -20,17 +20,17 @@ class EmtionDetail extends StatelessWidget {
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.calendar_today),
           prefixText: "Log Date",
-          border: new OutlineInputBorder(
-            borderRadius: new BorderRadius.circular(10.0),
-            borderSide: new BorderSide(),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: BorderSide(),
           ),
         ),
       ),
     );
-    Widget selectedEmotionIcon = new Expanded(
+    Widget selectedEmotionIcon = Expanded(
         flex: 2,
-        child: new Container(
-          child: new Row(
+        child: Container(
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -49,10 +49,10 @@ class EmtionDetail extends StatelessWidget {
           ),
         ));
 
-    Widget journalText = new Expanded(
+    Widget journalText = Expanded(
         flex: 5,
-        child: new Container(
-          padding: new EdgeInsets.all(8.0),
+        child: Container(
+          padding: EdgeInsets.all(8.0),
           margin: EdgeInsets.only(top: 8),
           child: TextFormField(
             keyboardType: TextInputType.multiline,
@@ -62,17 +62,17 @@ class EmtionDetail extends StatelessWidget {
             readOnly: true,
             textAlign: TextAlign.left,
             decoration: InputDecoration(
-              border: new OutlineInputBorder(
-                borderRadius: new BorderRadius.circular(10.0),
-                borderSide: new BorderSide(),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: BorderSide(),
               ),
             ),
           ),
         ));
-    Widget journalVoice = new Expanded(
+    Widget journalVoice = Expanded(
       flex: 1,
-      child: new Container(
-        padding: new EdgeInsets.all(8.0),
+      child: Container(
+        padding: EdgeInsets.all(8.0),
         margin: EdgeInsets.only(top: 8),
         child: TextFormField(
           initialValue: 'This is for the audio record',
@@ -83,10 +83,10 @@ class EmtionDetail extends StatelessWidget {
         ),
       ),
     );
-    Widget journalTags = new Expanded(
+    Widget journalTags = Expanded(
       flex: 1,
-      child: new Container(
-        padding: new EdgeInsets.all(8.0),
+      child: Container(
+        padding: EdgeInsets.all(8.0),
         margin: EdgeInsets.only(top: 8),
         color: Colors.pink,
         child: TextFormField(
@@ -98,9 +98,9 @@ class EmtionDetail extends StatelessWidget {
       ),
     );
 
-    Widget deleteButton = new Expanded(
+    Widget deleteButton = Expanded(
       flex: 2,
-      child: new Container(
+      child: Container(
         child: ButtonTheme(
           minWidth: double.infinity,
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -116,7 +116,7 @@ class EmtionDetail extends StatelessWidget {
         ),
       ),
     );
-    Widget body = new Column(
+    Widget body = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -145,8 +145,8 @@ class EmtionDetail extends StatelessWidget {
         ],
       ),
       backgroundColor: themeColor,
-      body: new Padding(
-        padding: new EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
+      body: Padding(
+        padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
         child: body,
       ),
     );

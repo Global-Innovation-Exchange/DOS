@@ -62,9 +62,9 @@ class _CreateLogState extends State<CreateLog> {
   Widget build(BuildContext context) {
     List<String> values = ["Strong", "2", "3", "4", "Weak"];
     //datetime picker widget
-    Widget selectDate = new Container(
-      padding: new EdgeInsets.all(8.0),
-      color: new Color(0X3311111),
+    Widget selectDate = Container(
+      padding: EdgeInsets.all(8.0),
+      color: Color(0X3311111),
       child: TextFormField(
         controller: _dateTimeController,
         readOnly: true,
@@ -72,9 +72,9 @@ class _CreateLogState extends State<CreateLog> {
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.calendar_today),
           prefixText: "Enter Date",
-          border: new OutlineInputBorder(
-            borderRadius: new BorderRadius.circular(10.0),
-            borderSide: new BorderSide(),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: BorderSide(),
           ),
         ),
         onTap: () {
@@ -82,14 +82,14 @@ class _CreateLogState extends State<CreateLog> {
         },
       ),
     );
-    Widget selectedEmotionIcon = new Expanded(
+    Widget selectedEmotionIcon = Expanded(
       flex: 7,
       child: getEmotionImage(_log.emotion),
     );
 
-    Widget selectedEmotionScale = new Expanded(
+    Widget selectedEmotionScale = Expanded(
       flex: 1,
-      child: new Container(
+      child: Container(
         child: Slider(
           value: _log.scale.toDouble(),
           min: 1.0,
@@ -106,9 +106,9 @@ class _CreateLogState extends State<CreateLog> {
         ),
       ),
     );
-    Widget scaleNumbers = new Expanded(
+    Widget scaleNumbers = Expanded(
       flex: 1,
-      child: new Container(
+      child: Container(
         child: Padding(
             padding: const EdgeInsets.all(6),
             child: Row(
@@ -120,9 +120,9 @@ class _CreateLogState extends State<CreateLog> {
       ),
     );
 
-    Widget iconsList = new Expanded(
+    Widget iconsList = Expanded(
       flex: 7,
-      child: new GridView.count(
+      child: GridView.count(
         scrollDirection: Axis.horizontal,
         childAspectRatio: 0.77,
         crossAxisCount: 2,
@@ -143,9 +143,9 @@ class _CreateLogState extends State<CreateLog> {
       ),
     );
 
-    Widget saveButton = new Expanded(
+    Widget saveButton = Expanded(
       flex: 2,
-      child: new Container(
+      child: Container(
         child: ButtonTheme(
           minWidth: double.infinity,
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -164,7 +164,7 @@ class _CreateLogState extends State<CreateLog> {
       ),
     );
 
-    Widget body = new Column(
+    Widget body = Column(
       // This makes each child fill the full width of the screen
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -200,8 +200,8 @@ class _CreateLogState extends State<CreateLog> {
         ],
       ),
       backgroundColor: themeColor,
-      body: new Padding(
-        padding: new EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
+      body: Padding(
+        padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
         child: body,
       ),
     );
@@ -214,9 +214,9 @@ class _CreateLogState extends State<CreateLog> {
 }
 
 Widget _displayGridItem({Emotion emotion, GestureTapCallback onTap}) {
-  return new InkWell(
-    child: new Container(
-      padding: new EdgeInsets.all(0),
+  return InkWell(
+    child: Container(
+      padding: EdgeInsets.all(0),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.all(

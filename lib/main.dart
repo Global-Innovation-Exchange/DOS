@@ -86,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             alignment: Alignment(0.0, 0.0),
                             child: Text(
                               formatDateTime(logs[position].dateTime),
-                              style: new TextStyle(
+                              style: TextStyle(
                                 fontSize: 18.0,
                                 color: Colors.black45,
                               ),
@@ -127,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    Widget logPreview = new Container(
+    Widget logPreview = Container(
         height: 520,
         decoration: BoxDecoration(
           color: themeColor,
@@ -147,9 +147,9 @@ class _MyHomePageState extends State<MyHomePage> {
             }
           },
         ));
-    Widget floatingButton = new Container(
+    Widget floatingButton = Container(
         alignment: Alignment(1.0, 1.0),
-        padding: new EdgeInsets.all(12),
+        padding: EdgeInsets.all(12),
         child: FloatingActionButton(
           onPressed: () async {
             bool updated = await Navigator.push(
@@ -167,7 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Icon(Icons.add),
         ));
 
-    Widget body = new Column(
+    Widget body = Column(
       // This makes each child fill the full width of the screen
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -184,8 +184,8 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       backgroundColor: themeColor,
-      body: new Padding(
-        padding: new EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
+      body: Padding(
+        padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
         child: body,
       ),
     );

@@ -28,7 +28,7 @@ MaterialColor colorSwatch = MaterialColor(0xFFE1B699, color);
 
 Color themeColor = Color(0xffFEEFE6);
 
-OutlineInputBorder inputBorder = new OutlineInputBorder(
-  borderRadius: new BorderRadius.circular(10.0),
-  borderSide: new BorderSide(),
+OutlineInputBorder inputBorder = OutlineInputBorder(
+  borderRadius: BorderRadius.circular(10.0),
+  borderSide: BorderSide(),
 );
