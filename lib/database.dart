@@ -79,20 +79,22 @@ class EmotionTable {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
 
-      // Insert all tags. If there is conflict in insertion the row id
-      // might be null, so we can't use the return value to create log_tags.
-      // https://github.com/tekartik/sqflite/issues/402
-      await Future.wait(log.tags.map((t) => txn.insert(tableTags, {'tag': t},
-          conflictAlgorithm: ConflictAlgorithm.ignore)));
+      if (log.tags != null && log.tags.length > 0) {
+        // Insert all tags. If there is conflict in insertion the row id
+        // might be null, so we can't use the return value to create log_tags.
+        // https://github.com/tekartik/sqflite/issues/402
+        await Future.wait(log.tags.map((t) => txn.insert(tableTags, {'tag': t},
+            conflictAlgorithm: ConflictAlgorithm.ignore)));
 
-      // TODO: Limit where in count for safety
-      // Find all the tags and insert into the log_tags
-      await txn.execute(
-          "INSERT INTO log_tags (log_id, tag_id) " +
-              "SELECT ?, id FROM tags WHERE tag IN (" +
-              log.tags.map((t) => "?").join(",") +
-              ")",
-          [logId.toString()] + log.tags);
+        // TODO: Limit where in count for safety
+        // Find all the tags and insert into the log_tags
+        await txn.execute(
+            "INSERT INTO log_tags (log_id, tag_id) " +
+                "SELECT ?, id FROM tags WHERE tag IN (" +
+                log.tags.map((t) => "?").join(",") +
+                ")",
+            [logId.toString()] + log.tags);
+      }
     });
   }
 
@@ -176,7 +178,7 @@ class EmotionLog {
   Emotion emotion;
   int scale;
   String jorunal;
-  List<String> tags = [];
+  List<String> tags;
 
   EmotionLog(
       {this.id,
