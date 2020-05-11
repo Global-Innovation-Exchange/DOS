@@ -87,6 +87,7 @@ class _AdditionalLogState extends State<AdditionalLog> {
                 textAlignVertical: TextAlignVertical.top,
                 controller: _journalController,
                 decoration: InputDecoration(
+                  alignLabelWithHint: true,
                   labelText: 'Journal',
                   border: inputBorder,
                 ),
