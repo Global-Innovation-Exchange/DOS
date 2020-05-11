@@ -50,9 +50,10 @@ class _AdditionalLogState extends State<AdditionalLog> {
               ),
               maxChips: 50,
               findSuggestions: (String query) async {
-                List results = await _db.getTagsStartWith(query, 5);
-                if (query != null && query.length > 0) {
+                List<String> results = await _db.getTagsStartWith(query, 5);
+                if (query != null && query.length > 0 && results.indexOf(query) == -1) {
                   // add the input string if only the input is not empty string
+                  // and the result doesn't contain the exact string
                   results.add(query);
                 }
                 return results;
