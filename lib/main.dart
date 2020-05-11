@@ -138,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
           future: _logsFuture,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return Expanded(child: _buildList(snapshot.data));
+              return _buildList(snapshot.data);
             } else if (snapshot.hasError) {
               return Text('Error');
             } else {
