@@ -15,11 +15,11 @@ class AdditionalLog extends StatefulWidget {
 class _AdditionalLogState extends State<AdditionalLog> {
   _AdditionalLogState(EmotionLog log) {
     this._log = log;
-    this._jorunalController = TextEditingController(text: log.jorunal);
+    this._journalController = TextEditingController(text: log.journal);
   }
 
   EmotionLog _log;
-  TextEditingController _jorunalController;
+  TextEditingController _journalController;
   EmotionTable _db = EmotionTable();
 
   @override
@@ -85,15 +85,15 @@ class _AdditionalLogState extends State<AdditionalLog> {
                 expands: true,
                 maxLines: null,
                 textAlignVertical: TextAlignVertical.top,
-                controller: _jorunalController,
+                controller: _journalController,
                 decoration: InputDecoration(
-                  labelText: 'Jorunal',
+                  labelText: 'Journal',
                   border: inputBorder,
                 ),
                 keyboardType: TextInputType.multiline,
                 onChanged: (value) {
                   // Not wrapping in setState because field is manged by controller
-                  _log.jorunal = value;
+                  _log.journal = value;
                 },
               ),
             ),
@@ -105,7 +105,7 @@ class _AdditionalLogState extends State<AdditionalLog> {
 
   @override
   void dispose() {
-    _jorunalController.dispose();
+    _journalController.dispose();
     super.dispose();
   }
 }

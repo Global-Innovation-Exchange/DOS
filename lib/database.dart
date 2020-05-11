@@ -45,7 +45,7 @@ class EmotionTable {
               "datetime INTEGER," +
               "emotion INTEGER," +
               "scale INTEGER," +
-              "jorunal TEXT)",
+              "journal TEXT)",
         );
         batch.execute(
             "CREATE TABLE tags(id INTEGER PRIMARY KEY AUTOINCREMENT, tag TEXT NOT NULL UNIQUE)");
@@ -177,7 +177,7 @@ class EmotionLog {
   DateTime dateTime;
   Emotion emotion;
   int scale;
-  String jorunal;
+  String journal;
   List<String> tags;
 
   EmotionLog(
@@ -185,7 +185,7 @@ class EmotionLog {
       this.dateTime,
       this.emotion,
       this.scale,
-      this.jorunal,
+      this.journal,
       this.tags});
 
   EmotionLog.fomObject(dynamic o) {
@@ -193,7 +193,7 @@ class EmotionLog {
     this.dateTime = DateTime.fromMillisecondsSinceEpoch(o['datetime']);
     this.emotion = Emotion.values[o['emotion'] ?? 0];
     this.scale = o['scale'];
-    this.jorunal = o['jorunal'];
+    this.journal = o['journal'];
   }
 
   Map<String, dynamic> toMap() {
@@ -201,7 +201,7 @@ class EmotionLog {
       'datetime': dateTime.millisecondsSinceEpoch,
       'emotion': emotion != null ? emotion.index : null,
       'scale': scale,
-      'jorunal': jorunal,
+      'journal': journal,
     };
     if (id != null) {
       map['id'] = id;
@@ -213,7 +213,7 @@ class EmotionLog {
   // each log when using the print statement.
   @override
   String toString() {
-    return 'EmotionLog{id: $id, journal: $jorunal datetime: $dateTime}';
+    return 'EmotionLog{id: $id, journal: $journal datetime: $dateTime}';
   }
 }
 

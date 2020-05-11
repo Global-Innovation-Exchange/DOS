@@ -58,11 +58,11 @@ class EmtionDetail extends StatelessWidget {
             keyboardType: TextInputType.multiline,
             maxLines: 9,
             maxLength: 7000,
-            initialValue: '${log.jorunal ?? ''}',
+            initialValue: '${log.journal ?? ''}',
             readOnly: true,
             textAlign: TextAlign.left,
             decoration: InputDecoration(
-              labelText: 'Jorunal',
+              labelText: 'Journal',
               alignLabelWithHint: true,
               floatingLabelBehavior: FloatingLabelBehavior.always,
               border: OutlineInputBorder(
