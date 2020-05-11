@@ -30,8 +30,7 @@ class _AdditionalLogState extends State<AdditionalLog> {
         automaticallyImplyLeading: false,
         actions: <Widget>[
           FlatButton(
-            textColor: Colors.white,
-            child: Text('Done'),
+            child: Text('DONE'),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -89,7 +88,6 @@ class _AdditionalLogState extends State<AdditionalLog> {
                 controller: _jorunalController,
                 decoration: InputDecoration(
                   labelText: 'Jorunal',
-                  alignLabelWithHint: true,
                   border: inputBorder,
                 ),
                 keyboardType: TextInputType.multiline,
