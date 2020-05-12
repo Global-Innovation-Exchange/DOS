@@ -45,9 +45,16 @@ class _AdditionalLogState extends State<AdditionalLog> {
             ChipsInput(
               initialValue: _log.tags ?? <String>[],
               decoration: InputDecoration(
-                labelText: "Tags",
-                border: inputBorder,
-              ),
+                  fillColor: Colors.white,
+                  filled: true,
+                  labelText: "Tags",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                    borderRadius: BorderRadius.circular(10.0),
+                  )),
               maxChips: 50,
               findSuggestions: (String query) async {
                 List<String> results = await _db.getTagsStartWith(query, 5);

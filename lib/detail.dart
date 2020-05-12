@@ -74,7 +74,7 @@ class EmtionDetail extends StatelessWidget {
               filled: true,
               contentPadding: EdgeInsets.all(15),
               labelText: 'your Journal',
-              alignLabelWithHint: true,
+              alignLabelWithHint: false,
               floatingLabelBehavior: FloatingLabelBehavior.always,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15.0),
