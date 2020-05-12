@@ -147,23 +147,22 @@ class _CreateLogState extends State<CreateLog> {
       ),
     );
 
-    Widget journalButton = Expanded(
-      flex: 2,
-      child: Container(
-        child: ButtonTheme(
-          minWidth: double.infinity,
-          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          child: RaisedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AdditionalLog(log: _log),
-                ),
-              );
-            },
-            child: Text('Write Journal'),
-          ),
+    Widget journalButton = SafeArea(
+      bottom: true,
+      child: ButtonTheme(
+        height: 50,
+        minWidth: double.infinity,
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        child: RaisedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AdditionalLog(log: _log),
+              ),
+            );
+          },
+          child: Text('Write Journal'),
         ),
       ),
     );

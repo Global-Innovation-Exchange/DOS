@@ -107,9 +107,10 @@ class EmtionDetail extends StatelessWidget {
       ),
     );
 
-    Widget deleteButton = Container(
-      height: 50,
+    Widget deleteButton = SafeArea(
+      bottom: true,
       child: ButtonTheme(
+        height: 50,
         minWidth: double.infinity,
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         child: RaisedButton(
