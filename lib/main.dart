@@ -123,54 +123,38 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    Widget logPreview = Container(
-        height: 520,
-        decoration: BoxDecoration(
-          color: themeColor,
-          borderRadius: BorderRadius.all(
-              Radius.circular(10.0)), // set rounded corner radius
-        ),
-        child: FutureBuilder<List<EmotionLog>>(
-          future: _logsFuture,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return _buildList(snapshot.data);
-            } else if (snapshot.hasError) {
-              return Text('Error');
-            } else {
-              // Loading...
-              return Text('Loading');
-            }
-          },
-        ));
+    Widget logPreview = FutureBuilder<List<EmotionLog>>(
+      future: _logsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return _buildList(snapshot.data);
+        } else if (snapshot.hasError) {
+          return Text('Error');
+        } else {
+          // Loading...
+          return Text('Loading');
+        }
+      },
+    );
     Widget floatingButton = Container(
-        alignment: Alignment(1.0, 1.0),
-        padding: EdgeInsets.all(12),
-        child: FloatingActionButton(
-          onPressed: () async {
-            bool updated = await Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => CreateLog()),
-            );
+      alignment: Alignment(1.0, 1.0),
+      padding: EdgeInsets.all(12),
+      child: FloatingActionButton(
+        onPressed: () async {
+          bool updated = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CreateLog()),
+          );
 
-            if (updated != null) {
-              setState(() {
-                _logsFuture = getLogs();
-              });
-            }
-          },
-          tooltip: 'Create Log',
-          child: Icon(Icons.add),
-        ));
-
-    Widget body = Column(
-      // This makes each child fill the full width of the screen
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        logPreview,
-        floatingButton,
-      ],
+          if (updated != null) {
+            setState(() {
+              _logsFuture = getLogs();
+            });
+          }
+        },
+        tooltip: 'Create Log',
+        child: Icon(Icons.add),
+      ),
     );
 
     return Scaffold(
@@ -182,8 +166,9 @@ class _MyHomePageState extends State<MyHomePage> {
       backgroundColor: themeColor,
       body: Padding(
         padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
-        child: body,
+        child: logPreview,
       ),
+      floatingActionButton: floatingButton,
     );
   }
 }
