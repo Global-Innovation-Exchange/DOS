@@ -49,8 +49,7 @@ class _CreateLogState extends State<CreateLog> {
     var now = DateTime.now();
     // Remove any component less than minute
     now = DateTime(now.year, now.month, now.day, now.hour, now.minute);
-    _dateTimeController =
-        TextEditingController(text: formatDateTime(now));
+    _dateTimeController = TextEditingController(text: formatDateTime(now));
 
     _log = EmotionLog();
     _log.scale = 3;
@@ -70,11 +69,16 @@ class _CreateLogState extends State<CreateLog> {
         readOnly: true,
         textAlign: TextAlign.center,
         decoration: InputDecoration(
+          fillColor: Colors.white,
+          filled: true,
           prefixIcon: Icon(Icons.calendar_today),
           prefixText: "Enter Date",
           border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
             borderRadius: BorderRadius.circular(10.0),
-            borderSide: BorderSide(),
           ),
         ),
         onTap: () {

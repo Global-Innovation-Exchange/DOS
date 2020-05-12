@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'database.dart';
@@ -11,24 +12,31 @@ class EmtionDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget selectedDate = Container(
+      height: 60,
       padding: EdgeInsets.all(8.0),
-      margin: EdgeInsets.only(top: 4),
+
+      // margin: EdgeInsets.only(top: 4),
       child: TextFormField(
-        initialValue: formatDateTime(log.dateTime),
-        readOnly: true,
-        textAlign: TextAlign.center,
-        decoration: InputDecoration(
-          prefixIcon: Icon(Icons.calendar_today),
-          prefixText: "Log Date",
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-            borderSide: BorderSide(),
-          ),
-        ),
-      ),
+          initialValue: formatDateTime(log.dateTime),
+          readOnly: true,
+          textAlign: TextAlign.center,
+          decoration: InputDecoration(
+            fillColor: Colors.white,
+            filled: true,
+            prefixIcon: Icon(Icons.calendar_today),
+            prefixText: "Log Date",
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15.0),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+          )),
     );
-    Widget selectedEmotionIcon = Expanded(
-        flex: 2,
+
+    Widget selectedEmotion = Expanded(
+        flex: 9,
         child: Container(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -50,7 +58,7 @@ class EmtionDetail extends StatelessWidget {
         ));
 
     Widget journalText = Expanded(
-        flex: 5,
+        flex: 20,
         child: Container(
           padding: EdgeInsets.all(8.0),
           margin: EdgeInsets.only(top: 8),
@@ -62,18 +70,24 @@ class EmtionDetail extends StatelessWidget {
             readOnly: true,
             textAlign: TextAlign.left,
             decoration: InputDecoration(
-              labelText: 'Journal',
+              fillColor: Colors.white,
+              filled: true,
+              contentPadding: EdgeInsets.all(15),
+              labelText: 'your Journal',
               alignLabelWithHint: true,
               floatingLabelBehavior: FloatingLabelBehavior.always,
               border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.white),
                 borderRadius: BorderRadius.circular(10.0),
-                borderSide: BorderSide(),
               ),
             ),
           ),
         ));
     Widget journalVoice = Expanded(
-      flex: 1,
+      flex: 5,
       child: Container(
         padding: EdgeInsets.all(8.0),
         margin: EdgeInsets.only(top: 8),
@@ -87,22 +101,18 @@ class EmtionDetail extends StatelessWidget {
       ),
     );
     Widget journalTags = Expanded(
-      flex: 1,
-      child: Container(
-        padding: EdgeInsets.all(8.0),
-        margin: EdgeInsets.only(top: 8),
-        color: Colors.pink,
-        child: TextFormField(
-          initialValue: (log.tags ?? []).map((t) => '#$t').join(", "),
-          readOnly: true,
-          textAlign: TextAlign.left,
-          decoration: InputDecoration(border: InputBorder.none),
-        ),
-      ),
-    );
+        flex: 9,
+        child: GridView.count(
+            scrollDirection: Axis.horizontal,
+            childAspectRatio: 0.4,
+            crossAxisCount: 2,
+            crossAxisSpacing: 1.0,
+            children: _generateGridItems().map((String value) {
+              return _displayGridItem(value);
+            }).toList()));
 
     Widget deleteButton = Expanded(
-      flex: 2,
+      flex: 5,
       child: Container(
         child: ButtonTheme(
           minWidth: double.infinity,
@@ -128,7 +138,7 @@ class EmtionDetail extends StatelessWidget {
         ),
         selectedDate,
         SizedBox(height: 25.0),
-        selectedEmotionIcon,
+        selectedEmotion,
         journalText,
         journalVoice,
         journalTags,
@@ -154,4 +164,30 @@ class EmtionDetail extends StatelessWidget {
       ),
     );
   }
+}
+
+List<String> _generateGridItems() {
+  List<String> gridItems = new List<String>();
+  for (int i = 1; i < 40; i++) {
+    gridItems.add("#" + i.toString() + "tesTEST");
+  }
+  return gridItems;
+}
+
+Widget _displayGridItem(String value) {
+  return new Expanded(
+      child: Container(
+    margin: EdgeInsets.only(left: 9, bottom: 9.0),
+    padding: new EdgeInsets.all(1),
+    alignment: Alignment.center,
+    decoration: BoxDecoration(
+      color: Colors.black12,
+      border: Border.all(
+          color: Colors.black12, // set border color
+          width: 1.0), // set border width
+      borderRadius:
+          BorderRadius.all(Radius.circular(20.0)), // set rounded corner radius
+    ),
+    child: new Text(value),
+  ));
 }

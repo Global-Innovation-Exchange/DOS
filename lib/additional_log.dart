@@ -51,7 +51,9 @@ class _AdditionalLogState extends State<AdditionalLog> {
               maxChips: 50,
               findSuggestions: (String query) async {
                 List<String> results = await _db.getTagsStartWith(query, 5);
-                if (query != null && query.length > 0 && results.indexOf(query) == -1) {
+                if (query != null &&
+                    query.length > 0 &&
+                    results.indexOf(query) == -1) {
                   // add the input string if only the input is not empty string
                   // and the result doesn't contain the exact string
                   results.add(query);
@@ -88,9 +90,19 @@ class _AdditionalLogState extends State<AdditionalLog> {
                 textAlignVertical: TextAlignVertical.top,
                 controller: _journalController,
                 decoration: InputDecoration(
-                  alignLabelWithHint: true,
-                  labelText: 'Journal',
-                  border: inputBorder,
+                  fillColor: Colors.white,
+                  filled: true,
+                  contentPadding: EdgeInsets.only(left: 5),
+                  labelText: 'Write your Journal',
+                  alignLabelWithHint: false,
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
                 ),
                 keyboardType: TextInputType.multiline,
                 onChanged: (value) {
