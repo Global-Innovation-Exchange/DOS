@@ -101,15 +101,15 @@ class EmtionDetail extends StatelessWidget {
       ),
     );
     Widget journalTags = Expanded(
-        flex: 9,
-        child: GridView.count(
-            scrollDirection: Axis.horizontal,
-            childAspectRatio: 0.4,
-            crossAxisCount: 2,
-            crossAxisSpacing: 1.0,
-            children: _generateGridItems().map((String value) {
-              return _displayGridItem(value);
-            }).toList()));
+      flex: 9,
+      child: GridView.count(
+        scrollDirection: Axis.horizontal,
+        childAspectRatio: 0.4,
+        crossAxisCount: 2,
+        crossAxisSpacing: 1.0,
+        children: log.tags.map((t) => _createChip(t)).toList(),
+      ),
+    );
 
     Widget deleteButton = Expanded(
       flex: 5,
@@ -166,27 +166,10 @@ class EmtionDetail extends StatelessWidget {
   }
 }
 
-List<String> _generateGridItems() {
-  List<String> gridItems = List<String>();
-  for (int i = 1; i < 40; i++) {
-    gridItems.add("#" + i.toString() + "tesTEST");
-  }
-  return gridItems;
-}
-
-Widget _displayGridItem(String value) {
+Widget _createChip(String value) {
   return Container(
-    margin: EdgeInsets.only(left: 9, bottom: 9.0),
-    padding: EdgeInsets.all(1),
-    alignment: Alignment.center,
-    decoration: BoxDecoration(
-      color: Colors.black12,
-      border: Border.all(
-          color: Colors.black12, // set border color
-          width: 1.0), // set border width
-      borderRadius:
-          BorderRadius.all(Radius.circular(20.0)), // set rounded corner radius
-    ),
-    child: Text(value),
-  );
+      margin: EdgeInsets.only(left: 9, bottom: 9.0),
+      padding: EdgeInsets.all(1),
+      alignment: Alignment.center,
+      child: Chip(avatar: CircleAvatar(child: Text('#')), label: Text(value)));
 }
