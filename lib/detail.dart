@@ -175,8 +175,7 @@ List<String> _generateGridItems() {
 }
 
 Widget _displayGridItem(String value) {
-  return new Expanded(
-      child: Container(
+  return Container(
     margin: EdgeInsets.only(left: 9, bottom: 9.0),
     padding: new EdgeInsets.all(1),
     alignment: Alignment.center,
@@ -189,5 +188,5 @@ Widget _displayGridItem(String value) {
           BorderRadius.all(Radius.circular(20.0)), // set rounded corner radius
     ),
     child: new Text(value),
-  ));
+  );
 }
