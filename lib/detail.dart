@@ -167,7 +167,7 @@ class EmtionDetail extends StatelessWidget {
 }
 
 List<String> _generateGridItems() {
-  List<String> gridItems = new List<String>();
+  List<String> gridItems = List<String>();
   for (int i = 1; i < 40; i++) {
     gridItems.add("#" + i.toString() + "tesTEST");
   }
@@ -177,7 +177,7 @@ List<String> _generateGridItems() {
 Widget _displayGridItem(String value) {
   return Container(
     margin: EdgeInsets.only(left: 9, bottom: 9.0),
-    padding: new EdgeInsets.all(1),
+    padding: EdgeInsets.all(1),
     alignment: Alignment.center,
     decoration: BoxDecoration(
       color: Colors.black12,
@@ -187,6 +187,6 @@ Widget _displayGridItem(String value) {
       borderRadius:
           BorderRadius.all(Radius.circular(20.0)), // set rounded corner radius
     ),
-    child: new Text(value),
+    child: Text(value),
   );
 }
