@@ -74,12 +74,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         children: <Widget>[
                           Container(
                             padding: EdgeInsets.all(10),
-                            alignment: Alignment(0.0, 0.0),
                             child: getEmotionImage(logs[position].emotion),
                           ),
                           Container(
-                            width: 260,
-                            alignment: Alignment(0.0, 0.0),
                             child: Text(
                               formatDateTime(logs[position].dateTime),
                               style: TextStyle(
