@@ -125,7 +125,8 @@ class EmotionTable {
     final Database db = await database;
 
     // Query the table for all The EmotionLogs.
-    final List<Map<String, dynamic>> maps = await db.query(tableLogs);
+    final List<Map<String, dynamic>> maps =
+        await db.query(tableLogs, orderBy: 'datetime DESC');
 
     // Convert the List<Map<String, dynamic> into a List<EmotionLog>.
     var logs = List.generate(
