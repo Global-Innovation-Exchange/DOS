@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:dos/database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 
 final _dateTimeFormatter = DateFormat.yMd().add_jm();
 String formatDateTime(DateTime dt) {
@@ -28,6 +31,30 @@ MaterialColor colorSwatch = MaterialColor(0xFFE1B699, color);
 
 Color themeColor = Color(0xffFEEFE6);
 
+audio
+OutlineInputBorder inputBorder = new OutlineInputBorder(
+  borderRadius: new BorderRadius.circular(10.0),
+  borderSide: new BorderSide(),
+);
+
+// https://stackoverflow.com/a/55614133/2563765
+Future<File> moveFile(String sourcePath, String newPath) async {
+  File sourceFile = File(sourcePath);
+  try {
+    // prefer using rename as it is probably faster
+    return await sourceFile.rename(newPath);
+  } on FileSystemException catch (e) {
+    // if rename fails, copy the source file and then delete it
+    final newFile = await sourceFile.copy(newPath);
+    await sourceFile.delete();
+    return newFile;
+  }
+}
+
+Future<File> getLogAudioFile(int logId) async {
+  Directory appDir = await getApplicationDocumentsDirectory();
+  return File('${appDir.path}/$logId.acc');
+=======
 OutlineInputBorder inputBorder = OutlineInputBorder(
   borderRadius: BorderRadius.circular(10.0),
   borderSide: BorderSide(),
@@ -58,4 +85,5 @@ Icon getEmotionSourceIcon(EmotionSource src, {Color color}) {
       break;
   }
   return icon;
+master
 }

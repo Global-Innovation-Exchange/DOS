@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:dos/database.dart';
 import 'package:dos/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chips_input/flutter_chips_input.dart';
+import 'package:flutter_sound_lite/flutter_sound_recorder.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
 
 class AdditionalLog extends StatefulWidget {
   AdditionalLog({Key key, this.log}) : super(key: key);
@@ -15,11 +20,15 @@ class AdditionalLog extends StatefulWidget {
 class _AdditionalLogState extends State<AdditionalLog> {
   _AdditionalLogState(EmotionLog log) {
     this._log = log;
-    this._journalController = TextEditingController(text: log.journal);
+    this._jorunalController = TextEditingController(text: log.journal);
+    this._recorder = FlutterSoundRecorder();
+    this._isRecording = false;
   }
 
   EmotionLog _log;
-  TextEditingController _journalController;
+  TextEditingController _jorunalController;
+  FlutterSoundRecorder _recorder;
+  bool _isRecording;
   EmotionTable _db = EmotionTable();
 
   Widget _buildSource() {
@@ -110,14 +119,39 @@ class _AdditionalLogState extends State<AdditionalLog> {
               },
             ),
             SizedBox(height: 20),
+            
+            audio
+            Row(
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(!_isRecording ? Icons.mic : Icons.stop),
+                  onPressed: () async {
+                    if (!_isRecording) {
+                      if (_log.tempAudioPath == null) {
+                        _log.tempAudioPath = await _createTempFilePath();
+                      }
+                      await _recorder.startRecorder(uri: _log.tempAudioPath);
+                    } else {
+                      await _recorder.stopRecorder();
+                    }
+                    setState(() {
+                      _isRecording = !_isRecording;
+                    });
+                  },
+                ),
+                Text('Record audio journal'),
+              ],
+            ),
+
             _buildSource(),
+ master
             SizedBox(height: 20),
             Expanded(
               child: TextFormField(
                 expands: true,
                 maxLines: null,
                 textAlignVertical: TextAlignVertical.top,
-                controller: _journalController,
+                controller: _jorunalController,
                 decoration: InputDecoration(
                   fillColor: Colors.white,
                   filled: true,
@@ -148,7 +182,20 @@ class _AdditionalLogState extends State<AdditionalLog> {
 
   @override
   void dispose() {
-    _journalController.dispose();
+    _jorunalController.dispose();
+    _recorder.release();
     super.dispose();
   }
+}
+
+Future<String> _createTempFilePath() async {
+  Directory tempDir = await getTemporaryDirectory();
+  bool exists = true;
+  File tempFile;
+  while (exists) {
+    String filename = '${Uuid().v4()}.aac';
+    tempFile = File('${tempDir.path}/$filename');
+    exists = await tempFile.exists();
+  }
+  return tempFile.path;
 }

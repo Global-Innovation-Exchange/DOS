@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_sound_lite/flutter_sound_player.dart';
 
 import 'database.dart';
 import 'utils.dart';
@@ -95,13 +98,7 @@ class EmotionDetail extends StatelessWidget {
 
     Widget journalVoice = Container(
       padding: EdgeInsets.all(8.0),
-      child: TextFormField(
-        initialValue: 'This is for the audio record',
-        readOnly: true,
-        textAlign: TextAlign.left,
-        decoration: InputDecoration(
-            prefixIcon: Icon(Icons.play_arrow), border: InputBorder.none),
-      ),
+      child: AudioButton(log: log),
     );
 
     Widget journalTags = Align(
@@ -182,4 +179,71 @@ class EmotionDetail extends StatelessWidget {
 
 Widget _createChip(String value) {
   return Chip(avatar: CircleAvatar(child: Text('#')), label: Text(value));
+}
+
+class AudioButton extends StatefulWidget {
+  AudioButton({Key key, this.log}) : super(key: key);
+  final EmotionLog log;
+
+  @override
+  _AudioButtonState createState() => _AudioButtonState();
+}
+
+class _AudioButtonState extends State<AudioButton> {
+  String _audioPath;
+  bool _isPlaying = false;
+  FlutterSoundPlayer _player = FlutterSoundPlayer();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _initAudioPath();
+  }
+
+  void _initAudioPath() async {
+    File f = await getLogAudioFile(widget.log.id);
+    if (await f.exists()) {
+      setState(() {
+        _audioPath = f.path;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _audioPath == null
+        ? SizedBox.shrink()
+        : Row(
+            children: <Widget>[
+              IconButton(
+                icon: Icon(!_isPlaying ? Icons.play_arrow : Icons.stop),
+                onPressed: () async {
+                  if (!_isPlaying) {
+                    _player.startPlayer(_audioPath, whenFinished: () {
+                      setState(() {
+                        _isPlaying = false;
+                      });
+                    });
+                    setState(() {
+                      _isPlaying = true;
+                    });
+                  } else {
+                    _player.stopPlayer();
+                    setState(() {
+                      _isPlaying = false;
+                    });
+                  }
+                },
+              ),
+              Text('Audio journal')
+            ],
+          );
+  }
+
+  @override
+  void dispose() {
+    _player.release();
+    super.dispose();
+  }
 }
