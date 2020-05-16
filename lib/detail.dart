@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'database.dart';
 import 'utils.dart';
 
-class EmtionDetail extends StatelessWidget {
-  EmtionDetail({Key key, this.log}) : super(key: key);
+class EmotionDetail extends StatelessWidget {
+  EmotionDetail({Key key, this.log}) : super(key: key);
   final EmotionTable _table = EmotionTable();
   final EmotionLog log;
 
