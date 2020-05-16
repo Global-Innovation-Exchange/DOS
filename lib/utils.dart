@@ -32,3 +32,30 @@ OutlineInputBorder inputBorder = OutlineInputBorder(
   borderRadius: BorderRadius.circular(10.0),
   borderSide: BorderSide(),
 );
+
+Icon getEmotionSourceIcon(EmotionSource src, {Color color}) {
+  Icon icon;
+  switch (src) {
+    case EmotionSource.home:
+      {
+        icon = Icon(
+          Icons.home,
+          color: color,
+        );
+      }
+      break;
+
+    case EmotionSource.work:
+      {
+        icon = Icon(Icons.work, color: color);
+      }
+      break;
+
+    case EmotionSource.moeny:
+      {
+        icon = Icon(Icons.attach_money, color: color);
+      }
+      break;
+  }
+  return icon;
+}

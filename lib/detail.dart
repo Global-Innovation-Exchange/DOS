@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'database.dart';
 import 'utils.dart';
 
-class EmtionDetail extends StatelessWidget {
-  EmtionDetail({Key key, this.log}) : super(key: key);
+class EmotionDetail extends StatelessWidget {
+  EmotionDetail({Key key, this.log}) : super(key: key);
   final EmotionTable _table = EmotionTable();
   final EmotionLog log;
 
@@ -55,6 +55,15 @@ class EmtionDetail extends StatelessWidget {
         ],
       ),
     );
+
+    Widget emotionSource = log.source != null
+        ? Container(
+            padding: EdgeInsets.all(8.0),
+            child: Row(
+              children: <Widget>[],
+            ),
+          )
+        : SizedBox.shrink();
 
     Widget journalText = Container(
       padding: EdgeInsets.all(8.0),
@@ -133,6 +142,9 @@ class EmtionDetail extends StatelessWidget {
               selectedDate,
               SizedBox(height: 25.0),
               selectedEmotion,
+              log.source != null
+                  ? getEmotionSourceIcon(log.source)
+                  : SizedBox.shrink(),
               journalText,
               journalVoice,
               journalTags,
