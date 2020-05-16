@@ -31,6 +31,7 @@ MaterialColor colorSwatch = MaterialColor(0xFFE1B699, color);
 
 Color themeColor = Color(0xffFEEFE6);
 
+audio
 OutlineInputBorder inputBorder = new OutlineInputBorder(
   borderRadius: new BorderRadius.circular(10.0),
   borderSide: new BorderSide(),
@@ -53,4 +54,36 @@ Future<File> moveFile(String sourcePath, String newPath) async {
 Future<File> getLogAudioFile(int logId) async {
   Directory appDir = await getApplicationDocumentsDirectory();
   return File('${appDir.path}/$logId.acc');
+=======
+OutlineInputBorder inputBorder = OutlineInputBorder(
+  borderRadius: BorderRadius.circular(10.0),
+  borderSide: BorderSide(),
+);
+
+Icon getEmotionSourceIcon(EmotionSource src, {Color color}) {
+  Icon icon;
+  switch (src) {
+    case EmotionSource.home:
+      {
+        icon = Icon(
+          Icons.home,
+          color: color,
+        );
+      }
+      break;
+
+    case EmotionSource.work:
+      {
+        icon = Icon(Icons.work, color: color);
+      }
+      break;
+
+    case EmotionSource.moeny:
+      {
+        icon = Icon(Icons.attach_money, color: color);
+      }
+      break;
+  }
+  return icon;
+master
 }

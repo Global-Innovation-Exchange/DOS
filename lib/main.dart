@@ -94,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   bool updated = await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => EmtionDetail(
+                      builder: (context) => EmotionDetail(
                         log: logs[position],
                       ),
                     ),

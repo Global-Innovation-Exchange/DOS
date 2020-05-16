@@ -7,8 +7,8 @@ import 'package:flutter_sound_lite/flutter_sound_player.dart';
 import 'database.dart';
 import 'utils.dart';
 
-class EmtionDetail extends StatelessWidget {
-  EmtionDetail({Key key, this.log}) : super(key: key);
+class EmotionDetail extends StatelessWidget {
+  EmotionDetail({Key key, this.log}) : super(key: key);
   final EmotionTable _table = EmotionTable();
   final EmotionLog log;
 
@@ -59,6 +59,15 @@ class EmtionDetail extends StatelessWidget {
       ),
     );
 
+    Widget emotionSource = log.source != null
+        ? Container(
+            padding: EdgeInsets.all(8.0),
+            child: Row(
+              children: <Widget>[],
+            ),
+          )
+        : SizedBox.shrink();
+
     Widget journalText = Container(
       padding: EdgeInsets.all(8.0),
       margin: EdgeInsets.only(top: 8),
@@ -104,9 +113,10 @@ class EmtionDetail extends StatelessWidget {
       ),
     );
 
-    Widget deleteButton = Container(
-      height: 50,
+    Widget deleteButton = SafeArea(
+      bottom: true,
       child: ButtonTheme(
+        height: 50,
         minWidth: double.infinity,
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         child: RaisedButton(
@@ -130,6 +140,9 @@ class EmtionDetail extends StatelessWidget {
               selectedDate,
               SizedBox(height: 25.0),
               selectedEmotion,
+              log.source != null
+                  ? getEmotionSourceIcon(log.source)
+                  : SizedBox.shrink(),
               journalText,
               journalVoice,
               journalTags,

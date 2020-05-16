@@ -31,6 +31,26 @@ class _AdditionalLogState extends State<AdditionalLog> {
   bool _isRecording;
   EmotionTable _db = EmotionTable();
 
+  Widget _buildSource() {
+    var children = EmotionSource.values.map((src) {
+      var isSelected = _log.source == src;
+      var color = isSelected ? Colors.red : Colors.blue;
+      return IconButton(
+        icon: getEmotionSourceIcon(src, color: color),
+        onPressed: () {
+          setState(() {
+            if (_log.source == src) {
+              _log.source = null;
+            } else {
+              _log.source = src;
+            }
+          });
+        },
+      );
+    }).toList();
+    return Row(children: children);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -99,6 +119,8 @@ class _AdditionalLogState extends State<AdditionalLog> {
               },
             ),
             SizedBox(height: 20),
+            
+            audio
             Row(
               children: <Widget>[
                 IconButton(
@@ -120,6 +142,9 @@ class _AdditionalLogState extends State<AdditionalLog> {
                 Text('Record audio journal'),
               ],
             ),
+
+            _buildSource(),
+ master
             SizedBox(height: 20),
             Expanded(
               child: TextFormField(

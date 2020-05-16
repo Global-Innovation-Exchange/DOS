@@ -47,6 +47,7 @@ class EmotionTable {
               "datetime INTEGER," +
               "emotion INTEGER," +
               "scale INTEGER," +
+              "source INTEGER," +
               "journal TEXT)",
         );
         batch.execute(
@@ -133,7 +134,8 @@ class EmotionTable {
     final Database db = await database;
 
     // Query the table for all The EmotionLogs.
-    final List<Map<String, dynamic>> maps = await db.query(tableLogs);
+    final List<Map<String, dynamic>> maps =
+        await db.query(tableLogs, orderBy: 'datetime DESC');
 
     // Convert the List<Map<String, dynamic> into a List<EmotionLog>.
     var logs = List.generate(
@@ -184,6 +186,7 @@ class EmotionLog {
   int id;
   DateTime dateTime;
   Emotion emotion;
+  EmotionSource source;
   int scale;
   String journal;
   List<String> tags;
@@ -195,6 +198,7 @@ class EmotionLog {
       this.emotion,
       this.scale,
       this.journal,
+      this.source,
       this.tags});
 
   EmotionLog.fomObject(dynamic o) {
@@ -202,14 +206,16 @@ class EmotionLog {
     this.dateTime = DateTime.fromMillisecondsSinceEpoch(o['datetime']);
     this.emotion = Emotion.values[o['emotion'] ?? 0];
     this.scale = o['scale'];
+    this.source = o['source'] != null ? EmotionSource.values[o['source']] : null;
     this.journal = o['journal'];
   }
 
   Map<String, dynamic> toMap() {
     var map = {
       'datetime': dateTime.millisecondsSinceEpoch,
-      'emotion': emotion != null ? emotion.index : null,
+      'emotion': emotion?.index,
       'scale': scale,
+      'source': source?.index,
       'journal': journal,
     };
     if (id != null) {
@@ -224,6 +230,12 @@ class EmotionLog {
   String toString() {
     return 'EmotionLog{id: $id, journal: $journal datetime: $dateTime}';
   }
+}
+
+enum EmotionSource {
+  home,
+  work,
+  moeny,
 }
 
 enum Emotion {
