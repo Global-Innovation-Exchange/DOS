@@ -119,8 +119,6 @@ class _AdditionalLogState extends State<AdditionalLog> {
               },
             ),
             SizedBox(height: 20),
-            
-            audio
             Row(
               children: <Widget>[
                 IconButton(
@@ -142,9 +140,7 @@ class _AdditionalLogState extends State<AdditionalLog> {
                 Text('Record audio journal'),
               ],
             ),
-
             _buildSource(),
- master
             SizedBox(height: 20),
             Expanded(
               child: TextFormField(
