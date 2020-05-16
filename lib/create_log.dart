@@ -9,7 +9,6 @@ class CreateLog extends StatefulWidget {
   @override
   _CreateLogState createState() => _CreateLogState();
 }
-
 class _CreateLogState extends State<CreateLog> {
   final _table = EmotionTable();
   EmotionLog _log;

@@ -56,6 +56,15 @@ class EmotionDetail extends StatelessWidget {
       ),
     );
 
+    Widget emotionSource = log.source != null
+        ? Container(
+            padding: EdgeInsets.all(8.0),
+            child: Row(
+              children: <Widget>[],
+            ),
+          )
+        : SizedBox.shrink();
+
     Widget journalText = Container(
       padding: EdgeInsets.all(8.0),
       margin: EdgeInsets.only(top: 8),
@@ -133,6 +142,9 @@ class EmotionDetail extends StatelessWidget {
               selectedDate,
               SizedBox(height: 25.0),
               selectedEmotion,
+              log.source != null
+                  ? getEmotionSourceIcon(log.source)
+                  : SizedBox.shrink(),
               journalText,
               journalVoice,
               journalTags,
