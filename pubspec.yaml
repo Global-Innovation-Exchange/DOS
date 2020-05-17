@@ -42,7 +42,7 @@ flutter:
   assets:
     - assets/images/
 
-# Run `lutter pub run flutter_launcher_icons:main` to regen icons
+# Run `flutter pub run flutter_launcher_icons:main` to regen icons
 flutter_icons:
   android: "launcher_icon"
   ios: true
