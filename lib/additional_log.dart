@@ -34,19 +34,27 @@ class _AdditionalLogState extends State<AdditionalLog> {
   Widget _buildSource() {
     var children = EmotionSource.values.map((src) {
       var isSelected = _log.source == src;
-      var color = isSelected ? Colors.red : Colors.blue;
-      return IconButton(
-        icon: getEmotionSourceIcon(src, color: color),
-        onPressed: () {
-          setState(() {
-            if (_log.source == src) {
-              _log.source = null;
-            } else {
-              _log.source = src;
-            }
-          });
-        },
-      );
+      var color = isSelected ? Colors.white : Colors.black38;
+
+      return Container(
+          margin: EdgeInsets.only(bottom: 30),
+          padding: EdgeInsets.only(right: 15),
+          child: CircleAvatar(
+            radius: 30,
+            backgroundColor: isSelected ? Color(0xffE1B699) : Colors.white,
+            child: IconButton(
+              icon: getEmotionSourceIcon(src, color: color),
+              onPressed: () {
+                setState(() {
+                  if (_log.source == src) {
+                    _log.source = null;
+                  } else {
+                    _log.source = src;
+                  }
+                });
+              },
+            ),
+          ));
     }).toList();
     return Row(children: children);
   }
@@ -54,8 +62,9 @@ class _AdditionalLogState extends State<AdditionalLog> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text('Additional Log'),
+        title: Text('Journal Log'),
         automaticallyImplyLeading: false,
         actions: <Widget>[
           FlatButton(
@@ -104,7 +113,9 @@ class _AdditionalLogState extends State<AdditionalLog> {
                 return InputChip(
                   key: ObjectKey(tagString),
                   label: Text(tagString),
-                  avatar: CircleAvatar(child: Text('#')),
+                  avatar: CircleAvatar(
+                    child: Text('#'),
+                  ),
                   onDeleted: () => state.deleteChip(tagString),
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 );
@@ -112,7 +123,9 @@ class _AdditionalLogState extends State<AdditionalLog> {
               suggestionBuilder: (context, state, tagString) {
                 return ListTile(
                   key: ObjectKey(tagString),
-                  leading: CircleAvatar(child: Text('#')),
+                  leading: CircleAvatar(
+                    child: Text('#'),
+                  ),
                   title: Text(tagString),
                   onTap: () => state.selectSuggestion(tagString),
                 );
@@ -120,28 +133,31 @@ class _AdditionalLogState extends State<AdditionalLog> {
             ),
             SizedBox(height: 20),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
-                IconButton(
-                  icon: Icon(!_isRecording ? Icons.mic : Icons.stop),
-                  onPressed: () async {
-                    if (!_isRecording) {
-                      if (_log.tempAudioPath == null) {
-                        _log.tempAudioPath = await _createTempFilePath();
+                InkWell(
+                    onTap: () async {
+                      if (!_isRecording) {
+                        if (_log.tempAudioPath == null) {
+                          _log.tempAudioPath = await _createTempFilePath();
+                        }
+                        await _recorder.startRecorder(uri: _log.tempAudioPath);
+                      } else {
+                        await _recorder.stopRecorder();
                       }
-                      await _recorder.startRecorder(uri: _log.tempAudioPath);
-                    } else {
-                      await _recorder.stopRecorder();
-                    }
-                    setState(() {
-                      _isRecording = !_isRecording;
-                    });
-                  },
-                ),
-                Text('Record audio journal'),
+                      setState(() {
+                        _isRecording = !_isRecording;
+                      });
+                    },
+                    child: Padding(
+                        padding: EdgeInsets.only(top: 0.0),
+                        child: Icon(
+                          !_isRecording ? Icons.mic : Icons.stop,
+                        ))),
+                Text(!_isRecording ? "Record audio Journal" : "Recording..."),
               ],
             ),
-            _buildSource(),
-            SizedBox(height: 20),
+            SizedBox(height: 10),
             Expanded(
               child: TextFormField(
                 expands: true,
@@ -151,8 +167,8 @@ class _AdditionalLogState extends State<AdditionalLog> {
                 decoration: InputDecoration(
                   fillColor: Colors.white,
                   filled: true,
-                  contentPadding: EdgeInsets.only(left: 5),
-                  labelText: 'Write your Journal',
+                  contentPadding: EdgeInsets.only(left: 5, top: 20),
+                  labelText: 'OR/ AND Write your Journal',
                   alignLabelWithHint: false,
                   floatingLabelBehavior: FloatingLabelBehavior.always,
                   border: OutlineInputBorder(
@@ -169,6 +185,21 @@ class _AdditionalLogState extends State<AdditionalLog> {
                   _log.journal = value;
                 },
               ),
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: 15, top: 20),
+                    child: Text(
+                      "I feel this way because of",
+                    ),
+                  ),
+                ),
+                _buildSource(),
+              ],
             ),
           ],
         ),

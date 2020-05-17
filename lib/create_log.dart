@@ -9,6 +9,7 @@ class CreateLog extends StatefulWidget {
   @override
   _CreateLogState createState() => _CreateLogState();
 }
+
 class _CreateLogState extends State<CreateLog> {
   final _table = EmotionTable();
   EmotionLog _log;
@@ -58,7 +59,7 @@ class _CreateLogState extends State<CreateLog> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> values = ["Strong", "2", "3", "4", "Weak"];
+    List<String> values = ["Little", "2", "3", "4", "Strong"];
     //datetime picker widget
     Widget selectDate = Container(
       padding: EdgeInsets.all(8.0),

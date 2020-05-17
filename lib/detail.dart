@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound_lite/flutter_sound_player.dart';
 
@@ -60,20 +60,28 @@ class EmotionDetail extends StatelessWidget {
     );
 
     Widget emotionSource = log.source != null
-        ? Container(
-            padding: EdgeInsets.all(8.0),
-            child: Row(
-              children: <Widget>[],
-            ),
-          )
+        ? Row(children: <Widget>[
+            Padding(
+                padding: EdgeInsets.only(left: 15, right: 15),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text("Because.."),
+                )),
+            CircleAvatar(
+                backgroundColor: Color(0xffE1B699),
+                child: getEmotionSourceIcon(
+                  log.source,
+                  color: Colors.white,
+                ))
+          ])
         : SizedBox.shrink();
 
     Widget journalText = Container(
       padding: EdgeInsets.all(8.0),
-      margin: EdgeInsets.only(top: 8),
+      margin: EdgeInsets.only(top: 0),
       child: TextFormField(
         keyboardType: TextInputType.multiline,
-        maxLines: 9,
+        maxLines: 7,
         maxLength: 7000,
         initialValue: '${log.journal ?? ''}',
         readOnly: true,
@@ -96,13 +104,13 @@ class EmotionDetail extends StatelessWidget {
       ),
     );
 
-    Widget journalVoice = Container(
-      padding: EdgeInsets.all(8.0),
+    Widget journalVoice = Align(
+      alignment: Alignment.bottomLeft,
       child: AudioButton(log: log),
     );
 
     Widget journalTags = Align(
-      alignment: Alignment.centerLeft,
+      alignment: Alignment.center,
       child: Padding(
         padding: EdgeInsets.only(left: 10, right: 10),
         child: Wrap(
@@ -138,14 +146,14 @@ class EmotionDetail extends StatelessWidget {
           child: Column(
             children: <Widget>[
               selectedDate,
-              SizedBox(height: 25.0),
+              SizedBox(height: 15.0),
               selectedEmotion,
-              log.source != null
-                  ? getEmotionSourceIcon(log.source)
-                  : SizedBox.shrink(),
-              journalText,
-              journalVoice,
+              SizedBox(height: 10.0),
               journalTags,
+              SizedBox(height: 15.0),
+              journalVoice,
+              journalText,
+              emotionSource,
             ],
           ),
         ),
@@ -162,7 +170,7 @@ class EmotionDetail extends StatelessWidget {
     // This makes each child fill the full width of the screen
     return Scaffold(
       appBar: AppBar(
-        title: Text('Log Details'),
+        title: Text('Journal'),
         actions: <Widget>[
           FlatButton(
             //textColor: Colors.white,

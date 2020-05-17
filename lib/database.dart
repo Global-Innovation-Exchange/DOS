@@ -206,7 +206,8 @@ class EmotionLog {
     this.dateTime = DateTime.fromMillisecondsSinceEpoch(o['datetime']);
     this.emotion = Emotion.values[o['emotion'] ?? 0];
     this.scale = o['scale'];
-    this.source = o['source'] != null ? EmotionSource.values[o['source']] : null;
+    this.source =
+        o['source'] != null ? EmotionSource.values[o['source']] : null;
     this.journal = o['journal'];
   }
 
@@ -251,5 +252,23 @@ enum Emotion {
   test,
   test1,
   test2,
-  test3
+  test3,
+  test4,
+  test5,
+  test6,
+  test7,
+  test8,
+  test9,
+  test10,
+  test11,
+  test12,
+  test13,
+  test14,
+  test15,
+  test16,
+  test17,
+  test18,
+  test19,
+  test20,
+  test21,
 }
