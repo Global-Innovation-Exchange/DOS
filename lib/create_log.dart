@@ -54,7 +54,7 @@ class _CreateLogState extends State<CreateLog> {
     _log = EmotionLog();
     _log.scale = 3;
     _log.dateTime = now;
-    _log.emotion = Emotion.joy;
+    _log.emotion = Emotion.happy;
   }
 
   @override
