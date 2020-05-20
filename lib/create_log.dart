@@ -108,7 +108,9 @@ class _CreateLogState extends State<CreateLog> {
             });
           },
         ),
+
       ),
+
     );
     Widget scaleNumbers = Expanded(
       flex: 1,
@@ -162,7 +164,7 @@ class _CreateLogState extends State<CreateLog> {
               ),
             );
           },
-          child: Text('Write Journal'),
+          child: Text('Enter Detailed Journal'),
         ),
       ),
     );
