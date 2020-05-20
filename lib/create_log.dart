@@ -59,7 +59,7 @@ class _CreateLogState extends State<CreateLog> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> values = ["Little", "2", "3", "4", "Strong"];
+    List<String> values = ["1", "2", "3", "4", "5"];
     //datetime picker widget
     Widget selectDate = Container(
       padding: EdgeInsets.all(8.0),
