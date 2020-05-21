@@ -242,6 +242,7 @@ enum EmotionSource {
 enum Emotion {
   none,
   happy,
+  sad,
   scared,
   surprised,
   angry,
@@ -261,8 +262,8 @@ enum Emotion {
   cool,
   model,
   angel,
-  worker,
   inLove,
+  worker,
   pirate,
   writer,
   exercise,
