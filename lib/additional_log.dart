@@ -64,7 +64,7 @@ class _AdditionalLogState extends State<AdditionalLog> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text('Journal Log'),
+        title: Text('Detailed Journal'),
         automaticallyImplyLeading: false,
         actions: <Widget>[
           FlatButton(
@@ -167,12 +167,12 @@ class _AdditionalLogState extends State<AdditionalLog> {
                 decoration: InputDecoration(
                   fillColor: Colors.white,
                   filled: true,
-                  contentPadding: EdgeInsets.only(left: 5, top: 20),
-                  labelText: 'OR/ AND Write your Journal',
+                  contentPadding: EdgeInsets.only(left: 15, top: 30), // prevent text overlap
+                  labelText: '\nWrite in your journal',  // weird spacing
                   alignLabelWithHint: false,
                   floatingLabelBehavior: FloatingLabelBehavior.always,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15.0),
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
