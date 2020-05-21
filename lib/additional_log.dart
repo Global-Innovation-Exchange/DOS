@@ -61,8 +61,136 @@ class _AdditionalLogState extends State<AdditionalLog> {
 
   @override
   Widget build(BuildContext context) {
+    Widget body = Padding(
+      padding: EdgeInsets.all(20),
+      child: Column(
+        children: <Widget>[
+          Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  margin: EdgeInsets.only(bottom: 15, top: 20),
+                  child: Text(
+                    "I feel this way because of",
+                  ),
+                ),
+              ),
+              _buildSource(),
+            ],
+          ),
+          ChipsInput(
+            initialValue: _log.tags ?? <String>[],
+            decoration: InputDecoration(
+                fillColor: Colors.white,
+                filled: true,
+                labelText: "Tags",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                  borderRadius: BorderRadius.circular(10.0),
+                )),
+            maxChips: 50,
+            findSuggestions: (String query) async {
+              List<String> results = await _db.getTagsStartWith(query, 5);
+              if (query != null &&
+                  query.length > 0 &&
+                  results.indexOf(query) == -1) {
+                // add the input string if only the input is not empty string
+                // and the result doesn't contain the exact string
+                results.add(query);
+              }
+              return results;
+            },
+            onChanged: (tags) {
+              // Don't need to wrap it setState because UI change is managed by ChipsInput
+              _log.tags = tags;
+            },
+            chipBuilder: (context, state, tagString) {
+              return InputChip(
+                key: ObjectKey(tagString),
+                label: Text(tagString),
+                avatar: CircleAvatar(
+                  child: Text('#'),
+                ),
+                onDeleted: () => state.deleteChip(tagString),
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              );
+            },
+            suggestionBuilder: (context, state, tagString) {
+              return ListTile(
+                key: ObjectKey(tagString),
+                leading: CircleAvatar(
+                  child: Text('#'),
+                ),
+                title: Text(tagString),
+                onTap: () => state.selectSuggestion(tagString),
+              );
+            },
+          ),
+          SizedBox(height: 20),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              InkWell(
+                  onTap: () async {
+                    if (!_isRecording) {
+                      if (_log.tempAudioPath == null) {
+                        _log.tempAudioPath = await _createTempFilePath();
+                      }
+                      await _recorder.startRecorder(uri: _log.tempAudioPath);
+                    } else {
+                      await _recorder.stopRecorder();
+                    }
+                    setState(() {
+                      _isRecording = !_isRecording;
+                    });
+                  },
+                  child: Padding(
+                      padding: EdgeInsets.only(top: 0.0),
+                      child: Icon(
+                        !_isRecording ? Icons.mic : Icons.stop,
+                      ))),
+              Text(!_isRecording ? "Record audio journal" : "Recording..."),
+            ],
+          ),
+          SizedBox(height: 20),
+          TextFormField(
+            maxLines: null,
+            minLines: 10,
+            textAlignVertical: TextAlignVertical.top,
+            enableInteractiveSelection: true, // allow selection
+            controller: _jorunalController,
+            decoration: InputDecoration(
+              fillColor: Colors.white,
+              filled: true,
+              contentPadding:
+                  EdgeInsets.only(left: 15, top: 50), // prevent text overlap
+              labelText: '\nWrite in your journal', // weird spacing
+              alignLabelWithHint: false,
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.white),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+            ),
+            keyboardType: TextInputType.multiline,
+            onChanged: (value) {
+              // Not wrapping in setState because field is manged by controller
+              _log.journal = value;
+            },
+          ),
+        ],
+      ),
+    );
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text('Detailed Journal'),
         automaticallyImplyLeading: false,
@@ -76,133 +204,12 @@ class _AdditionalLogState extends State<AdditionalLog> {
         ],
       ),
       backgroundColor: themeColor,
-      body: Padding(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          children: <Widget>[
-            ChipsInput(
-              initialValue: _log.tags ?? <String>[],
-              decoration: InputDecoration(
-                  fillColor: Colors.white,
-                  filled: true,
-                  labelText: "Tags",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                    borderRadius: BorderRadius.circular(10.0),
-                  )),
-              maxChips: 50,
-              findSuggestions: (String query) async {
-                List<String> results = await _db.getTagsStartWith(query, 5);
-                if (query != null &&
-                    query.length > 0 &&
-                    results.indexOf(query) == -1) {
-                  // add the input string if only the input is not empty string
-                  // and the result doesn't contain the exact string
-                  results.add(query);
-                }
-                return results;
-              },
-              onChanged: (tags) {
-                // Don't need to wrap it setState because UI change is managed by ChipsInput
-                _log.tags = tags;
-              },
-              chipBuilder: (context, state, tagString) {
-                return InputChip(
-                  key: ObjectKey(tagString),
-                  label: Text(tagString),
-                  avatar: CircleAvatar(
-                    child: Text('#'),
-                  ),
-                  onDeleted: () => state.deleteChip(tagString),
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                );
-              },
-              suggestionBuilder: (context, state, tagString) {
-                return ListTile(
-                  key: ObjectKey(tagString),
-                  leading: CircleAvatar(
-                    child: Text('#'),
-                  ),
-                  title: Text(tagString),
-                  onTap: () => state.selectSuggestion(tagString),
-                );
-              },
-            ),
-            SizedBox(height: 20),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                InkWell(
-                    onTap: () async {
-                      if (!_isRecording) {
-                        if (_log.tempAudioPath == null) {
-                          _log.tempAudioPath = await _createTempFilePath();
-                        }
-                        await _recorder.startRecorder(uri: _log.tempAudioPath);
-                      } else {
-                        await _recorder.stopRecorder();
-                      }
-                      setState(() {
-                        _isRecording = !_isRecording;
-                      });
-                    },
-                    child: Padding(
-                        padding: EdgeInsets.only(top: 0.0),
-                        child: Icon(
-                          !_isRecording ? Icons.mic : Icons.stop,
-                        ))),
-                Text(!_isRecording ? "Record audio Journal" : "Recording..."),
-              ],
-            ),
-            SizedBox(height: 10),
-            Expanded(
-              child: TextFormField(
-                expands: true,
-                maxLines: null,
-                textAlignVertical: TextAlignVertical.top,
-                controller: _jorunalController,
-                decoration: InputDecoration(
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding: EdgeInsets.only(left: 15, top: 30), // prevent text overlap
-                  labelText: '\nWrite in your journal',  // weird spacing
-                  alignLabelWithHint: false,
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-                keyboardType: TextInputType.multiline,
-                onChanged: (value) {
-                  // Not wrapping in setState because field is manged by controller
-                  _log.journal = value;
-                },
-              ),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                    margin: EdgeInsets.only(bottom: 15, top: 20),
-                    child: Text(
-                      "I feel this way because of",
-                    ),
-                  ),
-                ),
-                _buildSource(),
-              ],
-            ),
-          ],
-        ),
+      body: LayoutBuilder(
+        builder: (context, viewportConstraints) => SingleChildScrollView(
+            child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
+          child: body,
+        )),
       ),
     );
   }
