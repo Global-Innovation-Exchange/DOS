@@ -73,11 +73,25 @@ Icon getEmotionSourceIcon(EmotionSource src, {Color color}) {
       }
       break;
 
-    case EmotionSource.moeny:
+    case EmotionSource.money:
       {
         icon = Icon(Icons.attach_money, color: color);
       }
       break;
+
+//    case EmotionSource.humanchild:
+//      {
+//        icon = Icon(Icons.child_care, color: color);
+//      }
+//      break;
+    case EmotionSource.people:
+      {
+        icon = Icon(Icons.group, color: color);
+        //icon = Icon(Icons.local_hospital);
+        //icon = Icon(Icons.school, color: color);
+      }
+      break;
   }
+
   return icon;
 }

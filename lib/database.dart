@@ -236,7 +236,9 @@ class EmotionLog {
 enum EmotionSource {
   home,
   work,
-  moeny,
+  money,
+  //humanchild,
+  people,
 }
 
 enum Emotion {
