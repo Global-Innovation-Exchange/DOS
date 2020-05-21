@@ -79,7 +79,28 @@ class EmotionDetail extends StatelessWidget {
     Widget journalText = Container(
       padding: EdgeInsets.all(8.0),
       margin: EdgeInsets.only(top: 0),
-      child: JournalChange(log: log),
+      child: TextFormField(
+        keyboardType: TextInputType.multiline,
+        maxLines: null,
+        maxLength: 7000,
+        initialValue: '${log.journal ?? ''}',
+        //readOnly: true,
+        textAlign: TextAlign.left,
+        decoration: InputDecoration(
+          fillColor: Colors.white,
+          filled: true,
+          contentPadding: EdgeInsets.all(15),
+          labelText: 'your Journal',
+          alignLabelWithHint: false,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+      ),
     );
 
     Widget journalVoice = Align(
@@ -149,21 +170,6 @@ class EmotionDetail extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Journal'),
-        leading: IconButton(
-          icon: Icon(Icons.clear),
-          onPressed: () async {
-            Navigator.pop(context, false);
-          },
-        ),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('SAVE'),
-            onPressed: () async {
-              await _table.updateEmotionLog(log);
-              Navigator.pop(context, true);
-            },
-          )
-        ],
       ),
       backgroundColor: themeColor,
       body: body,
@@ -173,62 +179,6 @@ class EmotionDetail extends StatelessWidget {
 
 Widget _createChip(String value) {
   return Chip(avatar: CircleAvatar(child: Text('#')), label: Text(value));
-}
-
-class JournalChange extends StatefulWidget {
-  JournalChange({Key key, this.log}) : super(key: key);
-  final EmotionLog log;
-
-  @override
-  _JournalChangeState createState() => _JournalChangeState(log);
-}
-
-class _JournalChangeState extends State<JournalChange> {
-  _JournalChangeState(EmotionLog log) {
-    this._log = log;
-    this._jorunalController = TextEditingController(text: _log.journal);
-  }
-
-  EmotionLog _log;
-  TextEditingController _jorunalController;
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    _jorunalController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: _jorunalController,
-      onChanged: (value) {
-        // Not wrapping in setState because field is manged by controller
-        _log.journal = value;
-      },
-      keyboardType: TextInputType.multiline,
-      maxLines: null,
-      maxLength: 7000,
-      //initialValue: '${_log.journal ?? ''}',
-      //readOnly: true,
-      textAlign: TextAlign.left,
-      decoration: InputDecoration(
-        fillColor: Colors.white,
-        filled: true,
-        contentPadding: EdgeInsets.all(15),
-        labelText: 'your Journal',
-        alignLabelWithHint: false,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-      ),
-    );
-  }
 }
 
 class AudioButton extends StatefulWidget {
