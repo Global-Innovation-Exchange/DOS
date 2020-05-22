@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'create_log.dart';
 import 'database.dart';
 import 'detail.dart';
+import 'emotion.dart';
+import 'emotion_log.dart';
 import 'utils.dart';
 
 //calling main function when app started
@@ -13,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'DOS',
       theme: ThemeData(
         // This is the theme of the application.
         primarySwatch: colorSwatch,
@@ -91,11 +95,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 onTap: () async {
+                  var log = logs[position];
+                  File f = await getLogAudioFile(log.id);
+                  if (await f.exists()) {
+                    log.tempAudioPath = f.path;
+                  } else {
+                    log.tempAudioPath = null;
+                  }
                   bool updated = await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => EmotionDetail(
-                        log: logs[position],
+                        log: log,
                       ),
                     ),
                   );

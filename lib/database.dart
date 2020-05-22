@@ -5,6 +5,8 @@ import 'package:dos/utils.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
+import 'emotion_log.dart';
+
 final String tableLogs = 'logs';
 final String tableTags = 'tags';
 
@@ -187,97 +189,4 @@ class EmotionTable {
       }
     });
   }
-}
-
-class EmotionLog {
-  int id;
-  DateTime dateTime;
-  Emotion emotion;
-  EmotionSource source;
-  int scale;
-  String journal;
-  List<String> tags;
-  String tempAudioPath;
-
-  EmotionLog(
-      {this.id,
-      this.dateTime,
-      this.emotion,
-      this.scale,
-      this.journal,
-      this.source,
-      this.tags});
-
-  EmotionLog.fomObject(dynamic o) {
-    this.id = o['id'];
-    this.dateTime = DateTime.fromMillisecondsSinceEpoch(o['datetime']);
-    this.emotion = Emotion.values[o['emotion'] ?? 0];
-    this.scale = o['scale'];
-    this.source =
-        o['source'] != null ? EmotionSource.values[o['source']] : null;
-    this.journal = o['journal'];
-  }
-
-  Map<String, dynamic> toMap() {
-    var map = {
-      'datetime': dateTime.millisecondsSinceEpoch,
-      'emotion': emotion?.index,
-      'scale': scale,
-      'source': source?.index,
-      'journal': journal,
-    };
-    if (id != null) {
-      map['id'] = id;
-    }
-    return map;
-  }
-
-  // Implement toString to make it easier to see information about
-  // each log when using the print statement.
-  @override
-  String toString() {
-    return 'EmotionLog{id: $id, journal: $journal datetime: $dateTime}';
-  }
-}
-
-enum EmotionSource {
-  home,
-  work,
-  money,
-  //humanchild,
-  people,
-}
-
-enum Emotion {
-  none,
-  happy,
-  sad,
-  scared,
-  surprised,
-  angry,
-  cry,
-  love,
-  sleeping,
-  bad,
-  zombie,
-  sick,
-  laughing,
-  hungry,
-  kiss,
-  painter,
-  waiting,
-  music,
-  sick2,
-  cool,
-  model,
-  angel,
-  inLove,
-  worker,
-  pirate,
-  writer,
-  exercise,
-  detective,
-  cook,
-  employee,
-  run,
 }

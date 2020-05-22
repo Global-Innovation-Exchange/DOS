@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 
 import 'additional_log.dart';
 import 'database.dart';
+import 'emotion.dart';
+import 'emotion_log.dart';
 import 'utils.dart';
 
 class CreateLog extends StatefulWidget {
