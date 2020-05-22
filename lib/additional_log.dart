@@ -204,12 +204,21 @@ class _AdditionalLogState extends State<AdditionalLog> {
         ],
       ),
       backgroundColor: themeColor,
-      body: LayoutBuilder(
-        builder: (context, viewportConstraints) => SingleChildScrollView(
+      body: GestureDetector(
+        onTap: () {
+          // This is used to bring down the soft keyboard when other than
+          // text field is tapped.
+          FocusScope.of(context).unfocus();
+        },
+        child: LayoutBuilder(
+          builder: (context, viewportConstraints) => SingleChildScrollView(
             child: ConstrainedBox(
-          constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
-          child: body,
-        )),
+              constraints:
+                  BoxConstraints(minHeight: viewportConstraints.maxHeight),
+                  child: body,
+            ),
+          ),
+        ),
       ),
     );
   }
