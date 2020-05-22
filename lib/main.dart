@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'create_log.dart';
 import 'database.dart';
 import 'detail.dart';
-import 'emotion.dart';
-import 'emotion_log.dart';
+import 'models/emotion.dart';
+import 'models/emotion_log.dart';
 import 'utils.dart';
 
 //calling main function when app started

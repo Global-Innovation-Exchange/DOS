@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chips_input/flutter_chips_input.dart';
 
 import 'audio_journal.dart';
-import 'emotion_log.dart';
-import 'emotion_source.dart';
+import 'models/emotion_log.dart';
+import 'models/emotion_source.dart';
 
 class AdditionalLog extends StatefulWidget {
   AdditionalLog({Key key, this.log}) : super(key: key);

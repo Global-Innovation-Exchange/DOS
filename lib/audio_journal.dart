@@ -6,7 +6,7 @@ import 'package:flutter_sound_lite/flutter_sound_recorder.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
-import 'emotion_log.dart';
+import 'models/emotion_log.dart';
 import 'utils.dart';
 
 Future<String> _createTempFilePath() async {

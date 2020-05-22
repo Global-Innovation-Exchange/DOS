@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 
 import 'additional_log.dart';
 import 'database.dart';
-import 'emotion.dart';
-import 'emotion_log.dart';
+import 'models/emotion.dart';
+import 'models/emotion_log.dart';
 import 'utils.dart';
 
 class CreateLog extends StatefulWidget {
@@ -110,9 +110,7 @@ class _CreateLogState extends State<CreateLog> {
             });
           },
         ),
-
       ),
-
     );
     Widget scaleNumbers = Expanded(
       flex: 1,

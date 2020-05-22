@@ -5,7 +5,7 @@ import 'package:dos/utils.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'emotion_log.dart';
+import 'models/emotion_log.dart';
 
 final String tableLogs = 'logs';
 final String tableTags = 'tags';
