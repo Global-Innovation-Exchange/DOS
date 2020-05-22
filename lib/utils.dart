@@ -50,6 +50,16 @@ Future<File> moveFile(String sourcePath, String newPath) async {
   }
 }
 
+Future<bool> deleteFile(String path) async {
+  File file = File(path);
+  try {
+    await file.delete();
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
+
 Future<File> getLogAudioFile(int logId) async {
   Directory appDir = await getApplicationDocumentsDirectory();
   return File('${appDir.path}/$logId.acc');
