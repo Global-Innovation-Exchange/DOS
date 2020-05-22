@@ -170,15 +170,22 @@ class EmotionTable {
   Future<void> deleteEmotionLog(int id) async {
     // Get a reference to the database.
     final db = await database;
+    await db.transaction((txn) async {
+      // Remove the EmotionLog from the database.
+      await txn.delete(
+        tableLogs,
+        // Use a `where` clause to delete a specific log.
+        where: "id = ?",
+        // Pass the EmotionLog's id as a whereArg to prevent SQL injection.
+        whereArgs: [id],
+      );
 
-    // Remove the EmotionLog from the database.
-    await db.delete(
-      tableLogs,
-      // Use a `where` clause to delete a specific log.
-      where: "id = ?",
-      // Pass the EmotionLog's id as a whereArg to prevent SQL injection.
-      whereArgs: [id],
-    );
+      // Remove the optional audio
+      File audioFile = await getLogAudioFile(id);
+      if (await audioFile.exists()) {
+        await audioFile.delete();
+      }
+    });
   }
 }
 
