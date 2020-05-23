@@ -9,6 +9,7 @@ import 'models/emotion_log.dart';
 
 final String tableLogs = 'logs';
 final String tableTags = 'tags';
+final String tableLogTags = 'log_tags';
 
 class EmotionTable {
   static EmotionTable _emotionTable; // Singleton table
@@ -168,6 +169,25 @@ class EmotionTable {
         // Pass the EmotionLog's id as a whereArg to prevent SQL injection.
         whereArgs: [log.id],
       );
+
+      // Remove all assoication of tags and reinsert
+      await txn.delete(tableLogTags, where: "log_id = ?", whereArgs: [log.id]); 
+      if (log.tags != null && log.tags.length > 0) {
+        // Insert all tags. If there is conflict in insertion the row id
+        // might be null, so we can't use the return value to create log_tags.
+        // https://github.com/tekartik/sqflite/issues/402
+        await Future.wait(log.tags.map((t) => txn.insert(tableTags, {'tag': t},
+            conflictAlgorithm: ConflictAlgorithm.ignore)));
+
+        // TODO: Limit where in count for safety
+        // Find all the tags and insert into the log_tags
+        await txn.execute(
+            "INSERT INTO log_tags (log_id, tag_id) " +
+                "SELECT ?, id FROM tags WHERE tag IN (" +
+                log.tags.map((t) => "?").join(",") +
+                ")",
+            [log.id.toString()] + log.tags);
+      }
 
       File audioFile = await getLogAudioFile(log.id);
       if (log.tempAudioPath != null) {
