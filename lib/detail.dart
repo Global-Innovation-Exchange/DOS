@@ -11,12 +11,23 @@ import 'models/emotion_log.dart';
 import 'models/emotion_source.dart';
 import 'utils.dart';
 
-class EmotionDetail extends StatelessWidget {
+class EmotionDetail extends StatefulWidget {
   EmotionDetail({Key key, this.log}) : super(key: key);
-  final EmotionTable _table = EmotionTable();
   final EmotionLog log;
 
-  Future<bool> _showDeleteConfirmingDialog(BuildContext context) {
+  @override
+  _EmotionDetailState createState() => _EmotionDetailState(log.clone());
+}
+
+class _EmotionDetailState extends State<EmotionDetail> {
+  _EmotionDetailState(EmotionLog log) {
+    _log = log;
+  }
+
+  final EmotionTable _table = EmotionTable();
+  EmotionLog _log;
+
+  Future<bool> _showDeleteDialog(BuildContext context) {
     return showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -26,7 +37,31 @@ class EmotionDetail extends StatelessWidget {
           FlatButton(
             child: Text("YES"),
             onPressed: () async {
-              await _table.deleteEmotionLog(log.id);
+              await _table.deleteEmotionLog(_log.id);
+              Navigator.of(dialogContext).pop(true);
+            },
+          ),
+          FlatButton(
+              child: Text("NO"),
+              onPressed: () {
+                Navigator.of(dialogContext).pop(false);
+              }),
+        ],
+      ),
+    );
+  }
+
+  Future<bool> _showBackDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text("Exit log"),
+        content:
+            Text("You have unsaved changs, are you sure to leave the log?"),
+        actions: <Widget>[
+          FlatButton(
+            child: Text("YES"),
+            onPressed: () async {
               Navigator.of(dialogContext).pop(true);
             },
           ),
@@ -45,7 +80,7 @@ class EmotionDetail extends StatelessWidget {
     Widget selectedDate = Container(
       height: 60,
       padding: EdgeInsets.symmetric(vertical: 8),
-      child: JournalDateTime(log: log),
+      child: JournalDateTime(log: _log),
     );
 
     Widget selectedEmotion = Container(
@@ -56,16 +91,16 @@ class EmotionDetail extends StatelessWidget {
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(left: 10),
-            child: getEmotionImage(log.emotion),
+            child: getEmotionImage(_log.emotion),
           ),
           Expanded(
-            child: EmotionSlider(log: log),
+            child: EmotionSlider(log: _log),
           ),
         ],
       ),
     );
 
-    Widget emotionSource = log.source != null
+    Widget emotionSource = _log.source != null
         ? Row(children: <Widget>[
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 5),
@@ -74,7 +109,7 @@ class EmotionDetail extends StatelessWidget {
             CircleAvatar(
                 backgroundColor: Color(0xffE1B699),
                 child: getEmotionSourceIcon(
-                  log.source,
+                  _log.source,
                   color: Colors.white,
                 ))
           ])
@@ -82,12 +117,12 @@ class EmotionDetail extends StatelessWidget {
 
     Widget journalText = Container(
       padding: EdgeInsets.symmetric(vertical: 8),
-      child: JorunalTextField(log: log),
+      child: JorunalTextField(log: _log),
     );
 
     Widget journalVoice = Padding(
       padding: EdgeInsets.symmetric(horizontal: 5),
-      child: AudioJournal(log: log),
+      child: AudioJournal(log: _log),
     );
 
     Widget journalTags = Align(
@@ -95,7 +130,7 @@ class EmotionDetail extends StatelessWidget {
       child: Wrap(
         spacing: 10.0, // gap between adjacent chips
         runSpacing: 0.0, // gap between lines
-        children: log.tags.map((t) => _createChip(t)).toList(),
+        children: _log.tags.map((t) => _createChip(t)).toList(),
       ),
     );
 
@@ -107,8 +142,8 @@ class EmotionDetail extends StatelessWidget {
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         child: RaisedButton(
           onPressed: () async {
-            if (log.id != null) {
-              bool deleted = await _showDeleteConfirmingDialog(context);
+            if (_log.id != null) {
+              bool deleted = await _showDeleteDialog(context);
               if (deleted) {
                 Navigator.pop(context, true);
               }
@@ -150,34 +185,45 @@ class EmotionDetail extends StatelessWidget {
       ],
     );
 
+    var handleBackPressed = () async {
+      if (widget.log.equals(_log)) {
+        Navigator.pop(context, false);
+        return;
+      }
+
+      bool confirmed = await _showBackDialog(context);
+      if (confirmed) {
+        Navigator.pop(context, false);
+      }
+    };
+
     // This makes each child fill the full width of the screen
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Journal'),
-        leading: IconButton(
-          icon: Icon(Icons.clear),
-          onPressed: () async {
-            Navigator.pop(context, false);
-          },
+    return WillPopScope(
+      onWillPop: handleBackPressed,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Journal'),
+          leading:
+              IconButton(icon: Icon(Icons.clear), onPressed: handleBackPressed),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('SAVE'),
+              onPressed: () async {
+                await _table.updateEmotionLog(_log);
+                Navigator.pop(context, true);
+              },
+            )
+          ],
         ),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('SAVE'),
-            onPressed: () async {
-              await _table.updateEmotionLog(log);
-              Navigator.pop(context, true);
-            },
-          )
-        ],
-      ),
-      backgroundColor: themeColor,
-      body: GestureDetector(
-        onTap: () {
-          // This is used to bring down the soft keyboard when other than
-          // text field is tapped.
-          FocusScope.of(context).unfocus();
-        },
-        child: body,
+        backgroundColor: themeColor,
+        body: GestureDetector(
+          onTap: () {
+            // This is used to bring down the soft keyboard when other than
+            // text field is tapped.
+            FocusScope.of(context).unfocus();
+          },
+          child: body,
+        ),
       ),
     );
   }

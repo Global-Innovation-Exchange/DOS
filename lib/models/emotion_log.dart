@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dos/utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'emotion.dart';
@@ -23,7 +24,8 @@ class EmotionLog {
       this.scale,
       this.journal,
       this.source,
-      this.tags});
+      this.tags,
+      this.tempAudioPath});
 
   EmotionLog.fomObject(dynamic o) {
     this.id = o['id'];
@@ -69,6 +71,27 @@ class EmotionLog {
         }
       }
     }
+  }
+
+  bool equals(EmotionLog original) {
+    return this.dateTime == original.dateTime &&
+        this.emotion == original.emotion &&
+        this.scale == original.scale &&
+        this.journal == original.journal &&
+        this.source == original.source &&
+        setEquals(this.tags?.toSet(), original.tags?.toSet());
+  }
+
+  EmotionLog clone() {
+    return EmotionLog(
+        id: this.id,
+        dateTime: this.dateTime,
+        emotion: this.emotion,
+        scale: this.scale,
+        journal: this.journal,
+        source: this.source,
+        tags: this.tags.toList(),
+        tempAudioPath: this.tempAudioPath);
   }
 
   Future<String> getAudioPath() {
