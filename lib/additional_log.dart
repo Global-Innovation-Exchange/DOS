@@ -3,7 +3,7 @@ import 'package:dos/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chips_input/flutter_chips_input.dart';
 
-import 'audio_journal.dart';
+import 'components/audio_journal.dart';
 import 'components/journal_textfield.dart';
 import 'models/emotion_log.dart';
 import 'models/emotion_source.dart';

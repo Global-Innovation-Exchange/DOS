@@ -1,10 +1,11 @@
-import 'package:dos/audio_journal.dart';
+import 'package:dos/components/audio_journal.dart';
 import 'package:dos/components/emotion_slider.dart';
 import 'package:dos/components/journal_datetime.dart';
 import 'package:dos/components/journal_textfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'components/journal_tags.dart';
 import 'database.dart';
 import 'models/emotion.dart';
 import 'models/emotion_log.dart';
@@ -131,13 +132,10 @@ class _EmotionDetailState extends State<EmotionDetail> {
       child: AudioJournal(log: _log),
     );
 
-    Widget journalTags = Align(
+    Widget journalTags = Container(
       alignment: Alignment.center,
-      child: Wrap(
-        spacing: 10.0, // gap between adjacent chips
-        runSpacing: 0.0, // gap between lines
-        children: _log.tags.map((t) => _createChip(t)).toList(),
-      ),
+      width: 370,
+      child: JournalTags(log: _log),
     );
 
     Widget deleteButton = SafeArea(
@@ -173,10 +171,24 @@ class _EmotionDetailState extends State<EmotionDetail> {
                 selectedEmotion,
                 SizedBox(height: 10.0),
                 journalTags,
-                SizedBox(height: 15.0),
+                SizedBox(
+                  height: 20.0,
+                  width: 350,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(
+                          width: 1.0,
+                          color: Color(0xFFE1B699),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                emotionSource,
+                SizedBox(height: 30.0),
                 journalVoice,
                 journalText,
-                emotionSource,
               ],
             ),
           ),

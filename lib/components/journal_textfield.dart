@@ -30,16 +30,17 @@ class _JorunalTextFieldState extends State<JorunalTextField> {
       enableInteractiveSelection: true, // allow selection
       controller: _controller,
       decoration: InputDecoration(
-        fillColor: Colors.white,
-        filled: true,
-        labelText: 'Text Journal',
+        //fillColor: Colors.white,
+        //filled: true,
+        prefixIcon: Icon(Icons.edit),
+        // labelText: 'Text Journal',
         alignLabelWithHint: false,
         floatingLabelBehavior: FloatingLabelBehavior.always,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
         ),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
+          borderSide: BorderSide(style: BorderStyle.none),
           borderRadius: BorderRadius.circular(10.0),
         ),
       ),

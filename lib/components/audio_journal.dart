@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sound_lite/flutter_sound_player.dart';
 import 'package:flutter_sound_lite/flutter_sound_recorder.dart';
 
-import 'models/emotion_log.dart';
-import 'utils.dart';
+import '../models/emotion_log.dart';
+import '../utils.dart';
 
 class AudioJournal extends StatefulWidget {
   AudioJournal({Key key, this.log}) : super(key: key);
@@ -36,8 +36,8 @@ class _AudioJournalState extends State<AudioJournal> {
   Widget _buildIcon(
           {Icon icon, VoidCallback onPressed, Color foregroundColor}) =>
       CircleAvatar(
-        backgroundColor: Colors.white,
-        foregroundColor: foregroundColor,
+        backgroundColor: Color(0xffFEEFE6),
+        foregroundColor: Color(0xFFE1B699),
         child: IconButton(
             padding: EdgeInsets.all(0), icon: icon, onPressed: onPressed),
       );
@@ -92,7 +92,7 @@ class _AudioJournalState extends State<AudioJournal> {
     if (_isRecording) {
       icon = _buildIcon(
         icon: Icon(Icons.stop),
-        foregroundColor: Colors.black,
+        foregroundColor: Colors.black38,
         onPressed: () async {
           await _recorder.stopRecorder();
           setState(() {
