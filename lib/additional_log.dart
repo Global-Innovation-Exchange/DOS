@@ -132,7 +132,8 @@ class _AdditionalLogState extends State<AdditionalLog> {
           SizedBox(height: 20),
           JorunalTextField(
             log: _log,
-            minLines: 10,
+            filled: true,
+            fillColor: Colors.white,
           )
         ],
       ),
