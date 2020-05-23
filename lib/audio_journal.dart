@@ -1,25 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_sound_lite/flutter_sound_player.dart';
 import 'package:flutter_sound_lite/flutter_sound_recorder.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:uuid/uuid.dart';
 
 import 'models/emotion_log.dart';
 import 'utils.dart';
-
-Future<String> _createTempFilePath() async {
-  Directory tempDir = await getTemporaryDirectory();
-  bool exists = true;
-  File tempFile;
-  while (exists) {
-    String filename = '${Uuid().v4()}.aac';
-    tempFile = File('${tempDir.path}/$filename');
-    exists = await tempFile.exists();
-  }
-  return tempFile.path;
-}
 
 class AudioJournal extends StatefulWidget {
   AudioJournal({Key key, this.log}) : super(key: key);
@@ -121,7 +105,7 @@ class _AudioJournalState extends State<AudioJournal> {
           ? null
           : () async {
               if (!_hasRecording) {
-                _log.tempAudioPath = await _createTempFilePath();
+                _log.tempAudioPath = await createTempAudioPath();
                 await _recorder.startRecorder(uri: _log.tempAudioPath);
                 setState(() {
                   _isRecording = true;

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dos/utils.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'emotion.dart';
@@ -55,11 +56,26 @@ class EmotionLog {
     return 'EmotionLog{id: $id, journal: $journal datetime: $dateTime}';
   }
 
-  getAudioPath() {
+  /// Initialize the temp path base on the id
+  initTempPath() async {
+    this.tempAudioPath = null;
+    if (this.id != null) {
+      File f = await getAudioFile();
+      if (await f.exists()) {
+        String temp = await createTempAudioPath();
+        bool copied = await copyFile(f.path, temp);
+        if (copied) {
+          this.tempAudioPath = temp;
+        }
+      }
+    }
+  }
+
+  Future<String> getAudioPath() {
     return getLogAudioPath(this.id);
   }
 
-  getAudioFile() {
+  Future<File> getAudioFile() {
     return getLogAudioFile(this.id);
   }
 }

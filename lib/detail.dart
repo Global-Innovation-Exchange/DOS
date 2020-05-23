@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dos/audio_journal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound_lite/flutter_sound_player.dart';
@@ -42,11 +43,12 @@ class EmotionDetail extends StatelessWidget {
     Widget emotionSource = log.source != null
         ? Row(children: <Widget>[
             Padding(
-                padding: EdgeInsets.only(left: 15, right: 15),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text("Because.."),
-                )),
+              padding: EdgeInsets.only(left: 15, right: 15),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text("Because.."),
+              ),
+            ),
             CircleAvatar(
                 backgroundColor: Color(0xffE1B699),
                 child: getEmotionSourceIcon(
@@ -64,7 +66,7 @@ class EmotionDetail extends StatelessWidget {
 
     Widget journalVoice = Align(
       alignment: Alignment.bottomLeft,
-      child: AudioButton(log: log),
+      child: AudioJournal(log: log),
     );
 
     Widget journalTags = Align(
@@ -160,43 +162,23 @@ class ScaleChange extends StatefulWidget {
   final EmotionLog log;
 
   @override
-  _ScaleChangeState createState() => _ScaleChangeState(log);
+  _ScaleChangeState createState() => _ScaleChangeState();
 }
 
 class _ScaleChangeState extends State<ScaleChange> {
-  EmotionLog _log;
-  //TextEditingController _jorunalController;
-
-  _ScaleChangeState(EmotionLog log) {
-    this._log = log;
-    //this._jorunalController =
-    //TextEditingController(text: _log.scale.toString());
-  }
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    // _jorunalController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Slider(
-      value: _log.scale.toDouble(),
+      value: widget.log.scale.toDouble(),
       min: 1.0,
       max: 5.0,
       activeColor: Color(0xffE1B699),
       inactiveColor: Colors.black12,
       divisions: 4,
-      label: _log.scale.toString(),
-
-      //controller: _jorunalController,
+      label: widget.log.scale.toString(),
       onChanged: (value) {
-        // Not wrapping in setState because field is manged by controller
-        _log.scale = value.toInt();
         setState(() {
-          _log.scale = value.toInt();
+          widget.log.scale = value.toInt();
         });
       },
     );

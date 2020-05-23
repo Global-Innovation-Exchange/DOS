@@ -95,13 +95,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 onTap: () async {
-                  var log = logs[position];
-                  File f = await getLogAudioFile(log.id);
-                  if (await f.exists()) {
-                    log.tempAudioPath = f.path;
-                  } else {
-                    log.tempAudioPath = null;
-                  }
+                  EmotionLog log = logs[position];
+                  await log.initTempPath();
                   bool updated = await Navigator.push(
                     context,
                     MaterialPageRoute(

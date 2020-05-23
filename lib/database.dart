@@ -158,15 +158,26 @@ class EmotionTable {
     // Get a reference to the database.
     final db = await database;
 
-    // Update the given EmotionLog.
-    await db.update(
-      tableLogs,
-      log.toMap(),
-      // Ensure that the EmotionLog has a matching id.
-      where: "id = ?",
-      // Pass the EmotionLog's id as a whereArg to prevent SQL injection.
-      whereArgs: [log.id],
-    );
+    await db.transaction((txn) async {
+      // Update the given EmotionLog.
+      await txn.update(
+        tableLogs,
+        log.toMap(),
+        // Ensure that the EmotionLog has a matching id.
+        where: "id = ?",
+        // Pass the EmotionLog's id as a whereArg to prevent SQL injection.
+        whereArgs: [log.id],
+      );
+
+      File audioFile = await getLogAudioFile(log.id);
+      if (log.tempAudioPath != null) {
+        await moveFile(log.tempAudioPath, audioFile.path);
+      } else {
+        if (await audioFile.exists()) {
+          await audioFile.delete();
+        }
+      }
+    });
   }
 
   Future<void> deleteEmotionLog(int id) async {

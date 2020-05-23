@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
 
 final _dateTimeFormatter = DateFormat.yMd().add_jm();
 String formatDateTime(DateTime dt) {
@@ -44,6 +46,17 @@ Future<File> moveFile(String sourcePath, String newPath) async {
   }
 }
 
+Future<bool> copyFile(String sourcePath, String newPath) async {
+  File sourceFile = File(sourcePath);
+  try {
+    // prefer using rename as it is probably faster
+    await sourceFile.copy(newPath);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 Future<bool> deleteFile(String path) async {
   File file = File(path);
   try {
@@ -52,4 +65,16 @@ Future<bool> deleteFile(String path) async {
   } catch (e) {
     return false;
   }
+}
+
+Future<String> createTempAudioPath() async {
+  Directory tempDir = await getTemporaryDirectory();
+  bool exists = true;
+  File tempFile;
+  while (exists) {
+    String filename = '${Uuid().v4()}.aac';
+    tempFile = File('${tempDir.path}/$filename');
+    exists = await tempFile.exists();
+  }
+  return tempFile.path;
 }
