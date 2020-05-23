@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'additional_log.dart';
+import 'components/emotion_slider.dart';
 import 'database.dart';
 import 'models/emotion.dart';
 import 'models/emotion_log.dart';
@@ -45,22 +46,7 @@ class _CreateLogState extends State<CreateLog> {
 
     Widget selectedEmotionScale = Expanded(
       flex: 1,
-      child: Container(
-        child: Slider(
-          value: _log.scale.toDouble(),
-          min: 1.0,
-          max: 5.0,
-          activeColor: Color(0xffE1B699),
-          inactiveColor: Colors.black12,
-          divisions: 4,
-          label: _log.scale.toString(),
-          onChanged: (v) {
-            setState(() {
-              _log.scale = v.toInt();
-            });
-          },
-        ),
-      ),
+      child: Container(child: EmotionSlider(log: _log)),
     );
     Widget scaleNumbers = Expanded(
       flex: 1,

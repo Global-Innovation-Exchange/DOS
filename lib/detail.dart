@@ -1,4 +1,5 @@
 import 'package:dos/audio_journal.dart';
+import 'package:dos/components/emotion_slider.dart';
 import 'package:dos/components/journal_datetime.dart';
 import 'package:dos/components/journal_textfield.dart';
 import 'package:flutter/cupertino.dart';
@@ -34,7 +35,7 @@ class EmotionDetail extends StatelessWidget {
             child: getEmotionImage(log.emotion),
           ),
           Expanded(
-            child: ScaleChange(log: log),
+            child: EmotionSlider(log: log),
           ),
         ],
       ),
@@ -158,32 +159,4 @@ class EmotionDetail extends StatelessWidget {
 
 Widget _createChip(String value) {
   return Chip(avatar: CircleAvatar(child: Text('#')), label: Text(value));
-}
-
-class ScaleChange extends StatefulWidget {
-  ScaleChange({Key key, this.log}) : super(key: key);
-  final EmotionLog log;
-
-  @override
-  _ScaleChangeState createState() => _ScaleChangeState();
-}
-
-class _ScaleChangeState extends State<ScaleChange> {
-  @override
-  Widget build(BuildContext context) {
-    return Slider(
-      value: widget.log.scale.toDouble(),
-      min: 1.0,
-      max: 5.0,
-      activeColor: Color(0xffE1B699),
-      inactiveColor: Colors.black12,
-      divisions: 4,
-      label: widget.log.scale.toString(),
-      onChanged: (value) {
-        setState(() {
-          widget.log.scale = value.toInt();
-        });
-      },
-    );
-  }
 }
