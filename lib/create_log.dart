@@ -17,6 +17,7 @@ class CreateLog extends StatefulWidget {
 class _CreateLogState extends State<CreateLog> {
   final _table = EmotionTable();
   EmotionLog _log;
+  EmotionLog _original;
 
   @override
   void initState() {
@@ -29,6 +30,38 @@ class _CreateLogState extends State<CreateLog> {
     _log.scale = 3;
     _log.dateTime = now;
     _log.emotion = Emotion.happy;
+
+    _original = _log.clone();
+  }
+
+  Future<bool> _showBackDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (dialogContext) => WillPopScope(
+        onWillPop: () async {
+          // This is needed so that when user press anything other than buttons
+          // this dialog will still return a boolean
+          Navigator.of(dialogContext).pop(false);
+          return true;
+        },
+        child: AlertDialog(
+          content: Text("You have unsaved changs, are you sure to leave?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("YES"),
+              onPressed: () async {
+                Navigator.of(dialogContext).pop(true);
+              },
+            ),
+            FlatButton(
+                child: Text("NO"),
+                onPressed: () {
+                  Navigator.of(dialogContext).pop(false);
+                }),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -120,29 +153,42 @@ class _CreateLogState extends State<CreateLog> {
       ],
     );
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Create Log'),
-        leading: IconButton(
-          icon: Icon(Icons.clear),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+    var handleBackPressed = () async {
+      if (await _log.equals(_original)) {
+        Navigator.pop(context, false);
+        return;
+      }
+
+      bool confirmed = await _showBackDialog(context);
+      if (confirmed) {
+        Navigator.pop(context, false);
+      }
+    };
+
+    return WillPopScope(
+      onWillPop: handleBackPressed,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Create Log'),
+          leading: IconButton(
+            icon: Icon(Icons.clear),
+            onPressed: handleBackPressed,
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('SAVE'),
+              onPressed: () async {
+                await _table.insertEmotionLog(_log);
+                Navigator.pop(context, true);
+              },
+            )
+          ],
         ),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('SAVE'),
-            onPressed: () async {
-              await _table.insertEmotionLog(_log);
-              Navigator.pop(context, true);
-            },
-          )
-        ],
-      ),
-      backgroundColor: themeColor,
-      body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
-        child: body,
+        backgroundColor: themeColor,
+        body: Padding(
+          padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
+          child: body,
+        ),
       ),
     );
   }

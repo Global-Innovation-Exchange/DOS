@@ -73,13 +73,28 @@ class EmotionLog {
     }
   }
 
-  bool equals(EmotionLog original) {
-    return this.dateTime == original.dateTime &&
+  Future<bool> equals(EmotionLog original) async {
+    bool isEqual = this.dateTime == original.dateTime &&
         this.emotion == original.emotion &&
         this.scale == original.scale &&
         this.journal == original.journal &&
         this.source == original.source &&
-        setEquals(this.tags?.toSet(), original.tags?.toSet());
+        setEquals(this.tags?.toSet(), original.tags?.toSet()) &&
+        this.tempAudioPath == original.tempAudioPath;
+
+    if (isEqual && tempAudioPath != null) {
+      // This is for the case where user just modified the audio is the detail page
+      File f = await getLogAudioFile(id);
+      File temp = File(tempAudioPath);
+      bool bothExist = await Future.wait([f.exists(), temp.exists()])
+          .then((value) => value.every((exist) => exist));
+      if (bothExist) {
+        DateTime ogFileMod = await f.lastModified();
+        DateTime timeFileMod = await temp.lastModified();
+        isEqual &= ogFileMod == timeFileMod;
+      }
+    }
+    return isEqual;
   }
 
   EmotionLog clone() {
@@ -90,7 +105,7 @@ class EmotionLog {
         scale: this.scale,
         journal: this.journal,
         source: this.source,
-        tags: this.tags.toList(),
+        tags: this.tags?.toList(),
         tempAudioPath: this.tempAudioPath);
   }
 

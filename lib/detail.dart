@@ -54,23 +54,29 @@ class _EmotionDetailState extends State<EmotionDetail> {
   Future<bool> _showBackDialog(BuildContext context) {
     return showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text("Exit log"),
-        content:
-            Text("You have unsaved changs, are you sure to leave the log?"),
-        actions: <Widget>[
-          FlatButton(
-            child: Text("YES"),
-            onPressed: () async {
-              Navigator.of(dialogContext).pop(true);
-            },
-          ),
-          FlatButton(
-              child: Text("NO"),
-              onPressed: () {
-                Navigator.of(dialogContext).pop(false);
-              }),
-        ],
+      builder: (dialogContext) => WillPopScope(
+        onWillPop: () async {
+          // This is needed so that when user press anything other than buttons
+          // this dialog will still return a boolean
+          Navigator.of(dialogContext).pop(false);
+          return true;
+        },
+        child: AlertDialog(
+          content: Text("You have unsaved changs, are you sure to leave?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("YES"),
+              onPressed: () async {
+                Navigator.of(dialogContext).pop(true);
+              },
+            ),
+            FlatButton(
+                child: Text("NO"),
+                onPressed: () {
+                  Navigator.of(dialogContext).pop(false);
+                }),
+          ],
+        ),
       ),
     );
   }
@@ -186,7 +192,7 @@ class _EmotionDetailState extends State<EmotionDetail> {
     );
 
     var handleBackPressed = () async {
-      if (widget.log.equals(_log)) {
+      if (await _log.equals(widget.log)) {
         Navigator.pop(context, false);
         return;
       }
