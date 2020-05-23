@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sound_lite/flutter_sound_player.dart';
 
 import 'database.dart';
+import 'models/emotion.dart';
+import 'models/emotion_log.dart';
+import 'models/emotion_source.dart';
 import 'utils.dart';
 
 class EmotionDetail extends StatelessWidget {

@@ -1,17 +1,13 @@
 import 'dart:io';
 
-import 'package:dos/database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
 
 final _dateTimeFormatter = DateFormat.yMd().add_jm();
 String formatDateTime(DateTime dt) {
   return _dateTimeFormatter.format(dt);
-}
-
-Image getEmotionImage(Emotion e) {
-  return Image.asset('assets/images/${e.index}.png');
 }
 
 // Theme color to be used cross the app
@@ -50,48 +46,35 @@ Future<File> moveFile(String sourcePath, String newPath) async {
   }
 }
 
-Future<File> getLogAudioFile(int logId) async {
-  Directory appDir = await getApplicationDocumentsDirectory();
-  return File('${appDir.path}/$logId.acc');
+Future<bool> copyFile(String sourcePath, String newPath) async {
+  File sourceFile = File(sourcePath);
+  try {
+    // prefer using rename as it is probably faster
+    await sourceFile.copy(newPath);
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
-Icon getEmotionSourceIcon(EmotionSource src, {Color color}) {
-  Icon icon;
-  switch (src) {
-    case EmotionSource.home:
-      {
-        icon = Icon(
-          Icons.home,
-          color: color,
-        );
-      }
-      break;
-
-    case EmotionSource.work:
-      {
-        icon = Icon(Icons.work, color: color);
-      }
-      break;
-
-    case EmotionSource.money:
-      {
-        icon = Icon(Icons.attach_money, color: color);
-      }
-      break;
-
-//    case EmotionSource.humanchild:
-//      {
-//        icon = Icon(Icons.child_care, color: color);
-//      }
-//      break;
-    case EmotionSource.people:
-      {
-        icon = Icon(Icons.group, color: color);
-        //icon = Icon(Icons.local_hospital);
-        //icon = Icon(Icons.school, color: color);
-      }
-      break;
+Future<bool> deleteFile(String path) async {
+  File file = File(path);
+  try {
+    await file.delete();
+    return true;
+  } catch (e) {
+    return false;
   }
+}
 
-  return icon;
+Future<String> createTempAudioPath() async {
+  Directory tempDir = await getTemporaryDirectory();
+  bool exists = true;
+  File tempFile;
+  while (exists) {
+    String filename = '${Uuid().v4()}.aac';
+    tempFile = File('${tempDir.path}/$filename');
+    exists = await tempFile.exists();
+  }
+  return tempFile.path;
 }

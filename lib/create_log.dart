@@ -1,8 +1,12 @@
+import 'package:dos/components/journal_datetime.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'additional_log.dart';
+import 'components/emotion_slider.dart';
 import 'database.dart';
+import 'models/emotion.dart';
+import 'models/emotion_log.dart';
 import 'utils.dart';
 
 class CreateLog extends StatefulWidget {
@@ -13,35 +17,7 @@ class CreateLog extends StatefulWidget {
 class _CreateLogState extends State<CreateLog> {
   final _table = EmotionTable();
   EmotionLog _log;
-  TextEditingController _dateTimeController;
-
-  Future _selectDateTime(BuildContext context) async {
-    final DateTime selectedDate = await showDatePicker(
-      context: context,
-      initialDate: _log.dateTime,
-      firstDate: DateTime(_log.dateTime.year - 10),
-      lastDate: _log.dateTime,
-    );
-    if (selectedDate == null) return;
-
-    final TimeOfDay selectedTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.fromDateTime(_log.dateTime),
-    );
-    if (selectedTime == null) return;
-
-    final newDateTime = DateTime(
-      selectedDate.year,
-      selectedDate.month,
-      selectedDate.day,
-      selectedTime.hour,
-      selectedTime.minute,
-    );
-    setState(() {
-      _log.dateTime = newDateTime;
-      _dateTimeController.text = formatDateTime(newDateTime);
-    });
-  }
+  EmotionLog _original;
 
   @override
   void initState() {
@@ -49,12 +25,43 @@ class _CreateLogState extends State<CreateLog> {
     var now = DateTime.now();
     // Remove any component less than minute
     now = DateTime(now.year, now.month, now.day, now.hour, now.minute);
-    _dateTimeController = TextEditingController(text: formatDateTime(now));
 
     _log = EmotionLog();
     _log.scale = 3;
     _log.dateTime = now;
     _log.emotion = Emotion.happy;
+
+    _original = _log.clone();
+  }
+
+  Future<bool> _showBackDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (dialogContext) => WillPopScope(
+        onWillPop: () async {
+          // This is needed so that when user press anything other than buttons
+          // this dialog will still return a boolean
+          Navigator.of(dialogContext).pop(false);
+          return true;
+        },
+        child: AlertDialog(
+          content: Text("You have unsaved changs, are you sure to leave?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("YES"),
+              onPressed: () async {
+                Navigator.of(dialogContext).pop(true);
+              },
+            ),
+            FlatButton(
+                child: Text("NO"),
+                onPressed: () {
+                  Navigator.of(dialogContext).pop(false);
+                }),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -62,30 +69,9 @@ class _CreateLogState extends State<CreateLog> {
     List<String> values = ["1", "2", "3", "4", "5"];
     //datetime picker widget
     Widget selectDate = Container(
-      padding: EdgeInsets.all(8.0),
-      color: Color(0X3311111),
-      child: TextFormField(
-        controller: _dateTimeController,
-        readOnly: true,
-        textAlign: TextAlign.center,
-        decoration: InputDecoration(
-          fillColor: Colors.white,
-          filled: true,
-          prefixIcon: Icon(Icons.calendar_today),
-          prefixText: "Enter Date",
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15.0),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white),
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-        ),
-        onTap: () {
-          _selectDateTime(context);
-        },
-      ),
-    );
+        padding: EdgeInsets.all(8.0),
+        color: Color(0X3311111),
+        child: JournalDateTime(log: _log));
     Widget selectedEmotionIcon = Expanded(
       flex: 7,
       child: getEmotionImage(_log.emotion),
@@ -93,24 +79,7 @@ class _CreateLogState extends State<CreateLog> {
 
     Widget selectedEmotionScale = Expanded(
       flex: 1,
-      child: Container(
-        child: Slider(
-          value: _log.scale.toDouble(),
-          min: 1.0,
-          max: 5.0,
-          activeColor: Color(0xffE1B699),
-          inactiveColor: Colors.black12,
-          divisions: 4,
-          label: _log.scale.toString(),
-          onChanged: (v) {
-            setState(() {
-              _log.scale = v.toInt();
-            });
-          },
-        ),
-
-      ),
-
+      child: Container(child: EmotionSlider(log: _log)),
     );
     Widget scaleNumbers = Expanded(
       flex: 1,
@@ -184,36 +153,44 @@ class _CreateLogState extends State<CreateLog> {
       ],
     );
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Create Log'),
-        leading: IconButton(
-          icon: Icon(Icons.clear),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+    var handleBackPressed = () async {
+      if (await _log.equals(_original)) {
+        Navigator.pop(context, false);
+        return;
+      }
+
+      bool confirmed = await _showBackDialog(context);
+      if (confirmed) {
+        Navigator.pop(context, false);
+      }
+    };
+
+    return WillPopScope(
+      onWillPop: handleBackPressed,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Create Log'),
+          leading: IconButton(
+            icon: Icon(Icons.clear),
+            onPressed: handleBackPressed,
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('SAVE'),
+              onPressed: () async {
+                await _table.insertEmotionLog(_log);
+                Navigator.pop(context, true);
+              },
+            )
+          ],
         ),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('SAVE'),
-            onPressed: () async {
-              await _table.insertEmotionLog(_log);
-              Navigator.pop(context, true);
-            },
-          )
-        ],
-      ),
-      backgroundColor: themeColor,
-      body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
-        child: body,
+        backgroundColor: themeColor,
+        body: Padding(
+          padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
+          child: body,
+        ),
       ),
     );
-  }
-
-  void dispose() {
-    _dateTimeController.dispose();
-    super.dispose();
   }
 }
 

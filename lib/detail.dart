@@ -1,78 +1,142 @@
-import 'dart:io';
-
+import 'package:dos/audio_journal.dart';
+import 'package:dos/components/emotion_slider.dart';
+import 'package:dos/components/journal_datetime.dart';
+import 'package:dos/components/journal_textfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_sound_lite/flutter_sound_player.dart';
 
 import 'database.dart';
+import 'models/emotion.dart';
+import 'models/emotion_log.dart';
+import 'models/emotion_source.dart';
 import 'utils.dart';
 
-class EmotionDetail extends StatelessWidget {
+class EmotionDetail extends StatefulWidget {
   EmotionDetail({Key key, this.log}) : super(key: key);
-  final EmotionTable _table = EmotionTable();
   final EmotionLog log;
+
+  @override
+  _EmotionDetailState createState() => _EmotionDetailState(log.clone());
+}
+
+class _EmotionDetailState extends State<EmotionDetail> {
+  _EmotionDetailState(EmotionLog log) {
+    _log = log;
+  }
+
+  final EmotionTable _table = EmotionTable();
+  EmotionLog _log;
+
+  Future<bool> _showDeleteDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text("Delete log"),
+        content: Text("Are you sure to delete this log entry?"),
+        actions: <Widget>[
+          FlatButton(
+            child: Text("YES"),
+            onPressed: () async {
+              await _table.deleteEmotionLog(_log.id);
+              Navigator.of(dialogContext).pop(true);
+            },
+          ),
+          FlatButton(
+              child: Text("NO"),
+              onPressed: () {
+                Navigator.of(dialogContext).pop(false);
+              }),
+        ],
+      ),
+    );
+  }
+
+  Future<bool> _showBackDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (dialogContext) => WillPopScope(
+        onWillPop: () async {
+          // This is needed so that when user press anything other than buttons
+          // this dialog will still return a boolean
+          Navigator.of(dialogContext).pop(false);
+          return true;
+        },
+        child: AlertDialog(
+          content: Text("You have unsaved changs, are you sure to leave?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("YES"),
+              onPressed: () async {
+                Navigator.of(dialogContext).pop(true);
+              },
+            ),
+            FlatButton(
+                child: Text("NO"),
+                onPressed: () {
+                  Navigator.of(dialogContext).pop(false);
+                }),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     Widget selectedDate = Container(
       height: 60,
-      padding: EdgeInsets.all(8.0),
-
-      // margin: EdgeInsets.only(top: 4),
-      child: DateTimeChange(log: log),
+      padding: EdgeInsets.symmetric(vertical: 8),
+      child: JournalDateTime(log: _log),
     );
 
     Widget selectedEmotion = Container(
       height: 100,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          getEmotionImage(log.emotion),
-          Container(
-            child: ScaleChange(log: log),
+          Padding(
+            padding: EdgeInsets.only(left: 10),
+            child: getEmotionImage(_log.emotion),
+          ),
+          Expanded(
+            child: EmotionSlider(log: _log),
           ),
         ],
       ),
     );
 
-    Widget emotionSource = log.source != null
+    Widget emotionSource = _log.source != null
         ? Row(children: <Widget>[
             Padding(
-                padding: EdgeInsets.only(left: 15, right: 15),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text("Because.."),
-                )),
+              padding: EdgeInsets.symmetric(horizontal: 5),
+              child: Text("Because.."),
+            ),
             CircleAvatar(
                 backgroundColor: Color(0xffE1B699),
                 child: getEmotionSourceIcon(
-                  log.source,
+                  _log.source,
                   color: Colors.white,
                 ))
           ])
         : SizedBox.shrink();
 
     Widget journalText = Container(
-      padding: EdgeInsets.all(8.0),
-      margin: EdgeInsets.only(top: 0),
-      child: JournalChange(log: log),
+      padding: EdgeInsets.symmetric(vertical: 8),
+      child: JorunalTextField(log: _log),
     );
 
-    Widget journalVoice = Align(
-      alignment: Alignment.bottomLeft,
-      child: AudioButton(log: log),
+    Widget journalVoice = Padding(
+      padding: EdgeInsets.symmetric(horizontal: 5),
+      child: AudioJournal(log: _log),
     );
 
     Widget journalTags = Align(
       alignment: Alignment.center,
-      child: Padding(
-        padding: EdgeInsets.only(left: 10, right: 10),
-        child: Wrap(
-          spacing: 10.0, // gap between adjacent chips
-          runSpacing: 0.0, // gap between lines
-          children: log.tags.map((t) => _createChip(t)).toList(),
-        ),
+      child: Wrap(
+        spacing: 10.0, // gap between adjacent chips
+        runSpacing: 0.0, // gap between lines
+        children: _log.tags.map((t) => _createChip(t)).toList(),
       ),
     );
 
@@ -84,9 +148,11 @@ class EmotionDetail extends StatelessWidget {
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         child: RaisedButton(
           onPressed: () async {
-            if (log.id != null) {
-              await _table.deleteEmotionLog(log.id);
-              Navigator.pop(context, true);
+            if (_log.id != null) {
+              bool deleted = await _showDeleteDialog(context);
+              if (deleted) {
+                Navigator.pop(context, true);
+              }
             }
           },
           child: Text('DELETE'),
@@ -98,18 +164,21 @@ class EmotionDetail extends StatelessWidget {
       builder: (context, viewportConstraints) => SingleChildScrollView(
         child: ConstrainedBox(
           constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
-          child: Column(
-            children: <Widget>[
-              selectedDate,
-              SizedBox(height: 15.0),
-              selectedEmotion,
-              SizedBox(height: 10.0),
-              journalTags,
-              SizedBox(height: 15.0),
-              journalVoice,
-              journalText,
-              emotionSource,
-            ],
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              children: <Widget>[
+                selectedDate,
+                SizedBox(height: 15.0),
+                selectedEmotion,
+                SizedBox(height: 10.0),
+                journalTags,
+                SizedBox(height: 15.0),
+                journalVoice,
+                journalText,
+                emotionSource,
+              ],
+            ),
           ),
         ),
       ),
@@ -122,282 +191,50 @@ class EmotionDetail extends StatelessWidget {
       ],
     );
 
+    var handleBackPressed = () async {
+      if (await _log.equals(widget.log)) {
+        Navigator.pop(context, false);
+        return;
+      }
+
+      bool confirmed = await _showBackDialog(context);
+      if (confirmed) {
+        Navigator.pop(context, false);
+      }
+    };
+
     // This makes each child fill the full width of the screen
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Journal'),
-        leading: IconButton(
-          icon: Icon(Icons.clear),
-          onPressed: () async {
-            Navigator.pop(context, false);
-          },
+    return WillPopScope(
+      onWillPop: handleBackPressed,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Journal'),
+          leading:
+              IconButton(icon: Icon(Icons.clear), onPressed: handleBackPressed),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('SAVE'),
+              onPressed: () async {
+                await _table.updateEmotionLog(_log);
+                Navigator.pop(context, true);
+              },
+            )
+          ],
         ),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('SAVE'),
-            onPressed: () async {
-              await _table.updateEmotionLog(log);
-              Navigator.pop(context, true);
-            },
-          )
-        ],
+        backgroundColor: themeColor,
+        body: GestureDetector(
+          onTap: () {
+            // This is used to bring down the soft keyboard when other than
+            // text field is tapped.
+            FocusScope.of(context).unfocus();
+          },
+          child: body,
+        ),
       ),
-      backgroundColor: themeColor,
-      body: body,
     );
   }
 }
 
 Widget _createChip(String value) {
   return Chip(avatar: CircleAvatar(child: Text('#')), label: Text(value));
-}
-
-class ScaleChange extends StatefulWidget {
-  ScaleChange({Key key, this.log}) : super(key: key);
-  final EmotionLog log;
-
-  @override
-  _ScaleChangeState createState() => _ScaleChangeState(log);
-}
-
-class _ScaleChangeState extends State<ScaleChange> {
-  EmotionLog _log;
-  //TextEditingController _jorunalController;
-
-  _ScaleChangeState(EmotionLog log) {
-    this._log = log;
-    //this._jorunalController =
-    //TextEditingController(text: _log.scale.toString());
-  }
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    // _jorunalController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Slider(
-      value: _log.scale.toDouble(),
-      min: 1.0,
-      max: 5.0,
-      activeColor: Color(0xffE1B699),
-      inactiveColor: Colors.black12,
-      divisions: 4,
-      label: _log.scale.toString(),
-
-      //controller: _jorunalController,
-      onChanged: (value) {
-        // Not wrapping in setState because field is manged by controller
-        _log.scale = value.toInt();
-        setState(() {
-          _log.scale = value.toInt();
-        });
-      },
-    );
-  }
-}
-
-class DateTimeChange extends StatefulWidget {
-  DateTimeChange({Key key, this.log}) : super(key: key);
-  final EmotionLog log;
-
-  @override
-  _DateTimeChangeState createState() => _DateTimeChangeState(log);
-}
-
-class _DateTimeChangeState extends State<DateTimeChange> {
-  _DateTimeChangeState(EmotionLog log) {
-    this._log = log;
-    this._dateTimeController =
-        TextEditingController(text: formatDateTime(_log.dateTime));
-  }
-
-  EmotionLog _log;
-  TextEditingController _dateTimeController;
-
-  Future _selectDateTime(BuildContext context) async {
-    final DateTime selectedDate = await showDatePicker(
-      context: context,
-      initialDate: _log.dateTime,
-      firstDate: DateTime(_log.dateTime.year - 10),
-      lastDate: DateTime.now(),
-    );
-    if (selectedDate == null) return;
-
-    final TimeOfDay selectedTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.fromDateTime(_log.dateTime),
-    );
-    if (selectedTime == null) return;
-
-    final newDateTime = DateTime(
-      selectedDate.year,
-      selectedDate.month,
-      selectedDate.day,
-      selectedTime.hour,
-      selectedTime.minute,
-    );
-    setState(() {
-      _log.dateTime = newDateTime;
-      _dateTimeController.text = formatDateTime(newDateTime);
-    });
-  }
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    _dateTimeController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: _dateTimeController,
-      readOnly: true,
-      textAlign: TextAlign.center,
-      decoration: InputDecoration(
-        fillColor: Colors.white,
-        filled: true,
-        prefixIcon: Icon(Icons.calendar_today),
-        prefixText: "Enter Date",
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-      ),
-      onTap: () {
-        _selectDateTime(context);
-      },
-    );
-  }
-}
-
-class JournalChange extends StatefulWidget {
-  JournalChange({Key key, this.log}) : super(key: key);
-  final EmotionLog log;
-
-  @override
-  _JournalChangeState createState() => _JournalChangeState(log);
-}
-
-class _JournalChangeState extends State<JournalChange> {
-  _JournalChangeState(EmotionLog log) {
-    this._log = log;
-    this._jorunalController = TextEditingController(text: _log.journal);
-  }
-
-  EmotionLog _log;
-  TextEditingController _jorunalController;
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    _jorunalController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: _jorunalController,
-      onChanged: (value) {
-        // Not wrapping in setState because field is manged by controller
-        _log.journal = value;
-      },
-      keyboardType: TextInputType.multiline,
-      maxLines: null,
-      maxLength: 7000,
-      //initialValue: '${_log.journal ?? ''}',
-      //readOnly: true,
-      textAlign: TextAlign.left,
-      decoration: InputDecoration(
-        fillColor: Colors.white,
-        filled: true,
-        contentPadding: EdgeInsets.all(15),
-        labelText: 'your Journal',
-        alignLabelWithHint: false,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-      ),
-    );
-  }
-}
-
-class AudioButton extends StatefulWidget {
-  AudioButton({Key key, this.log}) : super(key: key);
-  final EmotionLog log;
-
-  @override
-  _AudioButtonState createState() => _AudioButtonState();
-}
-
-class _AudioButtonState extends State<AudioButton> {
-  String _audioPath;
-  bool _isPlaying = false;
-  FlutterSoundPlayer _player = FlutterSoundPlayer();
-
-  @override
-  void initState() {
-    super.initState();
-
-    _initAudioPath();
-  }
-
-  void _initAudioPath() async {
-    File f = await getLogAudioFile(widget.log.id);
-    if (await f.exists()) {
-      setState(() {
-        _audioPath = f.path;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _audioPath == null
-        ? SizedBox.shrink()
-        : Row(
-            children: <Widget>[
-              IconButton(
-                icon: Icon(!_isPlaying ? Icons.play_arrow : Icons.stop),
-                onPressed: () async {
-                  if (!_isPlaying) {
-                    _player.startPlayer(_audioPath, whenFinished: () {
-                      setState(() {
-                        _isPlaying = false;
-                      });
-                    });
-                    setState(() {
-                      _isPlaying = true;
-                    });
-                  } else {
-                    _player.stopPlayer();
-                    setState(() {
-                      _isPlaying = false;
-                    });
-                  }
-                },
-              ),
-              Text('Audio journal')
-            ],
-          );
-  }
-
-  @override
-  void dispose() {
-    _player.release();
-    super.dispose();
-  }
 }

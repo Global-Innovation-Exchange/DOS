@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'create_log.dart';
 import 'database.dart';
 import 'detail.dart';
+import 'models/emotion.dart';
+import 'models/emotion_log.dart';
 import 'utils.dart';
 
 //calling main function when app started
@@ -13,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'DOS',
       theme: ThemeData(
         // This is the theme of the application.
         primarySwatch: colorSwatch,
@@ -91,11 +95,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 onTap: () async {
+                  EmotionLog log = logs[position];
+                  await log.initTempPath();
                   bool updated = await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => EmotionDetail(
-                        log: logs[position],
+                        log: log,
                       ),
                     ),
                   );
@@ -161,10 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       backgroundColor: themeColor,
-      body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
-        child: logPreview,
-      ),
+      body: logPreview,
       floatingActionButton: floatingButton,
     );
   }

@@ -5,6 +5,8 @@ import 'package:dos/utils.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
+import 'models/emotion_log.dart';
+
 final String tableLogs = 'logs';
 final String tableTags = 'tags';
 
@@ -156,121 +158,46 @@ class EmotionTable {
     // Get a reference to the database.
     final db = await database;
 
-    // Update the given EmotionLog.
-    await db.update(
-      tableLogs,
-      log.toMap(),
-      // Ensure that the EmotionLog has a matching id.
-      where: "id = ?",
-      // Pass the EmotionLog's id as a whereArg to prevent SQL injection.
-      whereArgs: [log.id],
-    );
+    await db.transaction((txn) async {
+      // Update the given EmotionLog.
+      await txn.update(
+        tableLogs,
+        log.toMap(),
+        // Ensure that the EmotionLog has a matching id.
+        where: "id = ?",
+        // Pass the EmotionLog's id as a whereArg to prevent SQL injection.
+        whereArgs: [log.id],
+      );
+
+      File audioFile = await getLogAudioFile(log.id);
+      if (log.tempAudioPath != null) {
+        await moveFile(log.tempAudioPath, audioFile.path);
+      } else {
+        if (await audioFile.exists()) {
+          await audioFile.delete();
+        }
+      }
+    });
   }
 
   Future<void> deleteEmotionLog(int id) async {
     // Get a reference to the database.
     final db = await database;
+    await db.transaction((txn) async {
+      // Remove the EmotionLog from the database.
+      await txn.delete(
+        tableLogs,
+        // Use a `where` clause to delete a specific log.
+        where: "id = ?",
+        // Pass the EmotionLog's id as a whereArg to prevent SQL injection.
+        whereArgs: [id],
+      );
 
-    // Remove the EmotionLog from the database.
-    await db.delete(
-      tableLogs,
-      // Use a `where` clause to delete a specific log.
-      where: "id = ?",
-      // Pass the EmotionLog's id as a whereArg to prevent SQL injection.
-      whereArgs: [id],
-    );
+      // Remove the optional audio
+      File audioFile = await getLogAudioFile(id);
+      if (await audioFile.exists()) {
+        await audioFile.delete();
+      }
+    });
   }
-}
-
-class EmotionLog {
-  int id;
-  DateTime dateTime;
-  Emotion emotion;
-  EmotionSource source;
-  int scale;
-  String journal;
-  List<String> tags;
-  String tempAudioPath;
-
-  EmotionLog(
-      {this.id,
-      this.dateTime,
-      this.emotion,
-      this.scale,
-      this.journal,
-      this.source,
-      this.tags});
-
-  EmotionLog.fomObject(dynamic o) {
-    this.id = o['id'];
-    this.dateTime = DateTime.fromMillisecondsSinceEpoch(o['datetime']);
-    this.emotion = Emotion.values[o['emotion'] ?? 0];
-    this.scale = o['scale'];
-    this.source =
-        o['source'] != null ? EmotionSource.values[o['source']] : null;
-    this.journal = o['journal'];
-  }
-
-  Map<String, dynamic> toMap() {
-    var map = {
-      'datetime': dateTime.millisecondsSinceEpoch,
-      'emotion': emotion?.index,
-      'scale': scale,
-      'source': source?.index,
-      'journal': journal,
-    };
-    if (id != null) {
-      map['id'] = id;
-    }
-    return map;
-  }
-
-  // Implement toString to make it easier to see information about
-  // each log when using the print statement.
-  @override
-  String toString() {
-    return 'EmotionLog{id: $id, journal: $journal datetime: $dateTime}';
-  }
-}
-
-enum EmotionSource {
-  home,
-  work,
-  money,
-  //humanchild,
-  people,
-}
-
-enum Emotion {
-  none,
-  happy,
-  sad,
-  scared,
-  surprised,
-  angry,
-  cry,
-  love,
-  sleeping,
-  bad,
-  zombie,
-  sick,
-  laughing,
-  hungry,
-  kiss,
-  painter,
-  waiting,
-  music,
-  sick2,
-  cool,
-  model,
-  angel,
-  inLove,
-  worker,
-  pirate,
-  writer,
-  exercise,
-  detective,
-  cook,
-  employee,
-  run,
 }
