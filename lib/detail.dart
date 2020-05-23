@@ -1,4 +1,6 @@
 import 'package:dos/audio_journal.dart';
+import 'package:dos/components/journal_datetime.dart';
+import 'package:dos/components/journal_textfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +20,7 @@ class EmotionDetail extends StatelessWidget {
     Widget selectedDate = Container(
       height: 60,
       padding: EdgeInsets.symmetric(vertical: 8),
-      child: DateTimeChange(log: log),
+      child: JournalDateTime(log: log),
     );
 
     Widget selectedEmotion = Container(
@@ -55,7 +57,7 @@ class EmotionDetail extends StatelessWidget {
 
     Widget journalText = Container(
       padding: EdgeInsets.symmetric(vertical: 8),
-      child: JournalChange(log: log),
+      child: JorunalTextField(log: log),
     );
 
     Widget journalVoice = Padding(
@@ -182,139 +184,6 @@ class _ScaleChangeState extends State<ScaleChange> {
           widget.log.scale = value.toInt();
         });
       },
-    );
-  }
-}
-
-class DateTimeChange extends StatefulWidget {
-  DateTimeChange({Key key, this.log}) : super(key: key);
-  final EmotionLog log;
-
-  @override
-  _DateTimeChangeState createState() => _DateTimeChangeState(log);
-}
-
-class _DateTimeChangeState extends State<DateTimeChange> {
-  _DateTimeChangeState(EmotionLog log) {
-    this._log = log;
-    this._dateTimeController =
-        TextEditingController(text: formatDateTime(_log.dateTime));
-  }
-
-  EmotionLog _log;
-  TextEditingController _dateTimeController;
-
-  Future _selectDateTime(BuildContext context) async {
-    final DateTime selectedDate = await showDatePicker(
-      context: context,
-      initialDate: _log.dateTime,
-      firstDate: DateTime(_log.dateTime.year - 10),
-      lastDate: DateTime.now(),
-    );
-    if (selectedDate == null) return;
-
-    final TimeOfDay selectedTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.fromDateTime(_log.dateTime),
-    );
-    if (selectedTime == null) return;
-
-    final newDateTime = DateTime(
-      selectedDate.year,
-      selectedDate.month,
-      selectedDate.day,
-      selectedTime.hour,
-      selectedTime.minute,
-    );
-    setState(() {
-      _log.dateTime = newDateTime;
-      _dateTimeController.text = formatDateTime(newDateTime);
-    });
-  }
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    _dateTimeController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: _dateTimeController,
-      readOnly: true,
-      textAlign: TextAlign.center,
-      decoration: InputDecoration(
-        fillColor: Colors.white,
-        filled: true,
-        prefixIcon: Icon(Icons.calendar_today),
-        prefixText: "Enter Date",
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-      ),
-      onTap: () {
-        _selectDateTime(context);
-      },
-    );
-  }
-}
-
-class JournalChange extends StatefulWidget {
-  JournalChange({Key key, this.log}) : super(key: key);
-  final EmotionLog log;
-
-  @override
-  _JournalChangeState createState() => _JournalChangeState(log);
-}
-
-class _JournalChangeState extends State<JournalChange> {
-  _JournalChangeState(EmotionLog log) {
-    this._log = log;
-    this._jorunalController = TextEditingController(text: _log.journal);
-  }
-
-  EmotionLog _log;
-  TextEditingController _jorunalController;
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    _jorunalController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: _jorunalController,
-      onChanged: (value) {
-        // Not wrapping in setState because field is manged by controller
-        _log.journal = value;
-      },
-      keyboardType: TextInputType.multiline,
-      maxLines: null,
-      maxLength: 7000,
-      textAlign: TextAlign.left,
-      decoration: InputDecoration(
-        fillColor: Colors.white,
-        filled: true,
-        contentPadding: EdgeInsets.all(15),
-        labelText: 'Your Journal',
-        alignLabelWithHint: false,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-      ),
     );
   }
 }

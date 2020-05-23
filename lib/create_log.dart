@@ -1,3 +1,4 @@
+import 'package:dos/components/journal_datetime.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -15,35 +16,6 @@ class CreateLog extends StatefulWidget {
 class _CreateLogState extends State<CreateLog> {
   final _table = EmotionTable();
   EmotionLog _log;
-  TextEditingController _dateTimeController;
-
-  Future _selectDateTime(BuildContext context) async {
-    final DateTime selectedDate = await showDatePicker(
-      context: context,
-      initialDate: _log.dateTime,
-      firstDate: DateTime(_log.dateTime.year - 10),
-      lastDate: _log.dateTime,
-    );
-    if (selectedDate == null) return;
-
-    final TimeOfDay selectedTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.fromDateTime(_log.dateTime),
-    );
-    if (selectedTime == null) return;
-
-    final newDateTime = DateTime(
-      selectedDate.year,
-      selectedDate.month,
-      selectedDate.day,
-      selectedTime.hour,
-      selectedTime.minute,
-    );
-    setState(() {
-      _log.dateTime = newDateTime;
-      _dateTimeController.text = formatDateTime(newDateTime);
-    });
-  }
 
   @override
   void initState() {
@@ -51,7 +23,6 @@ class _CreateLogState extends State<CreateLog> {
     var now = DateTime.now();
     // Remove any component less than minute
     now = DateTime(now.year, now.month, now.day, now.hour, now.minute);
-    _dateTimeController = TextEditingController(text: formatDateTime(now));
 
     _log = EmotionLog();
     _log.scale = 3;
@@ -64,30 +35,9 @@ class _CreateLogState extends State<CreateLog> {
     List<String> values = ["1", "2", "3", "4", "5"];
     //datetime picker widget
     Widget selectDate = Container(
-      padding: EdgeInsets.all(8.0),
-      color: Color(0X3311111),
-      child: TextFormField(
-        controller: _dateTimeController,
-        readOnly: true,
-        textAlign: TextAlign.center,
-        decoration: InputDecoration(
-          fillColor: Colors.white,
-          filled: true,
-          prefixIcon: Icon(Icons.calendar_today),
-          prefixText: "Enter Date",
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15.0),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white),
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-        ),
-        onTap: () {
-          _selectDateTime(context);
-        },
-      ),
-    );
+        padding: EdgeInsets.all(8.0),
+        color: Color(0X3311111),
+        child: JournalDateTime(log: _log));
     Widget selectedEmotionIcon = Expanded(
       flex: 7,
       child: getEmotionImage(_log.emotion),
@@ -209,11 +159,6 @@ class _CreateLogState extends State<CreateLog> {
         child: body,
       ),
     );
-  }
-
-  void dispose() {
-    _dateTimeController.dispose();
-    super.dispose();
   }
 }
 

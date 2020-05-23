@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chips_input/flutter_chips_input.dart';
 
 import 'audio_journal.dart';
+import 'components/journal_textfield.dart';
 import 'models/emotion_log.dart';
 import 'models/emotion_source.dart';
 
@@ -129,34 +130,10 @@ class _AdditionalLogState extends State<AdditionalLog> {
           SizedBox(height: 20),
           AudioJournal(log: _log),
           SizedBox(height: 20),
-          TextFormField(
-            maxLines: null,
+          JorunalTextField(
+            log: _log,
             minLines: 10,
-            textAlignVertical: TextAlignVertical.top,
-            enableInteractiveSelection: true, // allow selection
-            controller: _jorunalController,
-            decoration: InputDecoration(
-              fillColor: Colors.white,
-              filled: true,
-              contentPadding:
-                  EdgeInsets.only(left: 15, top: 50), // prevent text overlap
-              labelText: '\nWrite in your journal', // weird spacing
-              alignLabelWithHint: false,
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.white),
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-            ),
-            keyboardType: TextInputType.multiline,
-            onChanged: (value) {
-              // Not wrapping in setState because field is manged by controller
-              _log.journal = value;
-            },
-          ),
+          )
         ],
       ),
     );
