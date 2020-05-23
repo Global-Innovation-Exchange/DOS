@@ -2,10 +2,15 @@ import 'package:dos/models/emotion_log.dart';
 import 'package:flutter/material.dart';
 
 class JorunalTextField extends StatefulWidget {
-  JorunalTextField({Key key, this.log, this.minLines}) : super(key: key);
+  JorunalTextField(
+      {Key key, this.log, this.minLines, this.filled, this.fillColor, this.labelText})
+      : super(key: key);
 
   final EmotionLog log;
   final int minLines;
+  final Color fillColor;
+  final bool filled;
+  final String labelText;
 
   @override
   _JorunalTextFieldState createState() => _JorunalTextFieldState(log);
@@ -30,10 +35,10 @@ class _JorunalTextFieldState extends State<JorunalTextField> {
       enableInteractiveSelection: true, // allow selection
       controller: _controller,
       decoration: InputDecoration(
-        //fillColor: Colors.white,
-        //filled: true,
+        fillColor: widget.fillColor,
+        filled: widget.filled,
         prefixIcon: Icon(Icons.edit),
-        // labelText: 'Text Journal',
+        labelText: widget.labelText,
         alignLabelWithHint: false,
         floatingLabelBehavior: FloatingLabelBehavior.always,
         border: OutlineInputBorder(
