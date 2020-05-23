@@ -142,7 +142,14 @@ class EmotionDetail extends StatelessWidget {
         ],
       ),
       backgroundColor: themeColor,
-      body: body,
+      body: GestureDetector(
+        onTap: () {
+          // This is used to bring down the soft keyboard when other than
+          // text field is tapped.
+          FocusScope.of(context).unfocus();
+        },
+        child: body,
+      ),
     );
   }
 }
