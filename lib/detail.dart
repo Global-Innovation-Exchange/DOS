@@ -16,6 +16,30 @@ class EmotionDetail extends StatelessWidget {
   final EmotionTable _table = EmotionTable();
   final EmotionLog log;
 
+  Future<bool> _showDeleteConfirmingDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text("Delete log"),
+        content: Text("Are you sure to delete this log entry?"),
+        actions: <Widget>[
+          FlatButton(
+            child: Text("YES"),
+            onPressed: () async {
+              await _table.deleteEmotionLog(log.id);
+              Navigator.of(dialogContext).pop(true);
+            },
+          ),
+          FlatButton(
+              child: Text("NO"),
+              onPressed: () {
+                Navigator.of(dialogContext).pop(false);
+              }),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget selectedDate = Container(
@@ -84,8 +108,10 @@ class EmotionDetail extends StatelessWidget {
         child: RaisedButton(
           onPressed: () async {
             if (log.id != null) {
-              await _table.deleteEmotionLog(log.id);
-              Navigator.pop(context, true);
+              bool deleted = await _showDeleteConfirmingDialog(context);
+              if (deleted) {
+                Navigator.pop(context, true);
+              }
             }
           },
           child: Text('DELETE'),
