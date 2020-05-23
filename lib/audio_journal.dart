@@ -187,10 +187,10 @@ class _AudioJournalState extends State<AudioJournal> {
       children: <Widget>[
         Row(
           children: <Widget>[
-            Text(!_isRecording ? "Record audio journal" : "Recording..."),
+            Text("Audio Journal"),
           ],
         ),
-        SizedBox(height: 10),
+        SizedBox(height: 5),
         Row(
           children: <Widget>[
             _buildRecorderIcon(),

@@ -1,9 +1,6 @@
-import 'dart:io';
-
 import 'package:dos/audio_journal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_sound_lite/flutter_sound_player.dart';
 
 import 'database.dart';
 import 'models/emotion.dart';
@@ -20,9 +17,7 @@ class EmotionDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget selectedDate = Container(
       height: 60,
-      padding: EdgeInsets.all(8.0),
-
-      // margin: EdgeInsets.only(top: 4),
+      padding: EdgeInsets.symmetric(vertical: 8),
       child: DateTimeChange(log: log),
     );
 
@@ -30,10 +25,13 @@ class EmotionDetail extends StatelessWidget {
       height: 100,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          getEmotionImage(log.emotion),
-          Container(
+          Padding(
+            padding: EdgeInsets.only(left: 10),
+            child: getEmotionImage(log.emotion),
+          ),
+          Expanded(
             child: ScaleChange(log: log),
           ),
         ],
@@ -43,11 +41,8 @@ class EmotionDetail extends StatelessWidget {
     Widget emotionSource = log.source != null
         ? Row(children: <Widget>[
             Padding(
-              padding: EdgeInsets.only(left: 15, right: 15),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text("Because.."),
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 5),
+              child: Text("Because.."),
             ),
             CircleAvatar(
                 backgroundColor: Color(0xffE1B699),
@@ -59,25 +54,21 @@ class EmotionDetail extends StatelessWidget {
         : SizedBox.shrink();
 
     Widget journalText = Container(
-      padding: EdgeInsets.all(8.0),
-      margin: EdgeInsets.only(top: 0),
+      padding: EdgeInsets.symmetric(vertical: 8),
       child: JournalChange(log: log),
     );
 
-    Widget journalVoice = Align(
-      alignment: Alignment.bottomLeft,
+    Widget journalVoice = Padding(
+      padding: EdgeInsets.symmetric(horizontal: 5),
       child: AudioJournal(log: log),
     );
 
     Widget journalTags = Align(
       alignment: Alignment.center,
-      child: Padding(
-        padding: EdgeInsets.only(left: 10, right: 10),
-        child: Wrap(
-          spacing: 10.0, // gap between adjacent chips
-          runSpacing: 0.0, // gap between lines
-          children: log.tags.map((t) => _createChip(t)).toList(),
-        ),
+      child: Wrap(
+        spacing: 10.0, // gap between adjacent chips
+        runSpacing: 0.0, // gap between lines
+        children: log.tags.map((t) => _createChip(t)).toList(),
       ),
     );
 
@@ -103,18 +94,21 @@ class EmotionDetail extends StatelessWidget {
       builder: (context, viewportConstraints) => SingleChildScrollView(
         child: ConstrainedBox(
           constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
-          child: Column(
-            children: <Widget>[
-              selectedDate,
-              SizedBox(height: 15.0),
-              selectedEmotion,
-              SizedBox(height: 10.0),
-              journalTags,
-              SizedBox(height: 15.0),
-              journalVoice,
-              journalText,
-              emotionSource,
-            ],
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              children: <Widget>[
+                selectedDate,
+                SizedBox(height: 15.0),
+                selectedEmotion,
+                SizedBox(height: 10.0),
+                journalTags,
+                SizedBox(height: 15.0),
+                journalVoice,
+                journalText,
+                emotionSource,
+              ],
+            ),
           ),
         ),
       ),
@@ -299,14 +293,12 @@ class _JournalChangeState extends State<JournalChange> {
       keyboardType: TextInputType.multiline,
       maxLines: null,
       maxLength: 7000,
-      //initialValue: '${_log.journal ?? ''}',
-      //readOnly: true,
       textAlign: TextAlign.left,
       decoration: InputDecoration(
         fillColor: Colors.white,
         filled: true,
         contentPadding: EdgeInsets.all(15),
-        labelText: 'your Journal',
+        labelText: 'Your Journal',
         alignLabelWithHint: false,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15.0),
@@ -317,72 +309,5 @@ class _JournalChangeState extends State<JournalChange> {
         ),
       ),
     );
-  }
-}
-
-class AudioButton extends StatefulWidget {
-  AudioButton({Key key, this.log}) : super(key: key);
-  final EmotionLog log;
-
-  @override
-  _AudioButtonState createState() => _AudioButtonState();
-}
-
-class _AudioButtonState extends State<AudioButton> {
-  String _audioPath;
-  bool _isPlaying = false;
-  FlutterSoundPlayer _player = FlutterSoundPlayer();
-
-  @override
-  void initState() {
-    super.initState();
-
-    _initAudioPath();
-  }
-
-  void _initAudioPath() async {
-    File f = await getLogAudioFile(widget.log.id);
-    if (await f.exists()) {
-      setState(() {
-        _audioPath = f.path;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _audioPath == null
-        ? SizedBox.shrink()
-        : Row(
-            children: <Widget>[
-              IconButton(
-                icon: Icon(!_isPlaying ? Icons.play_arrow : Icons.stop),
-                onPressed: () async {
-                  if (!_isPlaying) {
-                    _player.startPlayer(_audioPath, whenFinished: () {
-                      setState(() {
-                        _isPlaying = false;
-                      });
-                    });
-                    setState(() {
-                      _isPlaying = true;
-                    });
-                  } else {
-                    _player.stopPlayer();
-                    setState(() {
-                      _isPlaying = false;
-                    });
-                  }
-                },
-              ),
-              Text('Audio journal')
-            ],
-          );
-  }
-
-  @override
-  void dispose() {
-    _player.release();
-    super.dispose();
   }
 }

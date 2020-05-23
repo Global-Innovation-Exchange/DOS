@@ -167,10 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       backgroundColor: themeColor,
-      body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
-        child: logPreview,
-      ),
+      body: logPreview,
       floatingActionButton: floatingButton,
     );
   }
