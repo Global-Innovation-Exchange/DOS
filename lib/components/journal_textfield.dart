@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 
 class JorunalTextField extends StatefulWidget {
   JorunalTextField(
-      {Key key, this.log, this.minLines, this.filled, this.fillColor, this.labelText})
+      {Key key,
+      this.log,
+      this.minLines,
+      this.filled,
+      this.fillColor,
+      this.labelText})
       : super(key: key);
 
   final EmotionLog log;
@@ -21,13 +26,14 @@ class _JorunalTextFieldState extends State<JorunalTextField> {
     _log = log;
     _controller = TextEditingController(text: _log.journal);
   }
-
+  FocusNode myFocusNode = new FocusNode();
   EmotionLog _log;
   TextEditingController _controller;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      focusNode: myFocusNode,
       maxLines: null,
       minLines: widget.minLines,
       maxLength: 7000,
@@ -35,20 +41,21 @@ class _JorunalTextFieldState extends State<JorunalTextField> {
       enableInteractiveSelection: true, // allow selection
       controller: _controller,
       decoration: InputDecoration(
-        fillColor: widget.fillColor,
-        filled: widget.filled,
+        fillColor: myFocusNode.hasFocus ? Colors.white : widget.fillColor,
+        filled: true,
         prefixIcon: Icon(Icons.edit),
-        labelText: widget.labelText,
+        labelText: "Written Journal",
         alignLabelWithHint: false,
         floatingLabelBehavior: FloatingLabelBehavior.always,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: BorderRadius.circular(15.0),
         ),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(style: BorderStyle.none),
-          borderRadius: BorderRadius.circular(10.0),
+          borderSide: BorderSide(color: Colors.black12),
+          borderRadius: BorderRadius.circular(15.0),
         ),
       ),
+
       keyboardType: TextInputType.multiline,
       onChanged: (value) {
         // Not wrapping in setState because field is manged by controller
@@ -60,6 +67,7 @@ class _JorunalTextFieldState extends State<JorunalTextField> {
   @override
   void dispose() {
     _controller.dispose();
+    myFocusNode.dispose();
     super.dispose();
   }
 }

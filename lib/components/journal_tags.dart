@@ -51,9 +51,7 @@ class _JournalTagsState extends State<JournalTags> {
             avatar: CircleAvatar(
               child: Text('#'),
             ),
-            onDeleted: () {
-              state.deleteChip(tagString);
-            },
+            onDeleted: () => state.deleteChip(tagString),
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
           );
         },
@@ -67,5 +65,9 @@ class _JournalTagsState extends State<JournalTags> {
             onTap: () => state.selectSuggestion(tagString),
           );
         });
+  }
+
+  void dispose() {
+    super.dispose();
   }
 }

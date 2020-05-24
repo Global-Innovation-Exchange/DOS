@@ -6,6 +6,7 @@ enum EmotionSource {
   money,
   //humanchild,
   people,
+  sleep,
 }
 
 Icon getEmotionSourceIcon(EmotionSource src, {Color color}) {
@@ -42,6 +43,12 @@ Icon getEmotionSourceIcon(EmotionSource src, {Color color}) {
         icon = Icon(Icons.group, color: color);
         //icon = Icon(Icons.local_hospital);
         //icon = Icon(Icons.school, color: color);
+      }
+      break;
+
+    case EmotionSource.sleep:
+      {
+        icon = Icon(Icons.hotel, color: color);
       }
       break;
   }

@@ -27,6 +27,7 @@ class _EmotionDetailState extends State<EmotionDetail> {
 
   final EmotionTable _table = EmotionTable();
   EmotionLog _log;
+  bool pressed = false;
 
   Future<bool> _showDeleteDialog(BuildContext context) {
     return showDialog(
@@ -107,20 +108,65 @@ class _EmotionDetailState extends State<EmotionDetail> {
       ),
     );
 
-    Widget emotionSource = _log.source != null
-        ? Row(children: <Widget>[
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5),
-              child: Text("Because.."),
-            ),
-            CircleAvatar(
-                backgroundColor: Color(0xffE1B699),
-                child: getEmotionSourceIcon(
-                  _log.source,
-                  color: Colors.white,
-                ))
-          ])
-        : SizedBox.shrink();
+    Widget _buildSource() {
+      pressed = false;
+      var children = EmotionSource.values.map((src) {
+        var isSelected = _log.source == src;
+        var color = isSelected ? Colors.white : Colors.black38;
+
+        return Container(
+            margin: EdgeInsets.only(bottom: 10),
+            padding: EdgeInsets.only(right: 15),
+            child: CircleAvatar(
+              radius: 20,
+              backgroundColor: isSelected ? Color(0xffE1B699) : Colors.white,
+              child: IconButton(
+                icon: getEmotionSourceIcon(src, color: color),
+                onPressed: () {
+                  setState(() {
+                    _log.source = src;
+                  });
+                },
+              ),
+            ));
+      }).toList();
+      return Row(children: children);
+    }
+
+    Widget _selectedSource() {
+      return _log.source != null
+          ? CircleAvatar(
+              backgroundColor: Color(0xffE1B699),
+              child: getEmotionSourceIcon(
+                _log.source,
+                color: Colors.white,
+              ))
+          : SizedBox.shrink();
+    }
+
+    Widget emotionSource = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text("I feel this way because..."),
+        SizedBox(height: 15.0),
+        Row(
+          children: <Widget>[
+            Container(
+                alignment: Alignment.topLeft,
+                child: IconButton(
+                  iconSize: 20,
+                  icon: Icon(Icons.edit),
+                  onPressed: () {
+                    setState(() {
+                      pressed = true;
+                    });
+                  },
+                )),
+            pressed ? _buildSource() : _selectedSource(),
+          ],
+        ),
+      ],
+    );
 
     Widget journalText = Container(
       padding: EdgeInsets.symmetric(vertical: 8),
@@ -245,8 +291,6 @@ class _EmotionDetailState extends State<EmotionDetail> {
       ),
     );
   }
-}
 
-Widget _createChip(String value) {
-  return Chip(avatar: CircleAvatar(child: Text('#')), label: Text(value));
+  restReasons() {}
 }
