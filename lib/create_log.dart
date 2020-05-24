@@ -154,15 +154,20 @@ class _CreateLogState extends State<CreateLog> {
     );
 
     var handleBackPressed = () async {
-      if (await _log.equals(_original)) {
-        Navigator.pop(context, false);
-        return;
+      bool didLogChange = !await _log.equals(_original);
+      if (didLogChange) {
+        bool confirmed = await _showBackDialog(context);
+        if (!confirmed) {
+          // Cancelled the dialog so user will continue to edit
+          return;
+        }
       }
 
-      bool confirmed = await _showBackDialog(context);
-      if (confirmed) {
-        Navigator.pop(context, false);
+      // Clean up the temp audio copied
+      if (_log.tempAudioPath != null) {
+        await deleteFile(_log.tempAudioPath);
       }
+      Navigator.pop(context, false);
     };
 
     return WillPopScope(
