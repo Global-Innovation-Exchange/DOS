@@ -50,7 +50,8 @@ Future<bool> copyFile(String sourcePath, String newPath) async {
   File sourceFile = File(sourcePath);
   try {
     // prefer using rename as it is probably faster
-    await sourceFile.copy(newPath);
+    File f = await sourceFile.copy(newPath);
+    await f.setLastModified(await sourceFile.lastModified());
     return true;
   } catch (e) {
     return false;
