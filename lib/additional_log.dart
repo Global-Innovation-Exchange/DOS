@@ -29,60 +29,6 @@ class _AdditionalLogState extends State<AdditionalLog> {
   EmotionLog _log;
   EmotionTable _table = EmotionTable();
 
-  Future<bool> _showDeleteDialog(BuildContext context) {
-    return showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text("Delete log"),
-        content: Text("Are you sure you don't wasnt to add journal?"),
-        actions: <Widget>[
-          FlatButton(
-            child: Text("YES"),
-            onPressed: () async {
-              await _table.deleteEmotionLog(_log.id);
-              Navigator.of(dialogContext).pop(true);
-            },
-          ),
-          FlatButton(
-              child: Text("NO"),
-              onPressed: () {
-                Navigator.of(dialogContext).pop(false);
-              }),
-        ],
-      ),
-    );
-  }
-
-  Future<bool> _showBackDialog(BuildContext context) {
-    return showDialog(
-      context: context,
-      builder: (dialogContext) => WillPopScope(
-        onWillPop: () async {
-          // This is needed so that when user press anything other than buttons
-          // this dialog will still return a boolean
-          Navigator.of(dialogContext).pop(false);
-          return true;
-        },
-        child: AlertDialog(
-          content: Text("You have unsaved changs, are you sure to leave?"),
-          actions: <Widget>[
-            FlatButton(
-              child: Text("YES"),
-              onPressed: () async {
-                Navigator.of(dialogContext).pop(true);
-              },
-            ),
-            FlatButton(
-                child: Text("NO"),
-                onPressed: () {
-                  Navigator.of(dialogContext).pop(false);
-                }),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget build(BuildContext context) {
     Widget selectedDate = Container(
       height: 60,
