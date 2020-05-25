@@ -115,7 +115,6 @@ class _EmotionDetailState extends State<EmotionDetail> {
         var color = isSelected ? Colors.white : Colors.black38;
 
         return Container(
-            margin: EdgeInsets.only(bottom: 10),
             padding: EdgeInsets.only(right: 15),
             child: CircleAvatar(
               radius: 20,
