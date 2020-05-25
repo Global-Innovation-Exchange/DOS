@@ -125,13 +125,19 @@ class _CreateLogState extends State<CreateLog> {
         minWidth: double.infinity,
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         child: RaisedButton(
-          onPressed: () {
-            Navigator.push(
+          onPressed: () async {
+            await Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => AdditionalLog(log: _log),
               ),
             );
+
+            // Quick fix to foce update 
+            // when additional log updated the scale
+            setState(() {
+              _log = _log;
+            });
           },
           child: Text('Enter Detailed Journal'),
         ),
