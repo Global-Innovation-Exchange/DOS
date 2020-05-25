@@ -122,7 +122,11 @@ class _EmotionDetailState extends State<EmotionDetail> {
                 icon: getEmotionSourceIcon(src, color: color),
                 onPressed: () {
                   setState(() {
-                    _log.source = src;
+                    if (_log.source == src) {
+                      _log.source = null;
+                    } else {
+                      _log.source = src;
+                    }
                     _expandSources = false;
                   });
                 },
