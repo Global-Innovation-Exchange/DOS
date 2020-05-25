@@ -249,16 +249,21 @@ class _EmotionDetailState extends State<EmotionDetail> {
       ],
     );
 
-    var handleBackPressed = () async {
-      if (await _log.equals(widget.log)) {
-        Navigator.pop(context, false);
-        return;
+    Future<Null> Function() handleBackPressed = () async {
+      bool didLogChange = !await _log.equals(widget.log);
+      if (didLogChange) {
+        bool confirmed = await _showBackDialog(context);
+        if (!confirmed) {
+          // Cancelled the dialog so user will continue to edit
+          return;
+        }
       }
 
-      bool confirmed = await _showBackDialog(context);
-      if (confirmed) {
-        Navigator.pop(context, false);
+      // Clean up the temp audio copied
+      if (_log.tempAudioPath != null) {
+        await deleteFile(_log.tempAudioPath);
       }
+      Navigator.pop(context, false);
     };
 
     // This makes each child fill the full width of the screen
