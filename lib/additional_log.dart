@@ -149,11 +149,6 @@ class _AdditionalLogState extends State<AdditionalLog> {
       ),
     );
 
-    Widget body = Column(
-      children: <Widget>[
-        Expanded(child: scrollView),
-      ],
-    );
 
     return Scaffold(
       appBar: AppBar(
@@ -175,7 +170,7 @@ class _AdditionalLogState extends State<AdditionalLog> {
           // text field is tapped.
           FocusScope.of(context).unfocus();
         },
-        child: body,
+        child: scrollView,
       ),
     );
   }
