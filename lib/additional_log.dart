@@ -1,10 +1,14 @@
-import 'package:dos/database.dart';
 import 'package:dos/utils.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chips_input/flutter_chips_input.dart';
 
 import 'components/audio_journal.dart';
+import 'components/emotion_slider.dart';
+import 'components/journal_datetime.dart';
+import 'components/journal_tags.dart';
 import 'components/journal_textfield.dart';
+import 'database.dart';
+import 'models/emotion.dart';
 import 'models/emotion_log.dart';
 import 'models/emotion_source.dart';
 
@@ -20,127 +24,192 @@ class AdditionalLog extends StatefulWidget {
 class _AdditionalLogState extends State<AdditionalLog> {
   _AdditionalLogState(EmotionLog log) {
     this._log = log;
-    this._jorunalController = TextEditingController(text: log.journal);
   }
 
   EmotionLog _log;
-  TextEditingController _jorunalController;
-  EmotionTable _db = EmotionTable();
+  EmotionTable _table = EmotionTable();
 
-  Widget _buildSource() {
-    List<Widget> children = EmotionSource.values.map((src) {
-      bool isSelected = _log.source == src;
-      Color color = isSelected ? Colors.white : Colors.black38;
-
-      return CircleAvatar(
-        radius: 30,
-        backgroundColor: isSelected ? Color(0xffE1B699) : Colors.white,
-        child: IconButton(
-          icon: getEmotionSourceIcon(src, color: color),
-          onPressed: () {
-            setState(() {
-              if (_log.source == src) {
-                _log.source = null;
-              } else {
-                _log.source = src;
-              }
-            });
-          },
-        ),
-      );
-    }).toList();
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: children,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Widget body = Padding(
-      padding: EdgeInsets.all(20),
-      child: Column(
-        children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Container(
-                  margin: EdgeInsets.only(bottom: 15, top: 20),
-                  child: Text(
-                    "I feel this way because of",
-                  ),
-                ),
-              ),
-              _buildSource(),
-            ],
-          ),
-          SizedBox(height: 20),
-          ChipsInput(
-            initialValue: _log.tags ?? <String>[],
-            decoration: InputDecoration(
-                fillColor: Colors.white,
-                filled: true,
-                labelText: "Tags",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                  borderRadius: BorderRadius.circular(10.0),
-                )),
-            maxChips: 50,
-            findSuggestions: (String query) async {
-              List<String> results = await _db.getTagsStartWith(query, 5);
-              if (query != null &&
-                  query.length > 0 &&
-                  results.indexOf(query) == -1) {
-                // add the input string if only the input is not empty string
-                // and the result doesn't contain the exact string
-                results.add(query);
-              }
-              return results;
-            },
-            onChanged: (tags) {
-              // Don't need to wrap it setState because UI change is managed by ChipsInput
-              _log.tags = tags;
-            },
-            chipBuilder: (context, state, tagString) {
-              return InputChip(
-                key: ObjectKey(tagString),
-                label: Text(tagString),
-                avatar: CircleAvatar(
-                  child: Text('#'),
-                ),
-                onDeleted: () => state.deleteChip(tagString),
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              );
-            },
-            suggestionBuilder: (context, state, tagString) {
-              return ListTile(
-                key: ObjectKey(tagString),
-                leading: CircleAvatar(
-                  child: Text('#'),
-                ),
-                title: Text(tagString),
-                onTap: () => state.selectSuggestion(tagString),
-              );
+  Future<bool> _showDeleteDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text("Delete log"),
+        content: Text("Are you sure you don't wasnt to add journal?"),
+        actions: <Widget>[
+          FlatButton(
+            child: Text("YES"),
+            onPressed: () async {
+              await _table.deleteEmotionLog(_log.id);
+              Navigator.of(dialogContext).pop(true);
             },
           ),
-          SizedBox(height: 20),
-          AudioJournal(log: _log),
-          SizedBox(height: 20),
-          JorunalTextField(
-            log: _log,
-            filled: true,
-            fillColor: Colors.white,
-          )
+          FlatButton(
+              child: Text("NO"),
+              onPressed: () {
+                Navigator.of(dialogContext).pop(false);
+              }),
         ],
       ),
     );
+  }
+
+  Future<bool> _showBackDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (dialogContext) => WillPopScope(
+        onWillPop: () async {
+          // This is needed so that when user press anything other than buttons
+          // this dialog will still return a boolean
+          Navigator.of(dialogContext).pop(false);
+          return true;
+        },
+        child: AlertDialog(
+          content: Text("You have unsaved changs, are you sure to leave?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("YES"),
+              onPressed: () async {
+                Navigator.of(dialogContext).pop(true);
+              },
+            ),
+            FlatButton(
+                child: Text("NO"),
+                onPressed: () {
+                  Navigator.of(dialogContext).pop(false);
+                }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget build(BuildContext context) {
+    Widget selectedDate = Container(
+      height: 60,
+      padding: EdgeInsets.symmetric(vertical: 8),
+      child: JournalDateTime(log: _log),
+    );
+
+    Widget selectedEmotion = Container(
+      height: 100,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(left: 10),
+            child: getEmotionImage(_log.emotion),
+          ),
+          Expanded(
+            child: EmotionSlider(log: _log),
+          ),
+        ],
+      ),
+    );
+    Widget _buildSource() {
+      var children = EmotionSource.values.map((src) {
+        var isSelected = _log.source == src;
+        var color = isSelected ? Colors.white : Colors.black38;
+
+        return Container(
+            margin: EdgeInsets.only(bottom: 30),
+            padding: EdgeInsets.only(right: 15),
+            child: CircleAvatar(
+              radius: 30,
+              backgroundColor: isSelected ? Color(0xffE1B699) : Colors.white,
+              child: IconButton(
+                icon: getEmotionSourceIcon(src, color: color),
+                onPressed: () {
+                  setState(() {
+                    if (_log.source == src) {
+                      _log.source = null;
+                    } else {
+                      _log.source = src;
+                    }
+                  });
+                },
+              ),
+            ));
+      }).toList();
+      return Row(children: children);
+    }
+
+    Widget emotionSource = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text("I feel this way because..."),
+        SizedBox(height: 15.0),
+        Row(
+          children: <Widget>[
+            Container(
+              child: _buildSource(),
+            ),
+          ],
+        ),
+      ],
+    );
+
+    Widget journalText = Container(
+      padding: EdgeInsets.symmetric(vertical: 8),
+      child: JorunalTextField(log: _log),
+    );
+
+    Widget journalVoice = Padding(
+      padding: EdgeInsets.symmetric(horizontal: 5),
+      child: AudioJournal(log: _log),
+    );
+
+    Widget journalTags = Container(
+      alignment: Alignment.center,
+      width: 370,
+      child: JournalTags(log: _log),
+    );
+
+    Widget scrollView = LayoutBuilder(
+      builder: (context, viewportConstraints) => SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              children: <Widget>[
+                selectedDate,
+                SizedBox(height: 15.0),
+                selectedEmotion,
+                SizedBox(height: 10.0),
+                journalTags,
+                SizedBox(
+                  height: 20.0,
+                  width: 350,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(
+                          width: 1.0,
+                          color: Color(0xFFE1B699),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                emotionSource,
+                //SizedBox(height: 15.0),
+                journalVoice,
+                journalText,
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    Widget body = Column(
+      children: <Widget>[
+        Expanded(child: scrollView),
+      ],
+    );
+
     return Scaffold(
-      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text('Detailed Journal'),
         automaticallyImplyLeading: false,
@@ -160,22 +229,10 @@ class _AdditionalLogState extends State<AdditionalLog> {
           // text field is tapped.
           FocusScope.of(context).unfocus();
         },
-        child: LayoutBuilder(
-          builder: (context, viewportConstraints) => SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints:
-                  BoxConstraints(minHeight: viewportConstraints.maxHeight),
-              child: body,
-            ),
-          ),
-        ),
+        child: body,
       ),
     );
   }
 
-  @override
-  void dispose() {
-    _jorunalController.dispose();
-    super.dispose();
-  }
+  restReasons() {}
 }
