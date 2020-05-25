@@ -27,7 +27,7 @@ class _EmotionDetailState extends State<EmotionDetail> {
 
   final EmotionTable _table = EmotionTable();
   EmotionLog _log;
-  bool pressed = false;
+  bool _expandSources = false;
 
   Future<bool> _showDeleteDialog(BuildContext context) {
     return showDialog(
@@ -109,7 +109,6 @@ class _EmotionDetailState extends State<EmotionDetail> {
     );
 
     Widget _buildSource() {
-      pressed = false;
       var children = EmotionSource.values.map((src) {
         var isSelected = _log.source == src;
         var color = isSelected ? Colors.white : Colors.black38;
@@ -124,6 +123,7 @@ class _EmotionDetailState extends State<EmotionDetail> {
                 onPressed: () {
                   setState(() {
                     _log.source = src;
+                    _expandSources = false;
                   });
                 },
               ),
@@ -150,18 +150,16 @@ class _EmotionDetailState extends State<EmotionDetail> {
         SizedBox(height: 15.0),
         Row(
           children: <Widget>[
-            Container(
-                alignment: Alignment.topLeft,
-                child: IconButton(
-                  iconSize: 20,
-                  icon: Icon(Icons.edit),
-                  onPressed: () {
-                    setState(() {
-                      pressed = true;
-                    });
-                  },
-                )),
-            pressed ? _buildSource() : _selectedSource(),
+            IconButton(
+              iconSize: 20,
+              icon: Icon(Icons.edit),
+              onPressed: () {
+                setState(() {
+                  _expandSources = !_expandSources;
+                });
+              },
+            ),
+            _expandSources ? _buildSource() : _selectedSource(),
           ],
         ),
       ],
