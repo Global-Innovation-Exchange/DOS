@@ -19,6 +19,7 @@ class _JournalTagsState extends State<JournalTags> {
         initialValue: widget.log.tags ?? <String>[],
         //_log.tags,
         decoration: InputDecoration(
+            hintText: "Add or Create tags",
             prefixIcon: Icon(Icons.add_circle),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15.0),
