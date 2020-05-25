@@ -45,7 +45,7 @@ class _CreateLogState extends State<CreateLog> {
           return true;
         },
         child: AlertDialog(
-          content: Text("You have unsaved changs, are you sure to leave?"),
+          content: Text("You have unsaved changes, are you sure to leave?"),
           actions: <Widget>[
             FlatButton(
               child: Text("YES"),
