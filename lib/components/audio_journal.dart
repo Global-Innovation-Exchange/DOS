@@ -171,7 +171,7 @@ class _AudioJournalState extends State<AudioJournal> {
     var handlePressed = _isPlaying || _isRecording
         ? null
         : () async {
-            var deleted = await deleteFile(_log.tempAudioPath);
+            bool deleted = await deleteFile(_log.tempAudioPath);
             if (deleted) {
               setState(() {
                 _log.tempAudioPath = null;

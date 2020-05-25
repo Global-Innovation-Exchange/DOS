@@ -28,31 +28,31 @@ class _AdditionalLogState extends State<AdditionalLog> {
   EmotionTable _db = EmotionTable();
 
   Widget _buildSource() {
-    var children = EmotionSource.values.map((src) {
-      var isSelected = _log.source == src;
-      var color = isSelected ? Colors.white : Colors.black38;
+    List<Widget> children = EmotionSource.values.map((src) {
+      bool isSelected = _log.source == src;
+      Color color = isSelected ? Colors.white : Colors.black38;
 
-      return Container(
-          margin: EdgeInsets.only(bottom: 30),
-          padding: EdgeInsets.only(right: 15),
-          child: CircleAvatar(
-            radius: 30,
-            backgroundColor: isSelected ? Color(0xffE1B699) : Colors.white,
-            child: IconButton(
-              icon: getEmotionSourceIcon(src, color: color),
-              onPressed: () {
-                setState(() {
-                  if (_log.source == src) {
-                    _log.source = null;
-                  } else {
-                    _log.source = src;
-                  }
-                });
-              },
-            ),
-          ));
+      return CircleAvatar(
+        radius: 30,
+        backgroundColor: isSelected ? Color(0xffE1B699) : Colors.white,
+        child: IconButton(
+          icon: getEmotionSourceIcon(src, color: color),
+          onPressed: () {
+            setState(() {
+              if (_log.source == src) {
+                _log.source = null;
+              } else {
+                _log.source = src;
+              }
+            });
+          },
+        ),
+      );
     }).toList();
-    return Row(children: children);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: children,
+    );
   }
 
   @override
@@ -76,6 +76,7 @@ class _AdditionalLogState extends State<AdditionalLog> {
               _buildSource(),
             ],
           ),
+          SizedBox(height: 20),
           ChipsInput(
             initialValue: _log.tags ?? <String>[],
             decoration: InputDecoration(
