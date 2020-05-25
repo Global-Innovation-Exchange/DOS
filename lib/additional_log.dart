@@ -57,42 +57,39 @@ class _AdditionalLogState extends State<AdditionalLog> {
         var isSelected = _log.source == src;
         var color = isSelected ? Colors.white : Colors.black38;
 
-        return Container(
-            margin: EdgeInsets.only(bottom: 30),
-            padding: EdgeInsets.only(right: 15),
-            child: CircleAvatar(
-              radius: 30,
-              backgroundColor: isSelected ? Color(0xffE1B699) : Colors.white,
-              child: IconButton(
-                icon: getEmotionSourceIcon(src, color: color),
-                onPressed: () {
-                  setState(() {
-                    if (_log.source == src) {
-                      _log.source = null;
-                    } else {
-                      _log.source = src;
-                    }
-                  });
-                },
-              ),
-            ));
+        return CircleAvatar(
+          radius: 30,
+          backgroundColor: isSelected ? Color(0xffE1B699) : Colors.white,
+          child: IconButton(
+            icon: getEmotionSourceIcon(src, color: color),
+            onPressed: () {
+              setState(() {
+                if (_log.source == src) {
+                  _log.source = null;
+                } else {
+                  _log.source = src;
+                }
+              });
+            },
+          ),
+        );
       }).toList();
-      return Row(children: children);
+      return Row(
+        children: children,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      );
     }
 
-    Widget emotionSource = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text("I feel this way because..."),
-        SizedBox(height: 15.0),
-        Row(
-          children: <Widget>[
-            Container(
-              child: _buildSource(),
-            ),
-          ],
-        ),
-      ],
+    Widget emotionSource = Padding(
+      padding: EdgeInsets.symmetric(horizontal: 5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text("I feel this way because..."),
+          SizedBox(height: 15.0),
+          _buildSource(),
+        ],
+      ),
     );
 
     Widget journalText = Container(
@@ -139,7 +136,7 @@ class _AdditionalLogState extends State<AdditionalLog> {
                   ),
                 ),
                 emotionSource,
-                //SizedBox(height: 15.0),
+                SizedBox(height: 15.0),
                 journalVoice,
                 journalText,
               ],
@@ -148,7 +145,6 @@ class _AdditionalLogState extends State<AdditionalLog> {
         ),
       ),
     );
-
 
     return Scaffold(
       appBar: AppBar(
