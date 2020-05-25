@@ -108,10 +108,10 @@ class _EmotionDetailState extends State<EmotionDetail> {
       ),
     );
 
-    Widget _buildSource() {
-      var children = EmotionSource.values.map((src) {
-        var isSelected = _log.source == src;
-        var color = isSelected ? Colors.white : Colors.black38;
+    Widget _buildSources() {
+      List<Widget> children = EmotionSource.values.map((src) {
+        bool isSelected = _log.source == src;
+        Color color = isSelected ? Colors.white : Colors.black38;
 
         return Container(
             padding: EdgeInsets.only(right: 15),
@@ -133,12 +133,18 @@ class _EmotionDetailState extends State<EmotionDetail> {
               ),
             ));
       }).toList();
-      return Row(children: children);
+      return Row(
+        children: children,
+        // Use false to indicate this is exapnded
+        key: ValueKey<bool>(true),
+      );
     }
 
     Widget _selectedSource() {
       return _log.source != null
           ? CircleAvatar(
+              // Use false to indicate this is not exapnded
+              key: ValueKey<bool>(false),
               backgroundColor: Color(0xffE1B699),
               child: getEmotionSourceIcon(
                 _log.source,
@@ -147,26 +153,81 @@ class _EmotionDetailState extends State<EmotionDetail> {
           : SizedBox.shrink();
     }
 
-    Widget emotionSource = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text("I feel this way because..."),
-        SizedBox(height: 15.0),
-        Row(
-          children: <Widget>[
-            IconButton(
-              iconSize: 20,
-              icon: Icon(Icons.edit),
-              onPressed: () {
-                setState(() {
-                  _expandSources = !_expandSources;
-                });
-              },
-            ),
-            _expandSources ? _buildSource() : _selectedSource(),
-          ],
-        ),
-      ],
+    Widget emotionSource = Padding(
+      padding: EdgeInsets.symmetric(horizontal: 5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text("I feel this way because..."),
+          SizedBox(height: 15.0),
+          Row(
+            children: <Widget>[
+              IconButton(
+                iconSize: 20,
+                icon: Icon(Icons.edit),
+                onPressed: () {
+                  setState(() {
+                    _expandSources = !_expandSources;
+                  });
+                },
+              ),
+              AnimatedCrossFade(
+                firstCurve: Curves.easeOutBack,
+                secondCurve: Curves.easeInBack,
+                layoutBuilder:
+                    (topChild, topChildKey, bottomChild, bottomChildKey) {
+                  ValueKey<CrossFadeState> topKey = topChildKey as ValueKey;
+                  if (topKey.value == CrossFadeState.showFirst) {
+                    double left = (_log.source != null)
+                        ? 0
+                        : (EmotionSource.values.indexOf(_log.source) + 1) *
+                            (20.0 + 15.0);
+                    // Showing buildSources
+                    return Stack(
+                      overflow: Overflow.visible,
+                      alignment: Alignment.centerLeft,
+                      children: <Widget>[
+                        Positioned(
+                          key: bottomChildKey,
+                          left: left,
+                          child: bottomChild,
+                        ),
+                        Positioned(
+                          key: topChildKey,
+                          child: topChild,
+                        )
+                      ],
+                    );
+                  } else {
+                    // Showing selectedSource
+                    return Stack(
+                      overflow: Overflow.visible,
+                      alignment: Alignment.centerLeft,
+                      children: <Widget>[
+                        Positioned(
+                          key: bottomChildKey,
+                          child: bottomChild,
+                        ),
+                        Positioned(
+                          key: topChildKey,
+                          left: 0,
+                          child: topChild,
+                        )
+                      ],
+                    );
+                  }
+                },
+                duration: const Duration(milliseconds: 200),
+                firstChild: _buildSources(),
+                secondChild: _selectedSource(),
+                crossFadeState: _expandSources
+                    ? CrossFadeState.showFirst
+                    : CrossFadeState.showSecond,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
 
     Widget journalText = Container(
