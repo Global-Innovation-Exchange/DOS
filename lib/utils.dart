@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -79,4 +81,24 @@ Future<String> createTempAudioPath() async {
     exists = await tempFile.exists();
   }
   return tempFile.path;
+}
+
+Future<Set<int>> getAudioIds() async {
+  final isAAC = RegExp(r'^([0-9]+)\.acc$');
+  final Set<int> ids = Set();
+  final completer = Completer<Set<int>>();
+  Directory d = await getApplicationDocumentsDirectory();
+  var lister = d.list(recursive: false, followLinks: false);
+  lister.listen(
+    (file) {
+      String filename = basename(file.path);
+      final match = isAAC.firstMatch(filename);
+      if (match != null) {
+        ids.add(int.parse(match.group(1)));
+      }
+    },
+    onDone: () => completer.complete(ids),
+    onError: (error) => completer.completeError(error),
+  );
+  return await completer.future;
 }

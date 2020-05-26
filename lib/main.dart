@@ -48,10 +48,12 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final EmotionTable _emotionTable = EmotionTable();
   Future<List<EmotionLog>> _logsFuture;
+  Set<int> _audioIds = Set<int>();
 
   Future<List<EmotionLog>> getLogs() async {
     // TODO: (pref) Don't get all the logs and with all tags here
-    return _emotionTable.getLogs(withTags: true);
+    _audioIds = await getAudioIds();
+    return await _emotionTable.getLogs(withTags: true);
   }
 
   Widget _buildSourceIcon(EmotionSource source) {
@@ -100,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            _buildIcon(Icons.mic, true),
+            _buildIcon(Icons.mic, _audioIds.contains(log.id)),
             _buildIcon(
               Icons.text_fields,
               log.journal != null && log.journal.length > 0,
