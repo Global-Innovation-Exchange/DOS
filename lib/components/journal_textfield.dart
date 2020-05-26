@@ -25,15 +25,28 @@ class _JorunalTextFieldState extends State<JorunalTextField> {
   _JorunalTextFieldState(log) {
     _log = log;
     _controller = TextEditingController(text: _log.journal);
+    _focusNode = FocusNode();
+    _isFocus = false;
   }
-  FocusNode myFocusNode = new FocusNode();
+  FocusNode _focusNode;
   EmotionLog _log;
   TextEditingController _controller;
+  bool _isFocus;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(() {
+      setState(() {
+        _isFocus = _focusNode.hasFocus;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      focusNode: myFocusNode,
+      focusNode: _focusNode,
       maxLines: null,
       minLines: widget.minLines,
       maxLength: 7000,
@@ -41,7 +54,7 @@ class _JorunalTextFieldState extends State<JorunalTextField> {
       enableInteractiveSelection: true, // allow selection
       controller: _controller,
       decoration: InputDecoration(
-        fillColor: myFocusNode.hasFocus ? Colors.white : widget.fillColor,
+        fillColor: _isFocus ? Colors.white : widget.fillColor,
         filled: true,
         prefixIcon: Icon(Icons.edit),
         labelText: "Written Journal",
@@ -67,7 +80,7 @@ class _JorunalTextFieldState extends State<JorunalTextField> {
   @override
   void dispose() {
     _controller.dispose();
-    myFocusNode.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 }
