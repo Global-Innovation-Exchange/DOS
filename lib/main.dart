@@ -155,13 +155,21 @@ class _MyHomePageState extends State<MyHomePage> {
                                 color: Colors.black45,
                               ),
                             ),
-                            Slider(
-                                value: logs[position].scale.toDouble(),
-                                min: 1.0,
-                                max: 5.0,
-                                divisions: 4,
-                                label: logs[position].scale.toString(),
-                                onChanged: null),
+                            SliderTheme(
+                              data: SliderThemeData(
+                                disabledInactiveTrackColor:
+                                    themeForegroundColor,
+                                disabledActiveTrackColor: themeForegroundColor,
+                                disabledThumbColor: themeForegroundColor,
+                              ),
+                              child: Slider(
+                                  value: logs[position].scale.toDouble(),
+                                  min: 1.0,
+                                  max: 5.0,
+                                  divisions: 4,
+                                  label: logs[position].scale.toString(),
+                                  onChanged: null),
+                            ),
                           ],
                         ),
                       ),
