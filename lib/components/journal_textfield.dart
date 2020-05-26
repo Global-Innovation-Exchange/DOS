@@ -1,5 +1,6 @@
 import 'package:dos/models/emotion_log.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class JorunalTextField extends StatefulWidget {
   JorunalTextField(
@@ -56,7 +57,7 @@ class _JorunalTextFieldState extends State<JorunalTextField> {
       decoration: InputDecoration(
         fillColor: _isFocus ? Colors.white : widget.fillColor,
         filled: true,
-        prefixIcon: Icon(Icons.edit),
+        prefixIcon: Icon(MdiIcons.textBox),
         labelText: "Written Journal",
         alignLabelWithHint: false,
         floatingLabelBehavior: FloatingLabelBehavior.always,
