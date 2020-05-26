@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import 'create_log.dart';
 import 'database.dart';
@@ -88,23 +89,25 @@ class _MyHomePageState extends State<MyHomePage> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Row(
-          mainAxisSize: MainAxisSize.max,
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            _buildSourceIcon(log.source),
             _buildIcon(
-              Icons.account_balance_wallet,
+              MdiIcons.tag,
               log.tags != null && log.tags.length > 0,
             ),
+            SizedBox(width: 8),
+            _buildSourceIcon(log.source),
           ],
         ),
         Row(
-          mainAxisSize: MainAxisSize.max,
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             _buildIcon(Icons.mic, _audioIds.contains(log.id)),
+            SizedBox(width: 8),
             _buildIcon(
-              Icons.text_fields,
+              MdiIcons.textBox,
               log.journal != null && log.journal.length > 0,
             ),
           ],
