@@ -2,11 +2,12 @@ import 'package:dos/database.dart';
 import 'package:dos/models/emotion_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chips_input/flutter_chips_input.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class JournalTags extends StatefulWidget {
   JournalTags({Key key, this.log}) : super(key: key);
   final EmotionLog log;
-  EmotionTable _db = EmotionTable();
+  final EmotionTable _db = EmotionTable();
 
   @override
   _JournalTagsState createState() => _JournalTagsState();
@@ -19,15 +20,16 @@ class _JournalTagsState extends State<JournalTags> {
         initialValue: widget.log.tags ?? <String>[],
         //_log.tags,
         decoration: InputDecoration(
-            hintText: "Add or Create tags",
-            prefixIcon: Icon(Icons.add_circle),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(style: BorderStyle.none),
-              borderRadius: BorderRadius.circular(15.0),
-            )),
+          hintText: "Add or Create tags",
+          prefixIcon: Icon(MdiIcons.tag),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(style: BorderStyle.none),
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+        ),
         maxChips: 50,
         findSuggestions: (String query) async {
           List<String> results = await widget._db.getTagsStartWith(query, 5);
