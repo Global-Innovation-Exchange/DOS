@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'create_log.dart';
@@ -5,6 +6,7 @@ import 'database.dart';
 import 'detail.dart';
 import 'models/emotion.dart';
 import 'models/emotion_log.dart';
+import 'models/emotion_source.dart';
 import 'utils.dart';
 
 //calling main function when app started
@@ -73,22 +75,106 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Stack(
                     children: <Widget>[
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                           Container(
                             padding: EdgeInsets.all(10),
                             child: getEmotionImage(logs[position].emotion),
                           ),
-                          Container(
-                            child: Text(
-                              formatDateTime(logs[position].dateTime),
-                              style: TextStyle(
-                                fontSize: 18.0,
-                                color: Colors.black45,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Container(
+                                padding: EdgeInsets.only(left: 18),
+                                child: Text(
+                                  formatDateTime(logs[position].dateTime),
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    color: Colors.black45,
+                                  ),
+                                ),
                               ),
-                            ),
-                          )
+                              Container(
+                                child: Slider(
+                                    value: logs[position].scale.toDouble(),
+                                    min: 1.0,
+                                    max: 5.0,
+                                    activeColor: Color(0xffE1B699),
+                                    inactiveColor: Colors.black12,
+                                    divisions: 4,
+                                    label: logs[position].scale.toString(),
+                                    onChanged: null),
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(left: 18),
+                                child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      logs[position].source != null
+                                          ? Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                  Text("Because  "),
+                                                  CircleAvatar(
+                                                      radius: 13,
+                                                      backgroundColor:
+                                                          Color(0xffE1B699),
+                                                      child:
+                                                          getEmotionSourceIcon(
+                                                        logs[position].source,
+                                                        color: Colors.white,
+                                                      ))
+                                                ])
+                                          : SizedBox.shrink(),
+                                    ]),
+                              )
+                            ],
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              logs[position].journal == null
+                                  ? SizedBox.shrink()
+                                  : Container(
+                                      padding: EdgeInsets.all(10),
+                                      child: Row(children: <Widget>[
+                                        Icon(
+                                          Icons.spellcheck,
+                                          color: Color(0xffE1B699),
+                                        ),
+                                        Text(' x ' +
+                                            logs[position]
+                                                .journal
+                                                .length
+                                                .toString()),
+                                      ])),
+                              logs[position].tags.length == 0
+                                  ? SizedBox.shrink()
+                                  : Container(
+                                      padding: EdgeInsets.all(10),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Icon(
+                                            Icons.style,
+                                            color: Color(0xffE1B699),
+                                          ),
+                                          Text(' x ' +
+                                              logs[position]
+                                                  .tags
+                                                  .length
+                                                  .toString())
+                                        ],
+                                      ))
+                            ],
+                          ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -118,7 +204,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-
     _logsFuture = getLogs();
   }
 
