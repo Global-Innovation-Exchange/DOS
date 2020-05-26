@@ -23,8 +23,9 @@ Map<int, Color> color = {
   800: Color.fromRGBO(255, 182, 153, .9),
   900: Color.fromRGBO(255, 182, 153, 1),
 };
-MaterialColor colorSwatch = MaterialColor(0xFFE1B699, color);
 
+MaterialColor colorSwatch = MaterialColor(0xFFE1B699, color);
+Color themeForegroundColor = Color(0xFFE1B699);
 Color themeColor = Color(0xffFEEFE6);
 
 OutlineInputBorder inputBorder = new OutlineInputBorder(

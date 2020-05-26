@@ -9,49 +9,33 @@ enum EmotionSource {
   sleep,
 }
 
-Icon getEmotionSourceIcon(EmotionSource src, {Color color}) {
-  Icon icon;
+Icon getEmotionSourceIcon(EmotionSource src, {Color color, double size}) {
+  IconData iconData;
   switch (src) {
     case EmotionSource.home:
-      {
-        icon = Icon(
-          Icons.home,
-          color: color,
-        );
-      }
+      iconData = Icons.home;
       break;
 
     case EmotionSource.work:
-      {
-        icon = Icon(Icons.work, color: color);
-      }
+      iconData = Icons.work;
       break;
 
     case EmotionSource.money:
-      {
-        icon = Icon(Icons.attach_money, color: color);
-      }
+      iconData = Icons.attach_money;
       break;
 
 //    case EmotionSource.humanchild:
-//      {
-//        icon = Icon(Icons.child_care, color: color);
-//      }
+//      iconData = Icons.child_care;
 //      break;
+
     case EmotionSource.people:
-      {
-        icon = Icon(Icons.group, color: color);
-        //icon = Icon(Icons.local_hospital);
-        //icon = Icon(Icons.school, color: color);
-      }
+      iconData = Icons.group;
       break;
 
     case EmotionSource.sleep:
-      {
-        icon = Icon(Icons.hotel, color: color);
-      }
+      iconData = Icons.hotel;
       break;
   }
 
-  return icon;
+  return Icon(iconData, color: color, size: size);
 }

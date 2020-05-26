@@ -54,6 +54,63 @@ class _MyHomePageState extends State<MyHomePage> {
     return _emotionTable.getLogs(withTags: true);
   }
 
+  Widget _buildSourceIcon(EmotionSource source) {
+    return Opacity(
+      opacity: source != null ? 1.0 : 0,
+      child: CircleAvatar(
+        radius: 13,
+        backgroundColor: themeForegroundColor,
+        child: getEmotionSourceIcon(
+          // Use source as a place holder since it's going to be hidden by opacity
+          source ?? EmotionSource.home,
+          color: Colors.white,
+          size: 18,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIcon(IconData data, bool visible) {
+    return Opacity(
+      opacity: visible ? 1 : 0,
+      child: Icon(
+        data,
+        color: themeForegroundColor,
+      ),
+    );
+  }
+
+  Widget _buildGrid(EmotionLog log) {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            _buildSourceIcon(log.source),
+            _buildIcon(
+              Icons.account_balance_wallet,
+              log.tags != null && log.tags.length > 0,
+            ),
+          ],
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            _buildIcon(Icons.mic, true),
+            _buildIcon(
+              Icons.text_fields,
+              log.journal != null && log.journal.length > 0,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
   ListView _buildList(List<EmotionLog> logs) {
     return ListView.builder(
         itemCount: logs.length,
@@ -72,109 +129,38 @@ class _MyHomePageState extends State<MyHomePage> {
                     borderRadius: BorderRadius.all(
                         Radius.circular(10.0)), // set rounded corner radius
                   ),
-                  child: Stack(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                            padding: EdgeInsets.all(10),
-                            child: getEmotionImage(logs[position].emotion),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Container(
-                                padding: EdgeInsets.only(left: 18),
-                                child: Text(
-                                  formatDateTime(logs[position].dateTime),
-                                  style: TextStyle(
-                                    fontSize: 18.0,
-                                    color: Colors.black45,
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                child: Slider(
-                                    value: logs[position].scale.toDouble(),
-                                    min: 1.0,
-                                    max: 5.0,
-                                    activeColor: Color(0xffE1B699),
-                                    inactiveColor: Colors.black12,
-                                    divisions: 4,
-                                    label: logs[position].scale.toString(),
-                                    onChanged: null),
-                              ),
-                              Container(
-                                padding: EdgeInsets.only(left: 18),
-                                child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: <Widget>[
-                                      logs[position].source != null
-                                          ? Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                  Text("Because  "),
-                                                  CircleAvatar(
-                                                      radius: 13,
-                                                      backgroundColor:
-                                                          Color(0xffE1B699),
-                                                      child:
-                                                          getEmotionSourceIcon(
-                                                        logs[position].source,
-                                                        color: Colors.white,
-                                                      ))
-                                                ])
-                                          : SizedBox.shrink(),
-                                    ]),
-                              )
-                            ],
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              logs[position].journal == null
-                                  ? SizedBox.shrink()
-                                  : Container(
-                                      padding: EdgeInsets.all(10),
-                                      child: Row(children: <Widget>[
-                                        Icon(
-                                          Icons.spellcheck,
-                                          color: Color(0xffE1B699),
-                                        ),
-                                        Text(' x ' +
-                                            logs[position]
-                                                .journal
-                                                .length
-                                                .toString()),
-                                      ])),
-                              logs[position].tags.length == 0
-                                  ? SizedBox.shrink()
-                                  : Container(
-                                      padding: EdgeInsets.all(10),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Icon(
-                                            Icons.style,
-                                            color: Color(0xffE1B699),
-                                          ),
-                                          Text(' x ' +
-                                              logs[position]
-                                                  .tags
-                                                  .length
-                                                  .toString())
-                                        ],
-                                      ))
-                            ],
-                          ),
-                        ],
+                      // Emotion icon
+                      Container(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        child: getEmotionImage(logs[position].emotion),
                       ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 7),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Text(
+                              formatDateTime(logs[position].dateTime),
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                color: Colors.black45,
+                              ),
+                            ),
+                            Slider(
+                                value: logs[position].scale.toDouble(),
+                                min: 1.0,
+                                max: 5.0,
+                                divisions: 4,
+                                label: logs[position].scale.toString(),
+                                onChanged: null),
+                          ],
+                        ),
+                      ),
+                      _buildGrid(logs[position]),
                     ],
                   ),
                 ),
