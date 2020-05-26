@@ -120,16 +120,21 @@ class _EmotionDetailState extends State<EmotionDetail> {
               backgroundColor: isSelected ? Color(0xffE1B699) : Colors.white,
               child: IconButton(
                 icon: getEmotionSourceIcon(src, color: color),
-                onPressed: () {
-                  setState(() {
-                    if (_log.source == src) {
-                      _log.source = null;
-                    } else {
-                      _log.source = src;
-                    }
-                    _expandSources = false;
-                  });
-                },
+                onPressed: _expandSources
+                // Only set onPressed when it's shown because
+                // the animation is stacking this under and the button
+                // could still be clickable
+                    ? () {
+                        setState(() {
+                          if (_log.source == src) {
+                            _log.source = null;
+                          } else {
+                            _log.source = src;
+                          }
+                          _expandSources = false;
+                        });
+                      }
+                    : null,
               ),
             ));
       }).toList();
