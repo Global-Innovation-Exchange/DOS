@@ -177,6 +177,20 @@ class EmotionTable {
     return logs;
   }
 
+  Future<List<EmotionLog>> getMonthlyLogs(
+      {int year, int month, withTags = false}) {
+    if (month < 1 || month > 12) {
+      throw RangeError.range(month, 1, 12);
+    }
+
+    // in local time zone
+    final startTime = DateTime(year, month);
+    int endYear = year + (month + 1 / 12).toInt();
+    int endMonth = (month + 1) % 12;
+    final endTime = DateTime(endYear, endMonth);
+    return getLogs(from: startTime, to: endTime, withTags: withTags);
+  }
+
   Future<List<EmotionLog>> getLogs(
       {DateTime from, DateTime to, withTags = false}) async {
     // Get a reference to the database.
