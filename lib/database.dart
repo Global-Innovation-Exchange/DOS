@@ -110,12 +110,34 @@ class EmotionTable {
     return logId;
   }
 
+  // TEST ONLY DO NOT USE IN PROD
+  Future<List<String>> getTags() async {
+    final Database db = await database;
+    final maps = await db.query(tableTags);
+    return List.generate(maps.length, (i) => maps[i]['tag']);
+  }
+
   Future<List<String>> getTagsBy(int logId) async {
     final Database db = await database;
-    var maps = await db.rawQuery(
+    final maps = await db.rawQuery(
         'SELECT t.tag FROM log_tags lt INNER JOIN tags t ON lt.tag_id = t.id WHERE lt.log_id = ?',
         [logId]);
     return List.generate(maps.length, (i) => maps[i]['tag']);
+  }
+
+  // UNBOUNDED DON NO USE IN PROD
+  Future<Map<String, int>> getTagCount() async {
+    final Database db = await database;
+    final maps = await db.rawQuery(
+      'SELECT t.tag, COUNT(*) FROM log_tags lt INNER JOIN tags t ON lt.tag_id = t.id GROUP BY t.tag',
+    );
+
+    final count = Map<String, int>();
+    maps.forEach((element) {
+      count[element["tag"]] = element['COUNT(*)'];
+    });
+
+    return count;
   }
 
   Future<List<String>> getTagsStartWith(String str, int limit) async {
@@ -123,7 +145,7 @@ class EmotionTable {
       return <String>[];
     }
     final Database db = await database;
-    var maps = await db.query(tableTags,
+    final maps = await db.query(tableTags,
         columns: ['tag'],
         where: 'tag LIKE ?',
         whereArgs: ['$str%'],
@@ -171,7 +193,7 @@ class EmotionTable {
       );
 
       // Remove all assoication of tags and reinsert
-      await txn.delete(tableLogTags, where: "log_id = ?", whereArgs: [log.id]); 
+      await txn.delete(tableLogTags, where: "log_id = ?", whereArgs: [log.id]);
       if (log.tags != null && log.tags.length > 0) {
         // Insert all tags. If there is conflict in insertion the row id
         // might be null, so we can't use the return value to create log_tags.
