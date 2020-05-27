@@ -2,12 +2,12 @@ import 'package:dos/components/journal_datetime.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../components/emotion_slider.dart';
+import '../database.dart';
+import '../models/emotion.dart';
+import '../models/emotion_log.dart';
+import '../utils.dart';
 import 'additional_log.dart';
-import 'components/emotion_slider.dart';
-import 'database.dart';
-import 'models/emotion.dart';
-import 'models/emotion_log.dart';
-import 'utils.dart';
 
 class CreateLog extends StatefulWidget {
   @override

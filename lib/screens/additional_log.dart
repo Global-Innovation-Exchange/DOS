@@ -1,16 +1,16 @@
-import 'package:dos/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'components/audio_journal.dart';
-import 'components/emotion_slider.dart';
-import 'components/journal_datetime.dart';
-import 'components/journal_tags.dart';
-import 'components/journal_textfield.dart';
-import 'database.dart';
-import 'models/emotion.dart';
-import 'models/emotion_log.dart';
-import 'models/emotion_source.dart';
+import '../components/audio_journal.dart';
+import '../components/emotion_slider.dart';
+import '../components/journal_datetime.dart';
+import '../components/journal_tags.dart';
+import '../components/journal_textfield.dart';
+import '../database.dart';
+import '../models/emotion.dart';
+import '../models/emotion_log.dart';
+import '../models/emotion_source.dart';
+import '../utils.dart';
 
 class AdditionalLog extends StatefulWidget {
   AdditionalLog({Key key, this.log}) : super(key: key);

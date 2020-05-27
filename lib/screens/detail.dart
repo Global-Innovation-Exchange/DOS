@@ -5,12 +5,12 @@ import 'package:dos/components/journal_textfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'components/journal_tags.dart';
-import 'database.dart';
-import 'models/emotion.dart';
-import 'models/emotion_log.dart';
-import 'models/emotion_source.dart';
-import 'utils.dart';
+import '../components/journal_tags.dart';
+import '../database.dart';
+import '../models/emotion.dart';
+import '../models/emotion_log.dart';
+import '../models/emotion_source.dart';
+import '../utils.dart';
 
 class EmotionDetail extends StatefulWidget {
   EmotionDetail({Key key, this.log}) : super(key: key);
@@ -121,9 +121,9 @@ class _EmotionDetailState extends State<EmotionDetail> {
               child: IconButton(
                 icon: getEmotionSourceIcon(src, color: color),
                 onPressed: _expandSources
-                // Only set onPressed when it's shown because
-                // the animation is stacking this under and the button
-                // could still be clickable
+                    // Only set onPressed when it's shown because
+                    // the animation is stacking this under and the button
+                    // could still be clickable
                     ? () {
                         setState(() {
                           if (_log.source == src) {
