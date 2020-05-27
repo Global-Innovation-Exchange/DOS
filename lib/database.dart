@@ -154,13 +154,39 @@ class EmotionTable {
     return List.generate(maps.length, (i) => maps[i]['tag']);
   }
 
-  Future<List<EmotionLog>> getLogs({withTags = false}) async {
+  Future<List<EmotionLog>> getAllLogs({withTags = false}) async {
     // Get a reference to the database.
     final Database db = await database;
 
     // Query the table for all The EmotionLogs.
     final List<Map<String, dynamic>> maps =
         await db.query(tableLogs, orderBy: 'datetime DESC');
+
+    // Convert the List<Map<String, dynamic> into a List<EmotionLog>.
+    var logs = List.generate(
+      maps.length,
+      (i) => EmotionLog.fomObject(maps[i]),
+    );
+
+    if (withTags) {
+      // Get all the tags (expensive)
+      await Future.wait(logs.map((l) async {
+        l.tags = await getTagsBy(l.id);
+      }));
+    }
+    return logs;
+  }
+
+  Future<List<EmotionLog>> getLogs(
+      {DateTime from, DateTime to, withTags = false}) async {
+    // Get a reference to the database.
+    final Database db = await database;
+
+    // Query the table for all The EmotionLogs.
+    final List<Map<String, dynamic>> maps = await db.query(tableLogs,
+        where: "datetime >= ? AND datetime <= ?",
+        whereArgs: [from.millisecondsSinceEpoch, to.millisecondsSinceEpoch],
+        orderBy: 'datetime DESC');
 
     // Convert the List<Map<String, dynamic> into a List<EmotionLog>.
     var logs = List.generate(

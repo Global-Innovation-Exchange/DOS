@@ -54,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<List<EmotionLog>> getLogs() async {
     // TODO: (pref) Don't get all the logs and with all tags here
     _audioIds = await getAudioIds();
-    return await _emotionTable.getLogs(withTags: true);
+    return await _emotionTable.getAllLogs(withTags: true);
   }
 
   Widget _buildSourceIcon(EmotionSource source) {
