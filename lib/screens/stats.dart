@@ -131,16 +131,19 @@ class _StatResult {
     this.audioIds,
     this.logs,
     this.sourceCount,
+    this.tagCount,
   );
 
   Set<int> audioIds;
   List<EmotionLog> logs;
   LinkedHashMap<EmotionSource, int> sourceCount;
+  LinkedHashMap<String, int> tagCount;
 
   static Future<_StatResult> load(EmotionTable db, int year, int month) async {
     final audioIds = await getAudioIds();
     final logs = await db.getMonthlyLogs(year, month, withTags: true);
     final sourceCount = await db.getMonthlySourceCount(year, month);
-    return _StatResult(audioIds, logs, sourceCount);
+    final tagCount = await db.getMonthlyTagCount(year, month);
+    return _StatResult(audioIds, logs, sourceCount, tagCount);
   }
 }
