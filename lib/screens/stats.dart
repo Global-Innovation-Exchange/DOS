@@ -4,6 +4,7 @@ import 'package:dos/database.dart';
 import 'package:dos/models/emotion_source.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../database.dart';
 import '../models/emotion_log.dart';
@@ -36,7 +37,10 @@ class _StatScreenState extends State<StatScreen> {
           constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
           child: Column(
             children: <Widget>[
+              DaysLoggedRow(stats: stats),
+              TreadingTagsRow(stats: stats),
               SourceRow(stats: stats),
+              JournalCountRow(stats: stats),
             ],
           ),
         ),
@@ -71,49 +75,43 @@ class _StatScreenState extends State<StatScreen> {
 }
 
 // This is a row element that have all the shared style
-class StatRow extends StatelessWidget {
-  StatRow({
+class StatRowContainer extends StatelessWidget {
+  StatRowContainer({
     Key key,
-    this.children,
+    this.child,
     this.title,
-    this.mainAxisAlignment = MainAxisAlignment.start,
-    this.mainAxisSize = MainAxisSize.max,
-    this.crossAxisAlignment = CrossAxisAlignment.center,
   }) : super(key: key);
-  final List<Widget> children;
+  final Widget child;
   final String title;
-  final MainAxisAlignment mainAxisAlignment;
-  final MainAxisSize mainAxisSize;
-  final CrossAxisAlignment crossAxisAlignment;
 
   @override
   Widget build(BuildContext context) {
     // TODO: style so all rows has a common style
     return Container(
-        margin: EdgeInsets.all(20),
-        padding: EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: themeForegroundColor,
-          borderRadius: BorderRadius.all(
-            // set rounded corner radius
-            Radius.circular(10.0),
-          ),
+      margin: EdgeInsets.all(20),
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: themeForegroundColor,
+        borderRadius: BorderRadius.all(
+          // set rounded corner radius
+          Radius.circular(10.0),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              margin: EdgeInsets.only(bottom: 13),
-              child: Text(this.title,
-                  style: Theme.of(context).textTheme.subtitle1),
-            ),
-            Row(
-                mainAxisAlignment: mainAxisAlignment,
-                mainAxisSize: mainAxisSize,
-                crossAxisAlignment: crossAxisAlignment,
-                children: this.children),
-          ],
-        ));
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            margin: EdgeInsets.only(bottom: 25),
+            child:
+                Text(this.title, style: Theme.of(context).textTheme.bodyText1),
+          ),
+          Container(
+            width: double.infinity,
+            child: child,
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -124,65 +122,208 @@ class SourceRow extends StatelessWidget {
   Widget _buildIcon(EmotionSource source, int count) {
     return Stack(
       children: <Widget>[
-        Container(
-          height: 56,
-          alignment: Alignment.bottomCenter,
-          padding: EdgeInsets.only(right: 26),
-          child: getEmotionSourceIcon(source, size: 35),
-        ),
-        new Positioned(
-          //width: 40,
-          //height: 40,
-          left: 22,
-          bottom: 29,
-          //top: -2,
-          //  bottom: -15
+        Padding(
+          padding: EdgeInsets.only(right: 10),
           child: CircleAvatar(
-            radius: 13,
-            backgroundColor: Colors.white,
-            child: CircleAvatar(
-                radius: 10,
+              radius: 20,
+              backgroundColor: Colors.white,
+              child: CircleAvatar(
+                radius: 16,
                 backgroundColor: themeForegroundColor,
                 child: Text(
                   count.toString(),
                   style: TextStyle(color: Colors.black),
-                )),
-          ),
-        )
+                ),
+              )),
+        ),
+        new Positioned(
+          left: -4,
+          bottom: -6,
+          child: getEmotionSourceIcon(source, size: 26),
+        ),
       ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return StatRow(
-      title: "Emotion Sources (Top 5)",
-      children: stats.sourceCount.entries
-          .take(5)
-          .map((entry) => _buildIcon(entry.key, entry.value))
-          .toList(),
+    return StatRowContainer(
+        title: "Emotion Sources (Top 5)",
+        child: Wrap(
+          spacing: 20,
+          children: stats.sourceCount.entries
+              .take(5)
+              .map((entry) => _buildIcon(entry.key, entry.value))
+              .toList(),
+        ));
+  }
+}
+
+class DaysLoggedRow extends StatelessWidget {
+  DaysLoggedRow({Key key, this.stats}) : super(key: key);
+  final _StatResult stats;
+
+  @override
+  Widget build(BuildContext context) {
+    final tuple = stats.daysLogged;
+    final daysLogged = tuple[0];
+    final daysNotLogged = tuple[1];
+
+    return StatRowContainer(
+      title: "Days Logged",
+      child: Row(
+        children: [
+          Text('Days Logged: $daysLogged'),
+          Text('Days Not Logged: $daysNotLogged'),
+        ],
+      ),
+    );
+  }
+}
+
+class TreadingTagsRow extends StatelessWidget {
+  TreadingTagsRow({Key key, this.stats}) : super(key: key);
+  final _StatResult stats;
+
+  @override
+  Widget build(BuildContext context) {
+    return StatRowContainer(
+      title: "Treading Tags (Top 5)",
+      child: Wrap(
+        spacing: 10,
+        children: stats.tagCount.entries
+            .take(5)
+            .map(
+              (t) => Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  InputChip(
+                    key: ObjectKey(t.key),
+                    label: Text(t.key),
+                    avatar: CircleAvatar(
+                      child: Text('#'),
+                    ),
+                  ),
+                  Text("x ${t.value}"),
+                ],
+              ),
+            )
+            .toList(),
+      ),
+    );
+  }
+}
+
+class JournalCountRow extends StatelessWidget {
+  JournalCountRow({Key key, this.stats}) : super(key: key);
+  final _StatResult stats;
+
+  Widget _buildIcon(IconData iconData, int count) {
+    return Column(
+      children: <Widget>[
+        Icon(iconData),
+        Text(count.toString()),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final numOfLog = stats.jounralCount;
+    final int numOfLogWithSource = numOfLog[0];
+    final int numOfLogWithTags = numOfLog[1];
+    final int numOfLogWithAudio = numOfLog[2];
+    final int numOfLogWithJournal = numOfLog[3];
+    return StatRowContainer(
+      title: "Journal Counts",
+      child: Wrap(
+        spacing: 30,
+        children: [
+          _buildIcon(MdiIcons.headDotsHorizontalOutline, numOfLogWithSource),
+          _buildIcon(MdiIcons.tag, numOfLogWithTags),
+          _buildIcon(Icons.mic, numOfLogWithAudio),
+          _buildIcon(MdiIcons.textBox, numOfLogWithJournal),
+        ],
+      ),
     );
   }
 }
 
 class _StatResult {
   _StatResult(
+    this.year,
+    this.month,
     this.audioIds,
     this.logs,
     this.sourceCount,
     this.tagCount,
   );
 
+  int year;
+  int month;
   Set<int> audioIds;
   List<EmotionLog> logs;
   LinkedHashMap<EmotionSource, int> sourceCount;
   LinkedHashMap<String, int> tagCount;
 
+  get daysLogged {
+    Set<int> dayLogged = Set<int>();
+    logs.forEach((element) {
+      dayLogged.add(element.dateTime.day);
+    });
+
+    var daysLogged = 0;
+    var daysNotLogged = 0;
+    var time = DateTime(year, month);
+    while (time.month == month) {
+      if (dayLogged.contains(time.day)) {
+        daysLogged++;
+      } else {
+        daysNotLogged++;
+      }
+      time = time.add(Duration(days: 1));
+    }
+    return [daysLogged, daysNotLogged];
+  }
+
+  get jounralCount {
+    int numOfLogWithSource = 0;
+    int numOfLogWithTags = 0;
+    int numOfLogWithAudio = 0;
+    int numOfLogWithJournal = 0;
+    logs.forEach((log) {
+      numOfLogWithSource += (log.source != null) ? 1 : 0;
+      numOfLogWithTags += (log.tags != null && log.tags.length > 0) ? 1 : 0;
+      numOfLogWithAudio += (audioIds.contains(log.id)) ? 1 : 0;
+      numOfLogWithJournal +=
+          (log.journal != null && log.journal.length > 0) ? 1 : 0;
+    });
+    return [
+      numOfLogWithSource,
+      numOfLogWithTags,
+      numOfLogWithAudio,
+      numOfLogWithJournal,
+    ];
+  }
+
+  get emotionChart {}
+
   static Future<_StatResult> load(EmotionTable db, int year, int month) async {
-    final audioIds = await getAudioIds();
-    final logs = await db.getMonthlyLogs(year, month, withTags: true);
-    final sourceCount = await db.getMonthlySourceCount(year, month);
-    final tagCount = await db.getMonthlyTagCount(year, month);
-    return _StatResult(audioIds, logs, sourceCount, tagCount);
+    final audioIdsFuture = getAudioIds();
+    final logsFuture = db.getMonthlyLogs(year, month, withTags: true);
+    final sourceCountFuture = db.getMonthlySourceCount(year, month);
+    final tagCountFuture = db.getMonthlyTagCount(year, month);
+    // concurrently wait all
+    await Future.wait([
+      audioIdsFuture,
+      logsFuture,
+      sourceCountFuture,
+      tagCountFuture,
+    ]);
+    final audioIds = await audioIdsFuture;
+    final logs = await logsFuture;
+    final sourceCount = await sourceCountFuture;
+    final tagCount = await tagCountFuture;
+    return _StatResult(year, month, audioIds, logs, sourceCount, tagCount);
   }
 }
