@@ -120,31 +120,28 @@ class SourceRow extends StatelessWidget {
   final _StatResult stats;
 
   Widget _buildIcon(EmotionSource source, int count) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 6),
-      child: Stack(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(right: 10),
-            child: CircleAvatar(
-                radius: 20,
-                backgroundColor: Colors.white,
-                child: CircleAvatar(
-                  radius: 16,
-                  backgroundColor: themeForegroundColor,
-                  child: Text(
-                    count.toString(),
-                    style: TextStyle(color: Colors.black),
-                  ),
-                )),
-          ),
-          new Positioned(
-            left: -4,
-            bottom: -6,
-            child: getEmotionSourceIcon(source, size: 26),
-          ),
-        ],
-      ),
+    return Stack(
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(right: 10),
+          child: CircleAvatar(
+              radius: 20,
+              backgroundColor: Colors.white,
+              child: CircleAvatar(
+                radius: 16,
+                backgroundColor: themeForegroundColor,
+                child: Text(
+                  count.toString(),
+                  style: TextStyle(color: Colors.black),
+                ),
+              )),
+        ),
+        new Positioned(
+          left: -4,
+          bottom: -6,
+          child: getEmotionSourceIcon(source, size: 26),
+        ),
+      ],
     );
   }
 
@@ -152,7 +149,8 @@ class SourceRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return StatRowContainer(
         title: "Emotion Sources (Top 5)",
-        child: Row(
+        child: Wrap(
+          spacing: 20,
           children: stats.sourceCount.entries
               .take(5)
               .map((entry) => _buildIcon(entry.key, entry.value))
@@ -238,8 +236,8 @@ class JournalCountRow extends StatelessWidget {
     final int numOfLogWithJournal = numOfLog[3];
     return StatRowContainer(
       title: "Journal Counts",
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      child: Wrap(
+        spacing: 30,
         children: [
           _buildIcon(MdiIcons.headDotsHorizontalOutline, numOfLogWithSource),
           _buildIcon(MdiIcons.tag, numOfLogWithTags),
