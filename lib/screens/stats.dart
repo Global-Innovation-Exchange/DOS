@@ -196,12 +196,17 @@ class TreadingTagsRow extends StatelessWidget {
         children: stats.tagCount.entries
             .take(5)
             .map(
-              (t) => InputChip(
+              (t) => Row(
+                children: [
+                  InputChip(
                 key: ObjectKey(t.key),
                 label: Text(t.key),
                 avatar: CircleAvatar(
                   child: Text('#'),
                 ),
+              ),
+                  Text("x ${t.value}"),
+                ],
               ),
             )
             .toList(),
