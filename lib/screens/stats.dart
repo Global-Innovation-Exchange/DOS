@@ -37,6 +37,7 @@ class _StatScreenState extends State<StatScreen> {
           child: Column(
             children: <Widget>[
               DaysLoggedRow(stats: stats),
+              TreadingTagsRow(stats: stats),
               SourceRow(stats: stats),
             ],
           ),
@@ -72,20 +73,14 @@ class _StatScreenState extends State<StatScreen> {
 }
 
 // This is a row element that have all the shared style
-class StatRow extends StatelessWidget {
-  StatRow({
+class StatRowContainer extends StatelessWidget {
+  StatRowContainer({
     Key key,
-    this.children,
+    this.child,
     this.title,
-    this.mainAxisAlignment = MainAxisAlignment.start,
-    this.mainAxisSize = MainAxisSize.max,
-    this.crossAxisAlignment = CrossAxisAlignment.center,
   }) : super(key: key);
-  final List<Widget> children;
+  final Widget child;
   final String title;
-  final MainAxisAlignment mainAxisAlignment;
-  final MainAxisSize mainAxisSize;
-  final CrossAxisAlignment crossAxisAlignment;
 
   @override
   Widget build(BuildContext context) {
@@ -108,11 +103,10 @@ class StatRow extends StatelessWidget {
             child:
                 Text(this.title, style: Theme.of(context).textTheme.bodyText1),
           ),
-          Row(
-              mainAxisAlignment: mainAxisAlignment,
-              mainAxisSize: mainAxisSize,
-              crossAxisAlignment: crossAxisAlignment,
-              children: this.children),
+          Container(
+            width: double.infinity,
+            child: child,
+          ),
         ],
       ),
     );
@@ -154,13 +148,14 @@ class SourceRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StatRow(
-      title: "Emotion Sources (Top 5)",
-      children: stats.sourceCount.entries
-          .take(5)
-          .map((entry) => _buildIcon(entry.key, entry.value))
-          .toList(),
-    );
+    return StatRowContainer(
+        title: "Emotion Sources (Top 5)",
+        child: Row(
+          children: stats.sourceCount.entries
+              .take(5)
+              .map((entry) => _buildIcon(entry.key, entry.value))
+              .toList(),
+        ));
   }
 }
 
@@ -174,12 +169,41 @@ class DaysLoggedRow extends StatelessWidget {
     final daysLogged = tuple[0];
     final daysNotLogged = tuple[1];
 
-    return StatRow(
+    return StatRowContainer(
       title: "Days Logged",
-      children: [
-        Text('Days Logged: $daysLogged'),
-        Text('Days Not Logged: $daysNotLogged'),
-      ],
+      child: Row(
+        children: [
+          Text('Days Logged: $daysLogged'),
+          Text('Days Not Logged: $daysNotLogged'),
+        ],
+      ),
+    );
+  }
+}
+
+class TreadingTagsRow extends StatelessWidget {
+  TreadingTagsRow({Key key, this.stats}) : super(key: key);
+  final _StatResult stats;
+
+  @override
+  Widget build(BuildContext context) {
+    return StatRowContainer(
+      title: "Treading Tags (Top 5)",
+      child: Wrap(
+        spacing: 10,
+        children: stats.tagCount.entries
+            .take(5)
+            .map(
+              (t) => InputChip(
+                key: ObjectKey(t.key),
+                label: Text(t.key),
+                avatar: CircleAvatar(
+                  child: Text('#'),
+                ),
+              ),
+            )
+            .toList(),
+      ),
     );
   }
 }
