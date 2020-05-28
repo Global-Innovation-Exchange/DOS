@@ -197,14 +197,15 @@ class TreadingTagsRow extends StatelessWidget {
             .take(5)
             .map(
               (t) => Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   InputChip(
-                key: ObjectKey(t.key),
-                label: Text(t.key),
-                avatar: CircleAvatar(
-                  child: Text('#'),
-                ),
-              ),
+                    key: ObjectKey(t.key),
+                    label: Text(t.key),
+                    avatar: CircleAvatar(
+                      child: Text('#'),
+                    ),
+                  ),
                   Text("x ${t.value}"),
                 ],
               ),
@@ -306,6 +307,8 @@ class _StatResult {
       numOfLogWithJournal,
     ];
   }
+
+  get emotionChart {}
 
   static Future<_StatResult> load(EmotionTable db, int year, int month) async {
     final audioIdsFuture = getAudioIds();
