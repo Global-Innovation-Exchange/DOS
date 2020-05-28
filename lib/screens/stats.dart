@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:dos/database.dart';
 import 'package:dos/models/emotion_source.dart';
 import 'package:flutter/material.dart';
@@ -13,29 +15,27 @@ class StatScreen extends StatefulWidget {
 
 class _StatScreenState extends State<StatScreen> {
   final EmotionTable _db = EmotionTable();
-  Future<List<EmotionLog>> _logsFuture;
-  Set<int> _audioIds = Set<int>();
+  Future<_StatResult> _statFuture;
 
-  Future<List<EmotionLog>> getLogs(int year, int month) async {
-    _audioIds = await getAudioIds();
-    return await _db.getMonthlyLogs(year: year, month: month, withTags: true);
+  Future<_StatResult> getLogs(int year, int month) {
+    return _StatResult.load(_db, year, month);
   }
 
   @override
   void initState() {
     super.initState();
     final now = DateTime.now();
-    _logsFuture = getLogs(now.year, now.month);
+    _statFuture = getLogs(now.year, now.month);
   }
 
-  Widget _buildLayout(List<EmotionLog> logs, Set<int> audioIds) {
+  Widget _buildLayout(_StatResult stats) {
     return LayoutBuilder(
       builder: (context, viewportConstraints) => SingleChildScrollView(
         child: ConstrainedBox(
           constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
           child: Column(
             children: <Widget>[
-              SourceRow(logs: logs),
+              SourceRow(stats: stats),
             ],
           ),
         ),
@@ -45,11 +45,11 @@ class _StatScreenState extends State<StatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Widget logPreview = FutureBuilder<List<EmotionLog>>(
-      future: _logsFuture,
+    Widget logPreview = FutureBuilder<_StatResult>(
+      future: _statFuture,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return _buildLayout(snapshot.data, _audioIds);
+          return _buildLayout(snapshot.data);
         } else if (snapshot.hasError) {
           return Text('Error');
         } else {
@@ -100,16 +100,47 @@ class StatRow extends StatelessWidget {
 }
 
 class SourceRow extends StatelessWidget {
-  SourceRow({Key key, this.logs}) : super(key: key);
-  final List<EmotionLog> logs;
+  SourceRow({Key key, this.stats}) : super(key: key);
+  final _StatResult stats;
+
+  Widget _buildIcon(EmotionSource source, int count) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 5),
+      child: Column(
+        children: <Widget>[
+          getEmotionSourceIcon(source, size: 40),
+          Text(count.toString()),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return StatRow(
       title: "Source",
-      children: <Widget>[
-        getEmotionSourceIcon(EmotionSource.home, size: 50),
-      ],
+      children: stats.sourceCount.entries
+          .map((entry) => _buildIcon(entry.key, entry.value))
+          .toList(),
     );
+  }
+}
+
+class _StatResult {
+  _StatResult(
+    this.audioIds,
+    this.logs,
+    this.sourceCount,
+  );
+
+  Set<int> audioIds;
+  List<EmotionLog> logs;
+  LinkedHashMap<EmotionSource, int> sourceCount;
+
+  static Future<_StatResult> load(EmotionTable db, int year, int month) async {
+    final audioIds = await getAudioIds();
+    final logs = await db.getMonthlyLogs(year, month, withTags: true);
+    final sourceCount = await db.getMonthlySourceCount(year, month);
+    return _StatResult(audioIds, logs, sourceCount);
   }
 }

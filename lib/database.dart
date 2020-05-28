@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:io';
 
+import 'package:dos/models/emotion_source.dart';
 import 'package:dos/utils.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -10,6 +12,19 @@ import 'models/emotion_log.dart';
 final String tableLogs = 'logs';
 final String tableTags = 'tags';
 final String tableLogTags = 'log_tags';
+
+List<DateTime> getDateTimesOfMonth(int year, int month) {
+  if (month < 1 || month > 12) {
+    throw RangeError.range(month, 1, 12);
+  }
+
+  // in local time zone
+  final startTime = DateTime(year, month);
+  int endYear = year + (month + 1 / 12).toInt();
+  int endMonth = (month + 1) % 12;
+  final endTime = DateTime(endYear, endMonth);
+  return [startTime, endTime];
+}
 
 class EmotionTable {
   static EmotionTable _emotionTable; // Singleton table
@@ -126,13 +141,13 @@ class EmotionTable {
   }
 
   // UNBOUNDED DON NO USE IN PROD
-  Future<Map<String, int>> getTagCount() async {
+  Future<LinkedHashMap<String, int>> getTagCount() async {
     final Database db = await database;
     final maps = await db.rawQuery(
-      'SELECT t.tag, COUNT(*) FROM log_tags lt INNER JOIN tags t ON lt.tag_id = t.id GROUP BY t.tag',
+      'SELECT t.tag, COUNT(*) FROM log_tags lt INNER JOIN tags t ON lt.tag_id = t.id GROUP BY t.tag ORDER BY COUNT(*) DESC',
     );
 
-    final count = Map<String, int>();
+    final count = LinkedHashMap<String, int>();
     maps.forEach((element) {
       count[element["tag"]] = element['COUNT(*)'];
     });
@@ -152,6 +167,34 @@ class EmotionTable {
         limit: limit,
         orderBy: 'id DESC');
     return List.generate(maps.length, (i) => maps[i]['tag']);
+  }
+
+  Future<LinkedHashMap<EmotionSource, int>> getMonthlySourceCount(
+      int year, int month,
+      {countNull = false}) {
+    final dateTimes = getDateTimesOfMonth(year, month);
+    return getSourceCount(dateTimes[0], dateTimes[1], countNull: countNull);
+  }
+
+  Future<LinkedHashMap<EmotionSource, int>> getSourceCount(
+      DateTime from, DateTime to,
+      {countNull = false}) async {
+    final Database db = await database;
+    final maps = await db.rawQuery(
+      'SELECT source, COUNT(*) FROM logs WHERE datetime >= ? AND datetime <= ? GROUP BY source ORDER BY COUNT(*) DESC',
+      [from.millisecondsSinceEpoch, to.millisecondsSinceEpoch],
+    );
+
+    final count = LinkedHashMap<EmotionSource, int>();
+    maps.forEach((element) {
+      final srcInt = element["source"];
+      final key = srcInt != null ? EmotionSource.values[srcInt] : null;
+      if (key != null || (key == null && countNull)) {
+        count[key] = element['COUNT(*)'];
+      }
+    });
+
+    return count;
   }
 
   Future<List<EmotionLog>> getAllLogs({withTags = false}) async {
@@ -177,22 +220,14 @@ class EmotionTable {
     return logs;
   }
 
-  Future<List<EmotionLog>> getMonthlyLogs(
-      {int year, int month, withTags = false}) {
-    if (month < 1 || month > 12) {
-      throw RangeError.range(month, 1, 12);
-    }
-
-    // in local time zone
-    final startTime = DateTime(year, month);
-    int endYear = year + (month + 1 / 12).toInt();
-    int endMonth = (month + 1) % 12;
-    final endTime = DateTime(endYear, endMonth);
-    return getLogs(from: startTime, to: endTime, withTags: withTags);
+  Future<List<EmotionLog>> getMonthlyLogs(int year, int month,
+      {withTags = false}) {
+    final dateTimes = getDateTimesOfMonth(year, month);
+    return getLogs(dateTimes[0], dateTimes[1], withTags: withTags);
   }
 
-  Future<List<EmotionLog>> getLogs(
-      {DateTime from, DateTime to, withTags = false}) async {
+  Future<List<EmotionLog>> getLogs(DateTime from, DateTime to,
+      {withTags = false}) async {
     // Get a reference to the database.
     final Database db = await database;
 
