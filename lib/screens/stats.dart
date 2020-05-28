@@ -90,31 +90,30 @@ class StatRow extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: style so all rows has a common style
     return Container(
-      margin: EdgeInsets.all(20),
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: themeForegroundColor,
-        borderRadius: BorderRadius.all(
-          // set rounded corner radius
-          Radius.circular(10.0),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            margin: EdgeInsets.only(bottom: 25),
-            child:
-                Text(this.title, style: Theme.of(context).textTheme.bodyText1),
+        margin: EdgeInsets.all(20),
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: themeForegroundColor,
+          borderRadius: BorderRadius.all(
+            // set rounded corner radius
+            Radius.circular(10.0),
           ),
-          Row(
-              mainAxisAlignment: mainAxisAlignment,
-              mainAxisSize: mainAxisSize,
-              crossAxisAlignment: crossAxisAlignment,
-              children: this.children),
-        ],
-      ),
-    );
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              margin: EdgeInsets.only(bottom: 13),
+              child: Text(this.title,
+                  style: Theme.of(context).textTheme.subtitle1),
+            ),
+            Row(
+                mainAxisAlignment: mainAxisAlignment,
+                mainAxisSize: mainAxisSize,
+                crossAxisAlignment: crossAxisAlignment,
+                children: this.children),
+          ],
+        ));
   }
 }
 
@@ -123,31 +122,34 @@ class SourceRow extends StatelessWidget {
   final _StatResult stats;
 
   Widget _buildIcon(EmotionSource source, int count) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 6),
-      child: Stack(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(right: 10),
+    return Stack(
+      children: <Widget>[
+        Container(
+          height: 56,
+          alignment: Alignment.bottomCenter,
+          padding: EdgeInsets.only(right: 26),
+          child: getEmotionSourceIcon(source, size: 35),
+        ),
+        new Positioned(
+          //width: 40,
+          //height: 40,
+          left: 22,
+          bottom: 29,
+          //top: -2,
+          //  bottom: -15
+          child: CircleAvatar(
+            radius: 13,
+            backgroundColor: Colors.white,
             child: CircleAvatar(
-                radius: 20,
-                backgroundColor: Colors.white,
-                child: CircleAvatar(
-                  radius: 16,
-                  backgroundColor: themeForegroundColor,
-                  child: Text(
-                    count.toString(),
-                    style: TextStyle(color: Colors.black),
-                  ),
+                radius: 10,
+                backgroundColor: themeForegroundColor,
+                child: Text(
+                  count.toString(),
+                  style: TextStyle(color: Colors.black),
                 )),
           ),
-          new Positioned(
-            left: -4,
-            bottom: -6,
-            child: getEmotionSourceIcon(source, size: 26),
-          ),
-        ],
-      ),
+        )
+      ],
     );
   }
 
