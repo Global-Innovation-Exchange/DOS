@@ -140,16 +140,25 @@ class EmotionTable {
     return List.generate(maps.length, (i) => maps[i]['tag']);
   }
 
-  // UNBOUNDED DON NO USE IN PROD
-  Future<LinkedHashMap<String, int>> getTagCount() async {
+  Future<LinkedHashMap<String, int>> getMonthlyTagCount(int year, int month,
+      {countNull = false}) {
+    final dateTimes = getDateTimesOfMonth(year, month);
+    return getTagCount(dateTimes[0], dateTimes[1], countNull: countNull);
+  }
+
+  Future<LinkedHashMap<String, int>> getTagCount(DateTime from, DateTime to,
+      {countNull = false}) async {
     final Database db = await database;
     final maps = await db.rawQuery(
-      'SELECT t.tag, COUNT(*) FROM log_tags lt INNER JOIN tags t ON lt.tag_id = t.id GROUP BY t.tag ORDER BY COUNT(*) DESC',
-    );
+        'SELECT t.tag, COUNT(*) FROM log_tags lt INNER JOIN tags t ON lt.tag_id = t.id INNER JOIN logs l ON lt.log_id = l.id WHERE l.datetime >= ? AND l.datetime <= ? GROUP BY t.tag ORDER BY COUNT(*) DESC',
+        [from.millisecondsSinceEpoch, to.millisecondsSinceEpoch]);
 
     final count = LinkedHashMap<String, int>();
     maps.forEach((element) {
-      count[element["tag"]] = element['COUNT(*)'];
+      final key = element["tag"];
+      if (key != null || (key == null && countNull)) {
+        count[key] = element['COUNT(*)'];
+      }
     });
 
     return count;
