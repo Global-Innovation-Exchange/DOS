@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:dos/database.dart';
 import 'package:dos/models/emotion_source.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../database.dart';
@@ -89,8 +90,8 @@ class StatRow extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: style so all rows has a common style
     return Container(
-      margin: EdgeInsets.all(10),
-      padding: EdgeInsets.all(10),
+      margin: EdgeInsets.all(20),
+      padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: themeForegroundColor,
         borderRadius: BorderRadius.all(
@@ -101,7 +102,11 @@ class StatRow extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(this.title, style: Theme.of(context).textTheme.headline5),
+          Container(
+            margin: EdgeInsets.only(bottom: 25),
+            child:
+                Text(this.title, style: Theme.of(context).textTheme.bodyText1),
+          ),
           Row(
               mainAxisAlignment: mainAxisAlignment,
               mainAxisSize: mainAxisSize,
@@ -119,11 +124,28 @@ class SourceRow extends StatelessWidget {
 
   Widget _buildIcon(EmotionSource source, int count) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 5),
-      child: Column(
+      padding: EdgeInsets.symmetric(horizontal: 6),
+      child: Stack(
         children: <Widget>[
-          getEmotionSourceIcon(source, size: 40),
-          Text(count.toString()),
+          Padding(
+            padding: EdgeInsets.only(right: 10),
+            child: CircleAvatar(
+                radius: 20,
+                backgroundColor: Colors.white,
+                child: CircleAvatar(
+                  radius: 16,
+                  backgroundColor: themeForegroundColor,
+                  child: Text(
+                    count.toString(),
+                    style: TextStyle(color: Colors.black),
+                  ),
+                )),
+          ),
+          new Positioned(
+            left: -4,
+            bottom: -6,
+            child: getEmotionSourceIcon(source, size: 26),
+          ),
         ],
       ),
     );
@@ -132,7 +154,7 @@ class SourceRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StatRow(
-      title: "Source",
+      title: "Emotion Sources (Top 5)",
       children: stats.sourceCount.entries
           .take(5)
           .map((entry) => _buildIcon(entry.key, entry.value))

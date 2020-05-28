@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../database.dart';
@@ -32,11 +33,13 @@ class _LogsScreenState extends State<LogsScreen> {
   final EmotionTable _emotionTable = EmotionTable();
   Future<List<EmotionLog>> _logsFuture;
   Set<int> _audioIds = Set<int>();
+  var list;
 
   Future<List<EmotionLog>> getLogs() async {
     // TODO: (pref) Don't get all the logs and with all tags here
     _audioIds = await getAudioIds();
-    return await _emotionTable.getAllLogs(withTags: true);
+    list = await _emotionTable.getAllLogs(withTags: true);
+    return list;
   }
 
   Widget _buildSourceIcon(EmotionSource source) {
@@ -131,7 +134,10 @@ class _LogsScreenState extends State<LogsScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
                             Text(
-                              formatDateTime(logs[position].dateTime),
+                              DateFormat('kk:mm a ')
+                                      .format(logs[position].dateTime) +
+                                  DateFormat.yMMMd()
+                                      .format(logs[position].dateTime),
                               style: TextStyle(
                                 fontSize: 18.0,
                                 color: Colors.black45,
@@ -185,6 +191,7 @@ class _LogsScreenState extends State<LogsScreen> {
   @override
   void initState() {
     super.initState();
+
     _logsFuture = getLogs();
   }
 
