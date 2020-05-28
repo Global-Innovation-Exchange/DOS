@@ -36,6 +36,7 @@ class _StatScreenState extends State<StatScreen> {
           constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
           child: Column(
             children: <Widget>[
+              DaysLoggedRow(stats: stats),
               SourceRow(stats: stats),
             ],
           ),
@@ -163,24 +164,79 @@ class SourceRow extends StatelessWidget {
   }
 }
 
+class DaysLoggedRow extends StatelessWidget {
+  DaysLoggedRow({Key key, this.stats}) : super(key: key);
+  final _StatResult stats;
+
+  @override
+  Widget build(BuildContext context) {
+    final tuple = stats.daysLogged;
+    final daysLogged = tuple[0];
+    final daysNotLogged = tuple[1];
+
+    return StatRow(
+      title: "Days Logged",
+      children: [
+        Text('Days Logged: $daysLogged'),
+        Text('Days Not Logged: $daysNotLogged'),
+      ],
+    );
+  }
+}
+
 class _StatResult {
   _StatResult(
+    this.year,
+    this.month,
     this.audioIds,
     this.logs,
     this.sourceCount,
     this.tagCount,
   );
 
+  int year;
+  int month;
   Set<int> audioIds;
   List<EmotionLog> logs;
   LinkedHashMap<EmotionSource, int> sourceCount;
   LinkedHashMap<String, int> tagCount;
 
+  get daysLogged {
+    Set<int> dayLogged = Set<int>();
+    logs.forEach((element) {
+      dayLogged.add(element.dateTime.day);
+    });
+
+    var daysLogged = 0;
+    var daysNotLogged = 0;
+    var time = DateTime(year, month);
+    while (time.month == month) {
+      if (dayLogged.contains(time.day)) {
+        daysLogged++;
+      } else {
+        daysNotLogged++;
+      }
+      time = time.add(Duration(days: 1));
+    }
+    return [daysLogged, daysNotLogged];
+  }
+
   static Future<_StatResult> load(EmotionTable db, int year, int month) async {
-    final audioIds = await getAudioIds();
-    final logs = await db.getMonthlyLogs(year, month, withTags: true);
-    final sourceCount = await db.getMonthlySourceCount(year, month);
-    final tagCount = await db.getMonthlyTagCount(year, month);
-    return _StatResult(audioIds, logs, sourceCount, tagCount);
+    final audioIdsFuture = getAudioIds();
+    final logsFuture = db.getMonthlyLogs(year, month, withTags: true);
+    final sourceCountFuture = db.getMonthlySourceCount(year, month);
+    final tagCountFuture = db.getMonthlyTagCount(year, month);
+    // concurrently wait all
+    await Future.wait([
+      audioIdsFuture,
+      logsFuture,
+      sourceCountFuture,
+      tagCountFuture,
+    ]);
+    final audioIds = await audioIdsFuture;
+    final logs = await logsFuture;
+    final sourceCount = await sourceCountFuture;
+    final tagCount = await tagCountFuture;
+    return _StatResult(year, month, audioIds, logs, sourceCount, tagCount);
   }
 }
