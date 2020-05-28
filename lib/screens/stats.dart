@@ -71,9 +71,19 @@ class _StatScreenState extends State<StatScreen> {
 
 // This is a row element that have all the shared style
 class StatRow extends StatelessWidget {
-  StatRow({Key key, this.children, this.title}) : super(key: key);
+  StatRow({
+    Key key,
+    this.children,
+    this.title,
+    this.mainAxisAlignment = MainAxisAlignment.start,
+    this.mainAxisSize = MainAxisSize.max,
+    this.crossAxisAlignment = CrossAxisAlignment.center,
+  }) : super(key: key);
   final List<Widget> children;
   final String title;
+  final MainAxisAlignment mainAxisAlignment;
+  final MainAxisSize mainAxisSize;
+  final CrossAxisAlignment crossAxisAlignment;
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +102,11 @@ class StatRow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(this.title, style: Theme.of(context).textTheme.headline5),
-          Row(children: this.children),
+          Row(
+              mainAxisAlignment: mainAxisAlignment,
+              mainAxisSize: mainAxisSize,
+              crossAxisAlignment: crossAxisAlignment,
+              children: this.children),
         ],
       ),
     );
@@ -120,6 +134,7 @@ class SourceRow extends StatelessWidget {
     return StatRow(
       title: "Source",
       children: stats.sourceCount.entries
+          .take(5)
           .map((entry) => _buildIcon(entry.key, entry.value))
           .toList(),
     );
