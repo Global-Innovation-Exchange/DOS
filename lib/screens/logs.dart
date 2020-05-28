@@ -33,13 +33,11 @@ class _LogsScreenState extends State<LogsScreen> {
   final EmotionTable _emotionTable = EmotionTable();
   Future<List<EmotionLog>> _logsFuture;
   Set<int> _audioIds = Set<int>();
-  var list;
 
   Future<List<EmotionLog>> getLogs() async {
     // TODO: (pref) Don't get all the logs and with all tags here
     _audioIds = await getAudioIds();
-    list = await _emotionTable.getAllLogs(withTags: true);
-    return list;
+    return await _emotionTable.getAllLogs(withTags: true);
   }
 
   Widget _buildSourceIcon(EmotionSource source) {
