@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -10,26 +9,8 @@ import '../utils.dart';
 import 'create_log.dart';
 import 'detail.dart';
 
-//calling main function when app started
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  // This widget is the root of application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'DOS',
-      theme: ThemeData(
-        // This is the theme of the application.
-        primarySwatch: colorSwatch,
-      ),
-      home: MyHomePage(title: 'Emotion logs'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+class LogsScreen extends StatefulWidget {
+  LogsScreen({Key key, this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -43,10 +24,10 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _LogsScreenState createState() => _LogsScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _LogsScreenState extends State<LogsScreen> {
   final EmotionTable _emotionTable = EmotionTable();
   Future<List<EmotionLog>> _logsFuture;
   Set<int> _audioIds = Set<int>();
