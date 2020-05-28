@@ -4,6 +4,7 @@ import 'package:dos/database.dart';
 import 'package:dos/models/emotion_source.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../database.dart';
 import '../models/emotion_log.dart';
@@ -39,6 +40,7 @@ class _StatScreenState extends State<StatScreen> {
               DaysLoggedRow(stats: stats),
               TreadingTagsRow(stats: stats),
               SourceRow(stats: stats),
+              JournalCountRow(stats: stats),
             ],
           ),
         ),
@@ -208,6 +210,41 @@ class TreadingTagsRow extends StatelessWidget {
   }
 }
 
+class JournalCountRow extends StatelessWidget {
+  JournalCountRow({Key key, this.stats}) : super(key: key);
+  final _StatResult stats;
+
+  Widget _buildIcon(IconData iconData, int count) {
+    return Column(
+      children: <Widget>[
+        Icon(iconData),
+        Text(count.toString()),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final numOfLog = stats.jounralCount;
+    final int numOfLogWithSource = numOfLog[0];
+    final int numOfLogWithTags = numOfLog[1];
+    final int numOfLogWithAudio = numOfLog[2];
+    final int numOfLogWithJournal = numOfLog[3];
+    return StatRowContainer(
+      title: "Journal Counts",
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildIcon(MdiIcons.headDotsHorizontalOutline, numOfLogWithSource),
+          _buildIcon(MdiIcons.tag, numOfLogWithTags),
+          _buildIcon(Icons.mic, numOfLogWithAudio),
+          _buildIcon(MdiIcons.textBox, numOfLogWithJournal),
+        ],
+      ),
+    );
+  }
+}
+
 class _StatResult {
   _StatResult(
     this.year,
@@ -243,6 +280,26 @@ class _StatResult {
       time = time.add(Duration(days: 1));
     }
     return [daysLogged, daysNotLogged];
+  }
+
+  get jounralCount {
+    int numOfLogWithSource = 0;
+    int numOfLogWithTags = 0;
+    int numOfLogWithAudio = 0;
+    int numOfLogWithJournal = 0;
+    logs.forEach((log) {
+      numOfLogWithSource += (log.source != null) ? 1 : 0;
+      numOfLogWithTags += (log.tags != null && log.tags.length > 0) ? 1 : 0;
+      numOfLogWithAudio += (audioIds.contains(log.id)) ? 1 : 0;
+      numOfLogWithJournal +=
+          (log.journal != null && log.journal.length > 0) ? 1 : 0;
+    });
+    return [
+      numOfLogWithSource,
+      numOfLogWithTags,
+      numOfLogWithAudio,
+      numOfLogWithJournal,
+    ];
   }
 
   static Future<_StatResult> load(EmotionTable db, int year, int month) async {
