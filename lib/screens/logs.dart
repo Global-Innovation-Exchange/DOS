@@ -8,6 +8,7 @@ import '../models/emotion_source.dart';
 import '../utils.dart';
 import 'create_log.dart';
 import 'detail.dart';
+import 'stats.dart';
 
 class LogsScreen extends StatefulWidget {
   LogsScreen({Key key, this.title}) : super(key: key);
@@ -228,6 +229,20 @@ class _LogsScreenState extends State<LogsScreen> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
+        // TODO: Change to bottom nav bar
+        actions: <Widget>[
+          FlatButton(
+            child: Text("Stats"),
+            onPressed: () {
+              return Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => StatScreen(),
+                ),
+              );
+            },
+          )
+        ],
       ),
       backgroundColor: themeColor,
       body: logPreview,
