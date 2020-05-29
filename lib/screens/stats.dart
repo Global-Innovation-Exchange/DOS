@@ -41,7 +41,7 @@ class _StatScreenState extends State<StatScreen> {
           child: Column(
             children: <Widget>[
               DaysLoggedRow(stats: stats),
-              TreadingTagsRow(stats: stats),
+              TrendingTagsRow(stats: stats),
               SourceRow(stats: stats),
               JournalCountRow(stats: stats),
               EmotionChartsRow(stats: stats),
@@ -213,14 +213,14 @@ class DaysLoggedRow extends StatelessWidget {
   }
 }
 
-class TreadingTagsRow extends StatelessWidget {
-  TreadingTagsRow({Key key, this.stats}) : super(key: key);
+class TrendingTagsRow extends StatelessWidget {
+  TrendingTagsRow({Key key, this.stats}) : super(key: key);
   final _StatResult stats;
 
   @override
   Widget build(BuildContext context) {
     return StatRowContainer(
-        title: "Treading Tags (Top 5)",
+        title: "Trending Tags (Top 5)",
         child: Container(
           alignment: Alignment.topLeft,
           child: Wrap(
