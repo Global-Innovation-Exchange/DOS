@@ -1,3 +1,4 @@
+import 'package:dos/screens/create_log.dart';
 import 'package:dos/screens/logs.dart';
 import 'package:dos/screens/stats.dart';
 import 'package:flutter/cupertino.dart';
@@ -49,24 +50,52 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Container(
+          height: 85.0,
+          width: 85.0,
+          child: FittedBox(
+              child: FloatingActionButton(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                side: BorderSide(color: Color(0xFFE1B699), width: 3.0)),
+            backgroundColor: Colors.white,
+            child: const Icon(
+              Icons.add,
+              color: Color(0xFFE1B699),
+            ),
+            onPressed: () async {
+              bool updated = await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CreateLog()),
+              );
+
+              if (updated != null) {
+                setState(() {});
+              }
+            },
+          ))),
       body: _children[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-        // this will be set when a new tab is tapped
+        backgroundColor: themeForegroundColor,
         currentIndex: _currentIndex,
+        selectedItemColor: themeColor,
         onTap: onTabTapped,
         items: [
           BottomNavigationBarItem(
-            icon: new Icon(MdiIcons.book),
+            icon: new Icon(
+              MdiIcons.book,
+              size: 35,
+            ),
             title: new Text('Log'),
           ),
           BottomNavigationBarItem(
-            icon: new Icon(MdiIcons.chartBar),
+            icon: new Icon(
+              MdiIcons.chartBar,
+              size: 35,
+            ),
             title: new Text('Stats'),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            title: Text('Settings'),
-          )
         ],
       ),
     );

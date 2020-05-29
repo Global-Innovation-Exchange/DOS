@@ -44,6 +44,9 @@ class _StatScreenState extends State<StatScreen> {
               SourceRow(stats: stats),
               JournalCountRow(stats: stats),
               EmotionChartsRow(stats: stats),
+              SizedBox(
+                height: 45,
+              ),
             ],
           ),
         ),

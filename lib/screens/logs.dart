@@ -7,9 +7,7 @@ import '../models/emotion.dart';
 import '../models/emotion_log.dart';
 import '../models/emotion_source.dart';
 import '../utils.dart';
-import 'create_log.dart';
 import 'detail.dart';
-import 'stats.dart';
 
 class LogsScreen extends StatefulWidget {
   LogsScreen({Key key, this.title}) : super(key: key);
@@ -102,88 +100,95 @@ class _LogsScreenState extends State<LogsScreen> {
   ListView _buildList(List<EmotionLog> logs) {
     return ListView.builder(
         itemCount: logs.length,
-        itemBuilder: (context, position) => Card(
-              elevation: 2.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(15)),
-              ),
-              margin: EdgeInsets.only(top: 14, bottom: 4, right: 15, left: 15),
-              child: InkWell(
-                child: Container(
-                  height: 100,
-                  width: 100,
-                  alignment: Alignment(1.0, 0.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(
-                        Radius.circular(10.0)), // set rounded corner radius
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      // Emotion icon
-                      Container(
-                        padding: EdgeInsets.symmetric(vertical: 10),
-                        child: getEmotionImage(logs[position].emotion),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 7),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Text(
-                              DateFormat('kk:mm a ')
-                                      .format(logs[position].dateTime) +
-                                  DateFormat.yMMMd()
-                                      .format(logs[position].dateTime),
-                              style: TextStyle(
-                                fontSize: 18.0,
-                                color: Colors.black45,
-                              ),
+        itemBuilder: (context, position) {
+          bool last = logs.length == (position + 1);
+          bool first = 0 == (position);
+          double btm;
+          double tp;
+          last ? btm = kFloatingActionButtonMargin + 30 : btm = 4;
+          first ? tp = 40 : tp = 14;
+          return Card(
+            elevation: 2.0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(15)),
+            ),
+            margin: EdgeInsets.only(top: tp, bottom: btm, right: 15, left: 15),
+            child: InkWell(
+              child: Container(
+                height: 100,
+                width: 100,
+                alignment: Alignment(1.0, 0.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(10.0)), // set rounded corner radius
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    // Emotion icon
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: getEmotionImage(logs[position].emotion),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 7),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Text(
+                            DateFormat('kk:mm a ')
+                                    .format(logs[position].dateTime) +
+                                DateFormat.yMMMd()
+                                    .format(logs[position].dateTime),
+                            style: TextStyle(
+                              fontSize: 18.0,
+                              color: Colors.black45,
                             ),
-                            SliderTheme(
-                              data: SliderThemeData(
-                                disabledInactiveTrackColor:
-                                    themeForegroundColor,
+                          ),
+                          SliderTheme(
+                            data: SliderThemeData(
                                 disabledActiveTrackColor: themeForegroundColor,
                                 disabledThumbColor: themeForegroundColor,
-                              ),
-                              child: Slider(
-                                  value: logs[position].scale.toDouble(),
-                                  min: 1.0,
-                                  max: 5.0,
-                                  divisions: 4,
-                                  label: logs[position].scale.toString(),
-                                  onChanged: null),
-                            ),
-                          ],
-                        ),
-                      ),
-                      _buildGrid(logs[position]),
-                    ],
-                  ),
-                ),
-                onTap: () async {
-                  EmotionLog log = logs[position];
-                  await log.initTempPath();
-                  bool updated = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EmotionDetail(
-                        log: log,
+                                disabledInactiveTickMarkColor:
+                                    themeForegroundColor),
+                            child: Slider(
+                                value: logs[position].scale.toDouble(),
+                                min: 1.0,
+                                max: 5.0,
+                                divisions: 4,
+                                label: logs[position].scale.toString(),
+                                onChanged: null),
+                          ),
+                        ],
                       ),
                     ),
-                  );
-
-                  if (updated != null) {
-                    setState(() {
-                      // Force update
-                      _logsFuture = getLogs();
-                    });
-                  }
-                },
+                    _buildGrid(logs[position]),
+                  ],
+                ),
               ),
-            ));
+              onTap: () async {
+                EmotionLog log = logs[position];
+                await log.initTempPath();
+                bool updated = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EmotionDetail(
+                      log: log,
+                    ),
+                  ),
+                );
+
+                if (updated != null) {
+                  setState(() {
+                    // Force update
+                    _logsFuture = getLogs();
+                  });
+                }
+              },
+            ),
+          );
+        });
   }
 
   @override
@@ -208,26 +213,6 @@ class _LogsScreenState extends State<LogsScreen> {
         }
       },
     );
-    Widget floatingButton = Container(
-      alignment: Alignment(1.0, 1.0),
-      padding: EdgeInsets.all(12),
-      child: FloatingActionButton(
-        onPressed: () async {
-          bool updated = await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => CreateLog()),
-          );
-
-          if (updated != null) {
-            setState(() {
-              _logsFuture = getLogs();
-            });
-          }
-        },
-        tooltip: 'Create Log',
-        child: Icon(Icons.add),
-      ),
-    );
 
     return Scaffold(
       appBar: AppBar(
@@ -236,8 +221,10 @@ class _LogsScreenState extends State<LogsScreen> {
         title: Text(widget.title),
       ),
       backgroundColor: themeColor,
-      body: logPreview,
-      floatingActionButton: floatingButton,
+      body: Container(
+        child: logPreview,
+      ),
+      //floatingActionButton: floatingButton,
     );
   }
 }
