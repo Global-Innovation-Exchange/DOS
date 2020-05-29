@@ -110,7 +110,7 @@ List<DateTime> getDateTimesOfMonth(int year, int month) {
 
   // in local time zone
   final startTime = DateTime(year, month);
-  int endYear = year + (month + 1 / 12).toInt();
+  int endYear = year + (month + 1) ~/ 12;
   int endMonth = (month + 1) % 12;
   final endTime = DateTime(endYear, endMonth);
   return [startTime, endTime];
