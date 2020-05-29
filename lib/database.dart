@@ -255,7 +255,7 @@ class EmotionTable {
 
     // Query the table for all The EmotionLogs.
     final List<Map<String, dynamic>> maps =
-        await db.query(tableLogs, orderBy: 'datetime DESC', limit: 1);
+        await db.query(tableLogs, orderBy: 'datetime ASC', limit: 1);
 
     // Convert the List<Map<String, dynamic> into a List<EmotionLog>.
     if (maps.length == 0) {
