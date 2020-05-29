@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -29,13 +31,10 @@ class LogsScreen extends StatefulWidget {
 
 class _LogsScreenState extends State<LogsScreen> {
   final EmotionTable _emotionTable = EmotionTable();
-  Future<List<EmotionLog>> _logsFuture;
-  Set<int> _audioIds = Set<int>();
+  Future<_LogResult> _logResultFuture;
 
-  Future<List<EmotionLog>> getLogs() async {
-    // TODO: (pref) Don't get all the logs and with all tags here
-    _audioIds = await getAudioIds();
-    return await _emotionTable.getAllLogs(withTags: true);
+  Future<_LogResult> getResult() {
+    return _LogResult.load(_emotionTable);
   }
 
   Widget _buildSourceIcon(EmotionSource source) {
@@ -64,7 +63,7 @@ class _LogsScreenState extends State<LogsScreen> {
     );
   }
 
-  Widget _buildGrid(EmotionLog log) {
+  Widget _buildGrid(EmotionLog log, bool hasAudio) {
     return Column(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -85,7 +84,7 @@ class _LogsScreenState extends State<LogsScreen> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            _buildIcon(Icons.mic, _audioIds.contains(log.id)),
+            _buildIcon(Icons.mic, hasAudio),
             SizedBox(width: 8),
             _buildIcon(
               MdiIcons.textBox,
@@ -97,11 +96,25 @@ class _LogsScreenState extends State<LogsScreen> {
     );
   }
 
-  ListView _buildList(List<EmotionLog> logs) {
+  Widget _buildDayList(List<EmotionLog> logs, DateTime day) {}
+
+  Widget _buildList(_LogResult result) {
+    // Group by calendar day
+    final map = LinkedHashMap<DateTime, List<EmotionLog>>();
+    result.logs.forEach((log) {
+      final key =
+          DateTime(log.dateTime.year, log.dateTime.month, log.dateTime.day);
+      if (!map.containsKey(key)) {
+        map[key] = List<EmotionLog>();
+      }
+
+      map[key].add(log);
+    });
+
     return ListView.builder(
-        itemCount: logs.length,
+        itemCount: result.logs.length,
         itemBuilder: (context, position) {
-          bool last = logs.length == (position + 1);
+          bool last = result.logs.length == (position + 1);
           double btm;
           last ? btm = kFloatingActionButtonMargin + 30 : btm = 4;
           return Card(
@@ -125,7 +138,7 @@ class _LogsScreenState extends State<LogsScreen> {
                     // Emotion icon
                     Container(
                       padding: EdgeInsets.symmetric(vertical: 10),
-                      child: getEmotionImage(logs[position].emotion),
+                      child: getEmotionImage(result.logs[position].emotion),
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 7),
@@ -135,9 +148,9 @@ class _LogsScreenState extends State<LogsScreen> {
                         children: <Widget>[
                           Text(
                             DateFormat('kk:mm a ')
-                                    .format(logs[position].dateTime) +
+                                    .format(result.logs[position].dateTime) +
                                 DateFormat.yMMMd()
-                                    .format(logs[position].dateTime),
+                                    .format(result.logs[position].dateTime),
                             style: TextStyle(
                               fontSize: 18.0,
                               color: Colors.black45,
@@ -150,22 +163,22 @@ class _LogsScreenState extends State<LogsScreen> {
                                 disabledInactiveTickMarkColor:
                                     themeForegroundColor),
                             child: Slider(
-                                value: logs[position].scale.toDouble(),
+                                value: result.logs[position].scale.toDouble(),
                                 min: 1.0,
                                 max: 5.0,
                                 divisions: 4,
-                                label: logs[position].scale.toString(),
+                                label: result.logs[position].scale.toString(),
                                 onChanged: null),
                           ),
                         ],
                       ),
                     ),
-                    _buildGrid(logs[position]),
+                    _buildGrid(result.logs[position], result.audioIds.contains(result.logs[position].id)),
                   ],
                 ),
               ),
               onTap: () async {
-                EmotionLog log = logs[position];
+                EmotionLog log = result.logs[position];
                 await log.initTempPath();
                 bool updated = await Navigator.push(
                   context,
@@ -179,7 +192,7 @@ class _LogsScreenState extends State<LogsScreen> {
                 if (updated != null) {
                   setState(() {
                     // Force update
-                    _logsFuture = getLogs();
+                    _logResultFuture = getResult();
                   });
                 }
               },
@@ -192,13 +205,13 @@ class _LogsScreenState extends State<LogsScreen> {
   void initState() {
     super.initState();
 
-    _logsFuture = getLogs();
+    _logResultFuture = getResult();
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget logPreview = FutureBuilder<List<EmotionLog>>(
-      future: _logsFuture,
+    Widget logPreview = FutureBuilder<_LogResult>(
+      future: _logResultFuture,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return _buildList(snapshot.data);
@@ -221,7 +234,26 @@ class _LogsScreenState extends State<LogsScreen> {
       body: Container(
         child: logPreview,
       ),
-      //floatingActionButton: floatingButton,
     );
+  }
+}
+
+class _LogResult {
+  final List<EmotionLog> logs;
+  final Set<int> audioIds;
+
+  _LogResult({this.logs, this.audioIds});
+  static Future<_LogResult> load(EmotionTable db) async {
+    // TODO: (pref) Don't get all the logs and with all tags here
+    final logsFuture = db.getAllLogs(withTags: true);
+    final audioIdsFuture = getAudioIds();
+    // concurrently wait all
+    await Future.wait([
+      logsFuture,
+      audioIdsFuture,
+    ]);
+    final logs = await logsFuture;
+    final audioIds = await audioIdsFuture;
+    return _LogResult(logs: logs, audioIds: audioIds);
   }
 }
