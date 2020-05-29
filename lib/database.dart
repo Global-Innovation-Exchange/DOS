@@ -248,6 +248,29 @@ class EmotionTable {
     return logs;
   }
 
+  /// Can return null if there is no entry
+  Future<EmotionLog> getFirstLog({withTags = false}) async {
+    // Get a reference to the database.
+    final Database db = await database;
+
+    // Query the table for all The EmotionLogs.
+    final List<Map<String, dynamic>> maps =
+        await db.query(tableLogs, orderBy: 'datetime DESC', limit: 1);
+
+    // Convert the List<Map<String, dynamic> into a List<EmotionLog>.
+    if (maps.length == 0) {
+      return null;
+    }
+
+    final log = EmotionLog.fomObject(maps[0]);
+
+    if (withTags) {
+      // Get all the tags
+      log.tags = await getTagsBy(log.id);
+    }
+    return log;
+  }
+
   Future<void> updateEmotionLog(EmotionLog log) async {
     // Get a reference to the database.
     final db = await database;

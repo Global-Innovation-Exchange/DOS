@@ -393,6 +393,7 @@ class _StatResult {
     this.month,
     this.audioIds,
     this.logs,
+    this.firstLog,
     this.sourceCount,
     this.tagCount,
   );
@@ -401,6 +402,7 @@ class _StatResult {
   int month;
   Set<int> audioIds;
   List<EmotionLog> logs;
+  EmotionLog firstLog;
   LinkedHashMap<EmotionSource, int> sourceCount;
   LinkedHashMap<String, int> tagCount;
 
@@ -414,13 +416,25 @@ class _StatResult {
     var daysNotLogged = 0;
     var time = DateTime(year, month);
     final now = DateTime.now();
-    while (time.month == month && time.isBefore(now)) {
-      if (dayLogged.contains(time.day)) {
-        daysLogged++;
-      } else {
-        daysNotLogged++;
+    // If first log is null, which means there is no log records at all
+    if (firstLog != null) {
+      // Round the first log to day
+      final firstLogDay = DateTime(
+        firstLog.dateTime.year,
+        firstLog.dateTime.month,
+        firstLog.dateTime.day,
+      );
+      while (time.month == month && time.isBefore(now)) {
+        // Only count from the very the first log day
+        if (time.isAfter(firstLogDay) || time.isAtSameMomentAs(firstLogDay)) {
+          if (dayLogged.contains(time.day)) {
+            daysLogged++;
+          } else {
+            daysNotLogged++;
+          }
+        }
+        time = time.add(Duration(days: 1));
       }
-      time = time.add(Duration(days: 1));
     }
     return [daysLogged, daysNotLogged];
   }
@@ -471,19 +485,23 @@ class _StatResult {
   static Future<_StatResult> load(EmotionTable db, int year, int month) async {
     final audioIdsFuture = getAudioIds();
     final logsFuture = db.getMonthlyLogs(year, month, withTags: true);
+    final firstLogFuture = db.getFirstLog();
     final sourceCountFuture = db.getMonthlySourceCount(year, month);
     final tagCountFuture = db.getMonthlyTagCount(year, month);
     // concurrently wait all
     await Future.wait([
       audioIdsFuture,
       logsFuture,
+      firstLogFuture,
       sourceCountFuture,
       tagCountFuture,
     ]);
     final audioIds = await audioIdsFuture;
     final logs = await logsFuture;
+    final firstLog = await firstLogFuture;
     final sourceCount = await sourceCountFuture;
     final tagCount = await tagCountFuture;
-    return _StatResult(year, month, audioIds, logs, sourceCount, tagCount);
+    return _StatResult(
+        year, month, audioIds, logs, firstLog, sourceCount, tagCount);
   }
 }
