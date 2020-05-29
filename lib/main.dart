@@ -35,11 +35,18 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _currentIndex = 0;
-  final List<Widget> _children = [
-    LogsScreen(title: 'Emotion Logs'),
-    StatScreen(),
-    SettingScreen(),
-  ];
+  Key _key = ObjectKey(DateTime.now());
+
+  Widget _getBody(int index, Key key) {
+    switch (index) {
+      case 0:
+        return LogsScreen(title: 'Emotion Logs', key: key);
+      case 1:
+        return StatScreen(key: key);
+      default:
+        return SettingScreen();
+    }
+  }
 
   void onTabTapped(int index) {
     setState(() {
@@ -71,11 +78,14 @@ class _HomeState extends State<Home> {
               );
 
               if (updated != null) {
-                setState(() {});
+                setState(() {
+                  // Use key to force update the child for now
+                  _key = ObjectKey(DateTime.now());
+                });
               }
             },
           ))),
-      body: _children[_currentIndex],
+      body: _getBody(_currentIndex, _key),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: themeForegroundColor,
         currentIndex: _currentIndex,

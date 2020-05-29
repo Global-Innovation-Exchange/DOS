@@ -13,6 +13,7 @@ import '../models/emotion_log.dart';
 import '../utils.dart';
 
 class StatScreen extends StatefulWidget {
+  StatScreen({Key key}) : super(key: key);
   @override
   _StatScreenState createState() => _StatScreenState();
 }
