@@ -4,6 +4,7 @@ import 'package:dos/components/emotion_chart.dart';
 import 'package:dos/database.dart';
 import 'package:dos/models/emotion.dart';
 import 'package:dos/models/emotion_source.dart';
+import 'package:dos/screens/credits.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -45,6 +46,15 @@ class _StatScreenState extends State<StatScreen> {
               SourceRow(stats: stats),
               JournalCountRow(stats: stats),
               EmotionChartsRow(stats: stats),
+              FlatButton(
+                child: Text('Credits'),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CreditScreen()),
+                  );
+                },
+              ),
               SizedBox(
                 height: 45,
               ),
