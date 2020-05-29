@@ -64,13 +64,22 @@ class _LogsScreenState extends State<LogsScreen> {
         itemCount: dailyMap.length,
         itemBuilder: (context, position) {
           final kv = dailyMap[position];
-          var logDayRows = LogDayRows(
+          final logDayRows = LogDayRows(
             day: kv.key,
             logs: kv.value,
             audioIds: result.audioIds,
             onRowTap: handleRowTap,
           );
-          return logDayRows;
+          if (position == dailyMap.length - 1) {
+            // Add extra padding at the bottom for the last element
+            // to advoid the plus button
+            return Container(
+              margin: EdgeInsets.only(bottom: 50),
+              child: logDayRows,
+            );
+          } else {
+            return logDayRows;
+          }
         });
   }
 
