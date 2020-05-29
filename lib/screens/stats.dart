@@ -88,7 +88,7 @@ class StatRowContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: style so all rows has a common style
     return Container(
-      margin: EdgeInsets.all(20),
+      margin: EdgeInsets.only(top: 25, right: 20, left: 20),
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: themeForegroundColor,
@@ -220,10 +220,33 @@ class JournalCountRow extends StatelessWidget {
   final _StatResult stats;
 
   Widget _buildIcon(IconData iconData, int count) {
-    return Column(
+    return Stack(
       children: <Widget>[
-        Icon(iconData),
-        Text(count.toString()),
+        Container(
+          height: 56,
+          padding: EdgeInsets.only(right: 26),
+          child: Icon(
+            iconData,
+            size: 35,
+            color: Colors.black54,
+          ),
+          // getEmotionSourceIcon(source, size: 35, color: Colors.black54),
+        ),
+        new Positioned(
+          left: 22,
+          bottom: 29,
+          child: CircleAvatar(
+            radius: 13.5,
+            backgroundColor: Colors.white,
+            child: CircleAvatar(
+                radius: 10.5,
+                backgroundColor: themeForegroundColor,
+                child: Text(
+                  count.toString(),
+                  style: TextStyle(color: Colors.black),
+                )),
+          ),
+        )
       ],
     );
   }
@@ -238,10 +261,10 @@ class JournalCountRow extends StatelessWidget {
     return StatRowContainer(
       title: "Journal Counts",
       child: Wrap(
-        spacing: 30,
+        spacing: 1,
         children: [
-          _buildIcon(MdiIcons.headDotsHorizontalOutline, numOfLogWithSource),
           _buildIcon(MdiIcons.tag, numOfLogWithTags),
+          _buildIcon(MdiIcons.headDotsHorizontalOutline, numOfLogWithSource),
           _buildIcon(Icons.mic, numOfLogWithAudio),
           _buildIcon(MdiIcons.textBox, numOfLogWithJournal),
         ],
