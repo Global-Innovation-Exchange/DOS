@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
+import '../components/divider_wrap.dart';
 import '../database.dart';
 import '../models/emotion.dart';
 import '../models/emotion_log.dart';
@@ -37,50 +38,39 @@ class _LogsScreenState extends State<LogsScreen> {
     return _LogResult.load(_emotionTable);
   }
 
-  Widget _buildDayList(List<EmotionLog> logs, DateTime day) {}
+  void handleRowTap(EmotionLog log) async {
+    await log.initTempPath();
+    bool updated = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EmotionDetail(
+          log: log,
+        ),
+      ),
+    );
+
+    if (updated != null) {
+      setState(() {
+        // Force update
+        _logResultFuture = getResult();
+      });
+    }
+  }
 
   Widget _buildList(_LogResult result) {
-    // Group by calendar day
-    final map = LinkedHashMap<DateTime, List<EmotionLog>>();
-    result.logs.forEach((log) {
-      final key =
-          DateTime(log.dateTime.year, log.dateTime.month, log.dateTime.day);
-      if (!map.containsKey(key)) {
-        map[key] = List<EmotionLog>();
-      }
-
-      map[key].add(log);
-    });
+    final dailyMap = result.dailyLogs.entries.toList();
 
     return ListView.builder(
-        itemCount: result.logs.length,
+        itemCount: dailyMap.length,
         itemBuilder: (context, position) {
-          bool last = result.logs.length == (position + 1);
-          double btm;
-          last ? btm = kFloatingActionButtonMargin + 30 : btm = 4;
-          return LogRow(
-            log: result.logs[position],
-            hasAudio: result.audioIds.contains(result.logs[position].id),
-            onTap: () async {
-              EmotionLog log = result.logs[position];
-              await log.initTempPath();
-              bool updated = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EmotionDetail(
-                    log: log,
-                  ),
-                ),
-              );
-
-              if (updated != null) {
-                setState(() {
-                  // Force update
-                  _logResultFuture = getResult();
-                });
-              }
-            },
+          final kv = dailyMap[position];
+          var logDayRows = LogDayRows(
+            day: kv.key,
+            logs: kv.value,
+            audioIds: result.audioIds,
+            onRowTap: handleRowTap,
           );
+          return logDayRows;
         });
   }
 
@@ -121,6 +111,42 @@ class _LogsScreenState extends State<LogsScreen> {
   }
 }
 
+class LogDayRows extends StatelessWidget {
+  final DateTime day;
+  final List<EmotionLog> logs;
+  final Set<int> audioIds;
+  final Function(EmotionLog) onRowTap;
+  const LogDayRows({Key key, this.day, this.logs, this.onRowTap, this.audioIds})
+      : super(key: key);
+
+  void onTapped() async {}
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Widget> rows = [
+      DividerWrap(
+        child: Text(DateFormat.yMMMd().format(day)),
+        height: 25,
+        thickness: 5.0,
+        indent: 10,
+        innerIndent: 20,
+      )
+    ];
+    logs.forEach((l) {
+      rows.add(LogRow(
+        log: l,
+        hasAudio: audioIds.contains(l.id),
+        onTap: () {
+          if (onRowTap != null) {
+            onRowTap(l);
+          }
+        },
+      ));
+    });
+    return Column(children: rows);
+  }
+}
+
 class LogRow extends StatelessWidget {
   final EmotionLog log;
   final bool hasAudio;
@@ -151,8 +177,7 @@ class LogRow extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Text(
-                DateFormat('kk:mm a ').format(log.dateTime) +
-                    DateFormat.yMMMd().format(log.dateTime),
+                DateFormat('kk:mm a').format(log.dateTime),
                 style: TextStyle(
                   fontSize: 18.0,
                   color: Colors.black45,
@@ -289,6 +314,21 @@ class LogIconGrid extends StatelessWidget {
 class _LogResult {
   final List<EmotionLog> logs;
   final Set<int> audioIds;
+
+  LinkedHashMap<DateTime, List<EmotionLog>> get dailyLogs {
+    // Group by calendar day
+    final map = LinkedHashMap<DateTime, List<EmotionLog>>();
+    logs.forEach((log) {
+      final key =
+          DateTime(log.dateTime.year, log.dateTime.month, log.dateTime.day);
+      if (!map.containsKey(key)) {
+        map[key] = List<EmotionLog>();
+      }
+
+      map[key].add(log);
+    });
+    return map;
+  }
 
   _LogResult({this.logs, this.audioIds});
   static Future<_LogResult> load(EmotionTable db) async {
