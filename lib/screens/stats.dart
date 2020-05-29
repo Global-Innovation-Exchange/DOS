@@ -103,7 +103,7 @@ class StatRowContainer extends StatelessWidget {
           Container(
             margin: EdgeInsets.only(bottom: 25),
             child:
-                Text(this.title, style: Theme.of(context).textTheme.bodyText1),
+                Text(this.title, style: Theme.of(context).textTheme.subtitle1),
           ),
           Container(
             width: double.infinity,
@@ -122,25 +122,26 @@ class SourceRow extends StatelessWidget {
   Widget _buildIcon(EmotionSource source, int count) {
     return Stack(
       children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(right: 10),
+        Container(
+          height: 56,
+          padding: EdgeInsets.only(right: 26),
+          child: getEmotionSourceIcon(source, size: 35, color: Colors.black54),
+        ),
+        new Positioned(
+          left: 22,
+          bottom: 29,
           child: CircleAvatar(
-              radius: 20,
-              backgroundColor: Colors.white,
-              child: CircleAvatar(
-                radius: 16,
+            radius: 13.5,
+            backgroundColor: Colors.white,
+            child: CircleAvatar(
+                radius: 10.5,
                 backgroundColor: themeForegroundColor,
                 child: Text(
                   count.toString(),
                   style: TextStyle(color: Colors.black),
-                ),
-              )),
-        ),
-        new Positioned(
-          left: -4,
-          bottom: -6,
-          child: getEmotionSourceIcon(source, size: 26),
-        ),
+                )),
+          ),
+        )
       ],
     );
   }
@@ -150,7 +151,7 @@ class SourceRow extends StatelessWidget {
     return StatRowContainer(
         title: "Emotion Sources (Top 5)",
         child: Wrap(
-          spacing: 20,
+          spacing: 1,
           children: stats.sourceCount.entries
               .take(5)
               .map((entry) => _buildIcon(entry.key, entry.value))
