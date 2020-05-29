@@ -37,65 +37,6 @@ class _LogsScreenState extends State<LogsScreen> {
     return _LogResult.load(_emotionTable);
   }
 
-  Widget _buildSourceIcon(EmotionSource source) {
-    return Opacity(
-      opacity: source != null ? 1.0 : 0,
-      child: CircleAvatar(
-        radius: 13,
-        backgroundColor: themeForegroundColor,
-        child: getEmotionSourceIcon(
-          // Use source as a place holder since it's going to be hidden by opacity
-          source ?? EmotionSource.home,
-          color: Colors.white,
-          size: 18,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildIcon(IconData data, bool visible) {
-    return Opacity(
-      opacity: visible ? 1 : 0,
-      child: Icon(
-        data,
-        color: themeForegroundColor,
-      ),
-    );
-  }
-
-  Widget _buildGrid(EmotionLog log, bool hasAudio) {
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            _buildIcon(
-              MdiIcons.tag,
-              log.tags != null && log.tags.length > 0,
-            ),
-            SizedBox(width: 8),
-            _buildSourceIcon(log.source),
-          ],
-        ),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            _buildIcon(Icons.mic, hasAudio),
-            SizedBox(width: 8),
-            _buildIcon(
-              MdiIcons.textBox,
-              log.journal != null && log.journal.length > 0,
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
   Widget _buildDayList(List<EmotionLog> logs, DateTime day) {}
 
   Widget _buildList(_LogResult result) {
@@ -173,7 +114,11 @@ class _LogsScreenState extends State<LogsScreen> {
                         ],
                       ),
                     ),
-                    _buildGrid(result.logs[position], result.audioIds.contains(result.logs[position].id)),
+                    LogIconGrid(
+                      log: result.logs[position],
+                      hasAudio:
+                          result.audioIds.contains(result.logs[position].id),
+                    ),
                   ],
                 ),
               ),
@@ -234,6 +179,89 @@ class _LogsScreenState extends State<LogsScreen> {
       body: Container(
         child: logPreview,
       ),
+    );
+  }
+}
+
+class LogSourceIcon extends StatelessWidget {
+  final EmotionSource source;
+  const LogSourceIcon({Key key, this.source}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Opacity(
+      opacity: source != null ? 1.0 : 0,
+      child: CircleAvatar(
+        radius: 13,
+        backgroundColor: themeForegroundColor,
+        child: getEmotionSourceIcon(
+          // Use source as a place holder since it's going to be hidden by opacity
+          source ?? EmotionSource.home,
+          color: Colors.white,
+          size: 18,
+        ),
+      ),
+    );
+  }
+}
+
+class LogIcon extends StatelessWidget {
+  final IconData data;
+  final bool visible;
+  LogIcon({
+    Key key,
+    @required this.data,
+    @required this.visible,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Opacity(
+      opacity: visible ? 1 : 0,
+      child: Icon(
+        data,
+        color: themeForegroundColor,
+      ),
+    );
+  }
+}
+
+class LogIconGrid extends StatelessWidget {
+  final EmotionLog log;
+  final bool hasAudio;
+
+  const LogIconGrid({Key key, this.log, this.hasAudio}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            LogIcon(
+              data: MdiIcons.tag,
+              visible: log.tags != null && log.tags.length > 0,
+            ),
+            SizedBox(width: 8),
+            LogSourceIcon(source: log.source),
+          ],
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            LogIcon(data: Icons.mic, visible: hasAudio),
+            SizedBox(width: 8),
+            LogIcon(
+              data: MdiIcons.textBox,
+              visible: log.journal != null && log.journal.length > 0,
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
