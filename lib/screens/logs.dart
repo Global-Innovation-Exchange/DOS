@@ -70,11 +70,12 @@ class _LogsScreenState extends State<LogsScreen> {
             audioIds: result.audioIds,
             onRowTap: handleRowTap,
           );
+
           if (position == dailyMap.length - 1) {
             // Add extra padding at the bottom for the last element
             // to advoid the plus button
             return Container(
-              margin: EdgeInsets.only(bottom: 50),
+              margin: EdgeInsets.only(bottom: kBottomNavigationBarHeight),
               child: logDayRows,
             );
           } else {
@@ -133,13 +134,15 @@ class LogDayRows extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Widget> rows = [
-      DividerWrap(
-        child: Text(DateFormat.yMMMd().format(day)),
-        height: 25,
-        thickness: 5.0,
-        indent: 10,
-        innerIndent: 20,
-      )
+      Container(
+          margin: EdgeInsets.only(top: 35),
+          child: DividerWrap(
+            child: Text(DateFormat.yMMMd().format(day)),
+            height: 25,
+            thickness: 5.0,
+            indent: 10,
+            innerIndent: 20,
+          )),
     ];
     logs.forEach((l) {
       rows.add(LogRow(
