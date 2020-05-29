@@ -102,17 +102,14 @@ class _LogsScreenState extends State<LogsScreen> {
         itemCount: logs.length,
         itemBuilder: (context, position) {
           bool last = logs.length == (position + 1);
-          bool first = 0 == (position);
           double btm;
-          double tp;
           last ? btm = kFloatingActionButtonMargin + 30 : btm = 4;
-          first ? tp = 40 : tp = 14;
           return Card(
             elevation: 2.0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(15)),
             ),
-            margin: EdgeInsets.only(top: tp, bottom: btm, right: 15, left: 15),
+            margin: EdgeInsets.only(top: 15, bottom: btm, right: 15, left: 15),
             child: InkWell(
               child: Container(
                 height: 100,
