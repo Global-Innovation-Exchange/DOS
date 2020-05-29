@@ -58,36 +58,29 @@ class _LogsScreenState extends State<LogsScreen> {
           bool last = result.logs.length == (position + 1);
           double btm;
           last ? btm = kFloatingActionButtonMargin + 30 : btm = 4;
-          return Card(
-              elevation: 2.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(15)),
-              ),
-              margin:
-                  EdgeInsets.only(top: 15, bottom: btm, right: 15, left: 15),
-              child: LogRow(
-                log: result.logs[position],
-                hasAudio: result.audioIds.contains(result.logs[position].id),
-                onTap: () async {
-                  EmotionLog log = result.logs[position];
-                  await log.initTempPath();
-                  bool updated = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EmotionDetail(
-                        log: log,
-                      ),
-                    ),
-                  );
+          return LogRow(
+            log: result.logs[position],
+            hasAudio: result.audioIds.contains(result.logs[position].id),
+            onTap: () async {
+              EmotionLog log = result.logs[position];
+              await log.initTempPath();
+              bool updated = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EmotionDetail(
+                    log: log,
+                  ),
+                ),
+              );
 
-                  if (updated != null) {
-                    setState(() {
-                      // Force update
-                      _logResultFuture = getResult();
-                    });
-                  }
-                },
-              ));
+              if (updated != null) {
+                setState(() {
+                  // Force update
+                  _logResultFuture = getResult();
+                });
+              }
+            },
+          );
         });
   }
 
@@ -132,70 +125,80 @@ class LogRow extends StatelessWidget {
   final EmotionLog log;
   final bool hasAudio;
   final GestureTapCallback onTap;
+  final EdgeInsetsGeometry margin;
 
   const LogRow({
     Key key,
     @required this.log,
     @required this.hasAudio,
     this.onTap,
+    this.margin,
   }) : super(key: key);
+
+  Widget _buildRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        // Emotion icon
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 10),
+          child: getEmotionImage(log.emotion),
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 7),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Text(
+                DateFormat('kk:mm a ').format(log.dateTime) +
+                    DateFormat.yMMMd().format(log.dateTime),
+                style: TextStyle(
+                  fontSize: 18.0,
+                  color: Colors.black45,
+                ),
+              ),
+              SliderTheme(
+                data: SliderThemeData(
+                    disabledActiveTrackColor: themeForegroundColor,
+                    disabledThumbColor: themeForegroundColor,
+                    disabledInactiveTickMarkColor: themeForegroundColor),
+                child: Slider(
+                    value: log.scale.toDouble(),
+                    min: 1.0,
+                    max: 5.0,
+                    divisions: 4,
+                    label: log.scale.toString(),
+                    onChanged: null),
+              ),
+            ],
+          ),
+        ),
+        LogIconGrid(
+          log: log,
+          hasAudio: hasAudio,
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      child: Container(
-        height: 100,
-        width: 100,
-        alignment: Alignment(1.0, 0.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(
-              Radius.circular(10.0)), // set rounded corner radius
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            // Emotion icon
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 10),
-              child: getEmotionImage(log.emotion),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 7),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Text(
-                    DateFormat('kk:mm a ').format(log.dateTime) +
-                        DateFormat.yMMMd().format(log.dateTime),
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      color: Colors.black45,
-                    ),
-                  ),
-                  SliderTheme(
-                    data: SliderThemeData(
-                        disabledActiveTrackColor: themeForegroundColor,
-                        disabledThumbColor: themeForegroundColor,
-                        disabledInactiveTickMarkColor: themeForegroundColor),
-                    child: Slider(
-                        value: log.scale.toDouble(),
-                        min: 1.0,
-                        max: 5.0,
-                        divisions: 4,
-                        label: log.scale.toString(),
-                        onChanged: null),
-                  ),
-                ],
-              ),
-            ),
-            LogIconGrid(
-              log: log,
-              hasAudio: hasAudio,
-            ),
-          ],
-        ),
+    final borderRaduis = BorderRadius.all(Radius.circular(15));
+    return Card(
+      elevation: 2.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: borderRaduis,
       ),
-      onTap: onTap,
+      margin: this.margin ?? EdgeInsets.all(10),
+      child: InkWell(
+        borderRadius: borderRaduis, // set rounded corner radius
+        child: Container(
+          height: 100,
+          child: _buildRow(),
+        ),
+        onTap: onTap,
+      ),
     );
   }
 }
