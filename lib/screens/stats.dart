@@ -171,12 +171,36 @@ class DaysLoggedRow extends StatelessWidget {
     final daysNotLogged = tuple[1];
 
     return StatRowContainer(
-      title: "Days Logged",
-      child: Row(
-        children: [
-          Text('Days Logged: $daysLogged'),
-          Text('Days Not Logged: $daysNotLogged'),
-        ],
+      title: 'Total Day',
+      child: Container(
+        alignment: Alignment.center,
+        child: Wrap(
+          spacing: 35,
+          children: [
+            Column(
+              children: <Widget>[
+                Icon(
+                  Icons.check,
+                  size: 50,
+                  color: Colors.green,
+                ),
+                Text('$daysLogged days logged',
+                    style: Theme.of(context).textTheme.subtitle1),
+              ],
+            ),
+            Column(
+              children: <Widget>[
+                Icon(
+                  Icons.close,
+                  size: 50,
+                  color: Colors.red,
+                ),
+                Text('$daysNotLogged days not logged',
+                    style: Theme.of(context).textTheme.subtitle1),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -299,7 +323,8 @@ class _StatResult {
     var daysLogged = 0;
     var daysNotLogged = 0;
     var time = DateTime(year, month);
-    while (time.month == month) {
+    final now = DateTime.now();
+    while (time.month == month && time.isBefore(now)) {
       if (dayLogged.contains(time.day)) {
         daysLogged++;
       } else {
