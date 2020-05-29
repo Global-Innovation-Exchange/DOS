@@ -174,7 +174,7 @@ class DaysLoggedRow extends StatelessWidget {
     final daysNotLogged = tuple[1];
 
     return StatRowContainer(
-      title: 'Total Day',
+      title: 'Total Days',
       child: Container(
         alignment: Alignment.center,
         child: Wrap(
@@ -216,29 +216,46 @@ class TreadingTagsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StatRowContainer(
-      title: "Treading Tags (Top 5)",
-      child: Wrap(
-        spacing: 10,
-        children: stats.tagCount.entries
-            .take(5)
-            .map(
-              (t) => Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  InputChip(
-                    key: ObjectKey(t.key),
-                    label: Text(t.key),
-                    avatar: CircleAvatar(
-                      child: Text('#'),
-                    ),
+        title: "Treading Tags (Top 5)",
+        child: Container(
+          alignment: Alignment.topLeft,
+          child: Wrap(
+            spacing: 15,
+            children: stats.tagCount.entries
+                .take(5)
+                .map(
+                  (t) => Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Column(
+                        children: <Widget>[
+                          InputChip(
+                            key: ObjectKey(t.key),
+                            label: Text(t.key,
+                                style: Theme.of(context).textTheme.subtitle1),
+                            disabledColor: themeColor,
+                            avatar: CircleAvatar(
+                              backgroundColor: themeForegroundColor,
+                              child: Text(
+                                '#',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ),
+                          ),
+                          Text(
+                            t.value == 1
+                                ? "${t.value} time"
+                                : "${t.value} times",
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  Text("x ${t.value}"),
-                ],
-              ),
-            )
-            .toList(),
-      ),
-    );
+                )
+                .toList(),
+          ),
+        ));
   }
 }
 
@@ -257,7 +274,6 @@ class JournalCountRow extends StatelessWidget {
             size: 35,
             color: Colors.black54,
           ),
-          // getEmotionSourceIcon(source, size: 35, color: Colors.black54),
         ),
         new Positioned(
           left: 22,
