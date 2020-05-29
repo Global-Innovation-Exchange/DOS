@@ -1,6 +1,8 @@
 import 'dart:collection';
 
+import 'package:dos/components/emotion_chart.dart';
 import 'package:dos/database.dart';
+import 'package:dos/models/emotion.dart';
 import 'package:dos/models/emotion_source.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +43,7 @@ class _StatScreenState extends State<StatScreen> {
               TreadingTagsRow(stats: stats),
               SourceRow(stats: stats),
               JournalCountRow(stats: stats),
+              EmotionChartsRow(stats: stats),
             ],
           ),
         ),
@@ -297,6 +300,74 @@ class JournalCountRow extends StatelessWidget {
   }
 }
 
+class EmotionChartRow extends StatelessWidget {
+  EmotionChartRow(
+      {Key key,
+      this.emotion,
+      this.logs,
+      this.year,
+      this.month,
+      this.height = 100})
+      : super(key: key);
+  final Emotion emotion;
+  final List<EmotionLog> logs;
+  final int year;
+  final int month;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: this.height,
+      width: double.infinity,
+      child: Row(children: <Widget>[
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Container(width: 50, height: 50, child: getEmotionImage(emotion)),
+            Text('x${logs.length}'),
+          ],
+        ),
+        Expanded(
+          child: EmotionChart.fromLogs(
+            logs,
+            year,
+            month,
+            animate: true,
+          ),
+        ),
+      ]),
+    );
+  }
+}
+
+class EmotionChartsRow extends StatelessWidget {
+  EmotionChartsRow({Key key, this.stats}) : super(key: key);
+  final _StatResult stats;
+
+  @override
+  Widget build(BuildContext context) {
+    return StatRowContainer(
+      title: "Charts",
+      child: Column(
+        children: stats
+            .getEmotionMap()
+            .entries
+            .take(5)
+            .map(
+              (e) => EmotionChartRow(
+                emotion: e.key,
+                logs: e.value,
+                year: stats.year,
+                month: stats.month,
+              ),
+            )
+            .toList(),
+      ),
+    );
+  }
+}
+
 class _StatResult {
   _StatResult(
     this.year,
@@ -355,7 +426,28 @@ class _StatResult {
     ];
   }
 
-  get emotionChart {}
+  LinkedHashMap<Emotion, List<EmotionLog>> getEmotionMap(
+      {sorted = true, desc = true}) {
+    LinkedHashMap<Emotion, List<EmotionLog>> map =
+        Map<Emotion, List<EmotionLog>>();
+    this.logs.forEach((l) {
+      if (l.emotion != null && l.scale != null) {
+        if (!map.containsKey(l.emotion)) {
+          map[l.emotion] = List<EmotionLog>();
+        }
+        map[l.emotion].add(l);
+      }
+    });
+
+    if (sorted) {
+      // Sorted most logged
+      int descInt = desc ? -1 : 1;
+      final sortedList = map.entries.toList()
+        ..sort((a, b) => a.value.length.compareTo(b.value.length) * descInt);
+      map = LinkedHashMap.fromEntries(sortedList);
+    }
+    return map;
+  }
 
   static Future<_StatResult> load(EmotionTable db, int year, int month) async {
     final audioIdsFuture = getAudioIds();

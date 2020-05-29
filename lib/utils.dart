@@ -102,3 +102,16 @@ Future<Set<int>> getAudioIds() async {
   );
   return await completer.future;
 }
+
+List<DateTime> getDateTimesOfMonth(int year, int month) {
+  if (month < 1 || month > 12) {
+    throw RangeError.range(month, 1, 12);
+  }
+
+  // in local time zone
+  final startTime = DateTime(year, month);
+  int endYear = year + (month + 1) ~/ 12;
+  int endMonth = (month + 1) % 12;
+  final endTime = DateTime(endYear, endMonth);
+  return [startTime, endTime];
+}
