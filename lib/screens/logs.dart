@@ -189,7 +189,7 @@ class LogRow extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Text(
-                DateFormat('kk:mm a').format(log.dateTime),
+                DateFormat('KK:mm a').format(log.dateTime),
                 style: TextStyle(
                   fontSize: 18.0,
                   color: Colors.black45,
