@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:dos/utils.dart';
 import 'package:flutter/material.dart';
 
 class CreditScreen extends StatelessWidget {
@@ -9,6 +10,18 @@ class CreditScreen extends StatelessWidget {
       appBar: AppBar(title: Text("Credits")),
       body: ListView(
         children: <Widget>[
+          PackageCredit(
+            name: 'emoji (Eggy)',
+            license:
+                'Designed by Freepik from Flaticon, Licensee: user17759594',
+          ),
+          PackageCredit(
+            name: 'Custom Fonts',
+            license:
+                '''Google fonts are licensed under the Open Font License (OFL).
+The open source fonts in the Google Fonts catalog are published under licenses that allow the
+use of them on any website, whether it’s commercial or personal.''',
+          ),
           PackageCredit(
             name: 'sqflite',
             license: '''
@@ -550,21 +563,30 @@ class PackageCredit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          name,
-          style: Theme.of(context).textTheme.headline4,
-        ),
-        Text(
-          license,
-          style: TextStyle(
-            fontFeatures: [FontFeature.tabularFigures()],
-            fontFamily: 'Monospace',
+    return Container(
+      margin: EdgeInsets.all(15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            color: themeForegroundColor,
+            child: Text(
+              name,
+              style: Theme.of(context).primaryTextTheme.headline5,
+            ),
           ),
-        ),
-      ],
+          SizedBox(
+            height: 10,
+          ),
+          Text(
+            license,
+            style: TextStyle(
+              fontFeatures: [FontFeature.tabularFigures()],
+              fontFamily: 'Monospace',
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

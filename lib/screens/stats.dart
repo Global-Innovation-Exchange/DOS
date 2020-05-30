@@ -46,8 +46,14 @@ class _StatScreenState extends State<StatScreen> {
               SourceRow(stats: stats),
               JournalCountRow(stats: stats),
               EmotionChartsRow(stats: stats),
+              SizedBox(
+                height: 20,
+              ),
               FlatButton(
-                child: Text('Credits'),
+                child: Text('Attributions & Credits',
+                    style: Theme.of(context).primaryTextTheme.subtitle1.apply(
+                          fontSizeFactor: 1.2,
+                        )),
                 onPressed: () {
                   Navigator.push(
                     context,
