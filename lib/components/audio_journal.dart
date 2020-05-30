@@ -187,7 +187,7 @@ class _AudioJournalState extends State<AudioJournal> {
       children: <Widget>[
         Row(
           children: <Widget>[
-            Text("Audio Journal"),
+            Text("My Audio Journal"),
           ],
         ),
         SizedBox(height: 5),

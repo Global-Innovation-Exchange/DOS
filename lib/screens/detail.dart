@@ -33,8 +33,14 @@ class _EmotionDetailState extends State<EmotionDetail> {
     return showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text("Delete log"),
-        content: Text("Are you sure to delete this log entry?"),
+        title: Text("Delete log",
+            style: Theme.of(context).primaryTextTheme.subtitle1.apply(
+                  fontSizeFactor: 1.3,
+                )),
+        content: Text("Are you sure to delete this log entry?",
+            style: Theme.of(context).primaryTextTheme.subtitle1.apply(
+                  fontSizeFactor: 1.3,
+                )),
         actions: <Widget>[
           FlatButton(
             child: Text("YES"),
@@ -86,7 +92,7 @@ class _EmotionDetailState extends State<EmotionDetail> {
   @override
   Widget build(BuildContext context) {
     Widget selectedDate = Container(
-      height: 60,
+      height: 75,
       padding: EdgeInsets.symmetric(vertical: 8),
       child: JournalDateTime(log: _log),
     );
@@ -266,7 +272,10 @@ class _EmotionDetailState extends State<EmotionDetail> {
               }
             }
           },
-          child: Text('DELETE'),
+          child: Text('DELETE',
+              style: Theme.of(context).primaryTextTheme.subtitle1.apply(
+                    fontSizeFactor: 1.2,
+                  )),
         ),
       ),
     );
@@ -343,7 +352,10 @@ class _EmotionDetailState extends State<EmotionDetail> {
               IconButton(icon: Icon(Icons.clear), onPressed: handleBackPressed),
           actions: <Widget>[
             FlatButton(
-              child: Text('SAVE'),
+              child: Text('SAVE',
+                  style: Theme.of(context).primaryTextTheme.subtitle1.apply(
+                        fontSizeFactor: 1.2,
+                      )),
               onPressed: () async {
                 await _table.updateEmotionLog(_log);
                 Navigator.pop(context, true);

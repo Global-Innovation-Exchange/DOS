@@ -30,7 +30,6 @@ class _CreateLogState extends State<CreateLog> {
     _log.scale = 3;
     _log.dateTime = now;
     _log.emotion = Emotion.happy;
-
     _original = _log.clone();
   }
 
@@ -45,7 +44,15 @@ class _CreateLogState extends State<CreateLog> {
           return true;
         },
         child: AlertDialog(
-          content: Text("You have unsaved changes. Are you sure to leave?"),
+          title: Text("Warning",
+              style: Theme.of(context).primaryTextTheme.subtitle1.apply(
+                    fontSizeFactor: 1.3,
+                  )),
+          content:
+              Text("You have unsaved changes. Are you sure you want to leave?",
+                  style: Theme.of(context).primaryTextTheme.subtitle1.apply(
+                        fontSizeFactor: 1.3,
+                      )),
           actions: <Widget>[
             FlatButton(
               child: Text("YES"),
@@ -90,7 +97,11 @@ class _CreateLogState extends State<CreateLog> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: List.generate(
-                  values.length, (index) => Text(values[index].toString())),
+                  values.length,
+                  (index) => Text(values[index].toString(),
+                      style: Theme.of(context).primaryTextTheme.subtitle1.apply(
+                            fontSizeFactor: 0.8,
+                          ))),
             )),
       ),
     );
@@ -121,7 +132,7 @@ class _CreateLogState extends State<CreateLog> {
     Widget journalButton = SafeArea(
       bottom: true,
       child: ButtonTheme(
-        height: 50,
+        height: 55,
         minWidth: double.infinity,
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         child: RaisedButton(
@@ -133,13 +144,16 @@ class _CreateLogState extends State<CreateLog> {
               ),
             );
 
-            // Quick fix to foce update 
+            // Quick fix to foce update
             // when additional log updated the scale
             setState(() {
               _log = _log;
             });
           },
-          child: Text('Enter Detailed Journal'),
+          child: Text('Enter Detailed Journal',
+              style: Theme.of(context).primaryTextTheme.subtitle1.apply(
+                    fontSizeFactor: 1.2,
+                  )),
         ),
       ),
     );
@@ -187,7 +201,10 @@ class _CreateLogState extends State<CreateLog> {
           ),
           actions: <Widget>[
             FlatButton(
-              child: Text('SAVE'),
+              child: Text('SAVE',
+                  style: Theme.of(context).primaryTextTheme.subtitle1.apply(
+                        fontSizeFactor: 1.2,
+                      )),
               onPressed: () async {
                 await _table.insertEmotionLog(_log);
                 Navigator.pop(context, true);

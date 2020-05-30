@@ -6,7 +6,6 @@ import '../components/emotion_slider.dart';
 import '../components/journal_datetime.dart';
 import '../components/journal_tags.dart';
 import '../components/journal_textfield.dart';
-import '../database.dart';
 import '../models/emotion.dart';
 import '../models/emotion_log.dart';
 import '../models/emotion_source.dart';
@@ -27,11 +26,10 @@ class _AdditionalLogState extends State<AdditionalLog> {
   }
 
   EmotionLog _log;
-  EmotionTable _table = EmotionTable();
 
   Widget build(BuildContext context) {
     Widget selectedDate = Container(
-      height: 60,
+      height: 75,
       padding: EdgeInsets.symmetric(vertical: 8),
       child: JournalDateTime(log: _log),
     );
@@ -136,7 +134,7 @@ class _AdditionalLogState extends State<AdditionalLog> {
                   ),
                 ),
                 emotionSource,
-                SizedBox(height: 15.0),
+                SizedBox(height: 23.0),
                 journalVoice,
                 journalText,
               ],
@@ -152,7 +150,10 @@ class _AdditionalLogState extends State<AdditionalLog> {
         automaticallyImplyLeading: false,
         actions: <Widget>[
           FlatButton(
-            child: Text('DONE'),
+            child: Text('DONE',
+                style: Theme.of(context).primaryTextTheme.subtitle1.apply(
+                      fontSizeFactor: 1.2,
+                    )),
             onPressed: () {
               Navigator.pop(context);
             },

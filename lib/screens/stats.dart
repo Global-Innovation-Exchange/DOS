@@ -56,7 +56,7 @@ class _StatScreenState extends State<StatScreen> {
                 },
               ),
               SizedBox(
-                height: 45,
+                height: kBottomNavigationBarHeight,
               ),
             ],
           ),
@@ -119,8 +119,10 @@ class StatRowContainer extends StatelessWidget {
         children: [
           Container(
             margin: EdgeInsets.only(bottom: 25),
-            child:
-                Text(this.title, style: Theme.of(context).textTheme.subtitle1),
+            child: Text(this.title,
+                style: Theme.of(context).primaryTextTheme.subtitle1.apply(
+                      fontSizeFactor: 1.4,
+                    )),
           ),
           Container(
             width: double.infinity,
@@ -136,31 +138,27 @@ class SourceRow extends StatelessWidget {
   SourceRow({Key key, this.stats}) : super(key: key);
   final _StatResult stats;
 
-  Widget _buildIcon(EmotionSource source, int count) {
-    return Stack(
-      children: <Widget>[
-        Container(
-          height: 56,
-          padding: EdgeInsets.only(right: 26),
-          child: getEmotionSourceIcon(source, size: 35, color: Colors.black54),
-        ),
-        new Positioned(
-          left: 22,
-          bottom: 29,
-          child: CircleAvatar(
+  Widget _buildIcon(EmotionSource source, int count, BuildContext context) {
+    return Stack(children: <Widget>[
+      Container(
+        height: 56,
+        padding: EdgeInsets.only(right: 26),
+        child: getEmotionSourceIcon(source, size: 35, color: Colors.black54),
+      ),
+      new Positioned(
+        left: 22,
+        bottom: 29,
+        child: CircleAvatar(
             radius: 13.5,
             backgroundColor: Colors.white,
             child: CircleAvatar(
-                radius: 10.5,
-                backgroundColor: themeForegroundColor,
-                child: Text(
-                  count.toString(),
-                  style: TextStyle(color: Colors.black),
-                )),
-          ),
-        )
-      ],
-    );
+              radius: 10.5,
+              backgroundColor: themeForegroundColor,
+              child: Text(count.toString(),
+                  style: Theme.of(context).textTheme.subtitle1),
+            )),
+      ),
+    ]);
   }
 
   @override
@@ -171,7 +169,7 @@ class SourceRow extends StatelessWidget {
           spacing: 1,
           children: stats.sourceCount.entries
               .take(5)
-              .map((entry) => _buildIcon(entry.key, entry.value))
+              .map((entry) => _buildIcon(entry.key, entry.value, context))
               .toList(),
         ));
   }
@@ -245,8 +243,9 @@ class TrendingTagsRow extends StatelessWidget {
                         children: <Widget>[
                           InputChip(
                             key: ObjectKey(t.key),
-                            label: Text(t.key,
-                                style: Theme.of(context).textTheme.subtitle1),
+                            label: Text(
+                              t.key,
+                            ),
                             disabledColor: themeColor,
                             avatar: CircleAvatar(
                               backgroundColor: themeForegroundColor,
@@ -277,7 +276,7 @@ class JournalCountRow extends StatelessWidget {
   JournalCountRow({Key key, this.stats}) : super(key: key);
   final _StatResult stats;
 
-  Widget _buildIcon(IconData iconData, int count) {
+  Widget _buildIcon(IconData iconData, int count, BuildContext context) {
     return Stack(
       children: <Widget>[
         Container(
@@ -300,7 +299,7 @@ class JournalCountRow extends StatelessWidget {
                 backgroundColor: themeForegroundColor,
                 child: Text(
                   count.toString(),
-                  style: TextStyle(color: Colors.black),
+                  style: Theme.of(context).textTheme.subtitle1,
                 )),
           ),
         )
@@ -320,10 +319,11 @@ class JournalCountRow extends StatelessWidget {
       child: Wrap(
         spacing: 1,
         children: [
-          _buildIcon(MdiIcons.tag, numOfLogWithTags),
-          _buildIcon(MdiIcons.headDotsHorizontalOutline, numOfLogWithSource),
-          _buildIcon(Icons.mic, numOfLogWithAudio),
-          _buildIcon(MdiIcons.textBox, numOfLogWithJournal),
+          _buildIcon(MdiIcons.tag, numOfLogWithTags, context),
+          _buildIcon(
+              MdiIcons.headDotsHorizontalOutline, numOfLogWithSource, context),
+          _buildIcon(Icons.mic, numOfLogWithAudio, context),
+          _buildIcon(MdiIcons.textBox, numOfLogWithJournal, context),
         ],
       ),
     );

@@ -3,6 +3,7 @@ import 'package:dos/screens/logs.dart';
 import 'package:dos/screens/stats.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import 'screens/settings.dart';
@@ -20,6 +21,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         // This is the theme of the application.
         primarySwatch: colorSwatch,
+        textTheme: GoogleFonts.kalamTextTheme(
+          Theme.of(context).textTheme.apply(
+                fontSizeFactor: 1.1,
+                fontSizeDelta: 2.0,
+              ),
+        ),
+        primaryTextTheme: GoogleFonts.ralewayTextTheme(),
       ),
       home: Home(),
     );
@@ -94,14 +102,14 @@ class _HomeState extends State<Home> {
         items: [
           BottomNavigationBarItem(
             icon: new Icon(
-              MdiIcons.book,
+              MdiIcons.cardAccountDetails,
               size: 35,
             ),
             title: new Text('Log'),
           ),
           BottomNavigationBarItem(
             icon: new Icon(
-              MdiIcons.chartBar,
+              MdiIcons.chartBellCurve,
               size: 35,
             ),
             title: new Text('Stats'),

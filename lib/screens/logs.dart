@@ -137,7 +137,10 @@ class LogDayRows extends StatelessWidget {
       Container(
           margin: EdgeInsets.only(top: 35),
           child: DividerWrap(
-            child: Text(DateFormat.yMMMd().format(day)),
+            child: Text(
+              DateFormat.yMMMd().format(day),
+              style: TextStyle(fontSize: 23),
+            ),
             height: 25,
             thickness: 5.0,
             indent: 10,

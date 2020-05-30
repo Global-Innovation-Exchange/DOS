@@ -58,7 +58,7 @@ class _JorunalTextFieldState extends State<JorunalTextField> {
         fillColor: _isFocus ? Colors.white : widget.fillColor,
         filled: true,
         prefixIcon: Icon(MdiIcons.textBox),
-        labelText: "Written Journal",
+        labelText: "My Written Journal",
         alignLabelWithHint: false,
         floatingLabelBehavior: FloatingLabelBehavior.always,
         border: OutlineInputBorder(

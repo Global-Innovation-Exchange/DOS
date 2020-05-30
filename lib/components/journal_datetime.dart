@@ -64,8 +64,14 @@ class _JournalDateTimeState extends State<JournalDateTime> {
       textAlign: TextAlign.center,
       decoration: InputDecoration(
         fillColor: Colors.white,
+        prefixStyle: Theme.of(context).primaryTextTheme.subtitle1.apply(
+              fontSizeFactor: 1.1,
+            ),
         filled: true,
-        prefixIcon: Icon(Icons.calendar_today),
+        prefixIcon: Icon(
+          Icons.calendar_today,
+          size: 20,
+        ),
         prefixText: "Enter Date",
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15.0),

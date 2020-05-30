@@ -20,7 +20,7 @@ class _JournalTagsState extends State<JournalTags> {
         initialValue: widget.log.tags ?? <String>[],
         //_log.tags,
         decoration: InputDecoration(
-          hintText: "Add or Create tags",
+          hintText: "expressing self using tags",
           prefixIcon: Icon(MdiIcons.tag),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15.0),
