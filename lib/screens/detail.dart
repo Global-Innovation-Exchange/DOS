@@ -70,7 +70,15 @@ class _EmotionDetailState extends State<EmotionDetail> {
           return true;
         },
         child: AlertDialog(
-          content: Text("You have unsaved changes. Are you sure to leave?"),
+          title: Text("Warning",
+              style: Theme.of(context).primaryTextTheme.subtitle1.apply(
+                    fontSizeFactor: 1.3,
+                  )),
+          content:
+              Text("You have unsaved changes. Are you sure you want to leave?",
+                  style: Theme.of(context).primaryTextTheme.subtitle1.apply(
+                        fontSizeFactor: 1.3,
+                      )),
           actions: <Widget>[
             FlatButton(
               child: Text("YES"),
