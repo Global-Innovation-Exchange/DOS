@@ -21,11 +21,15 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         // This is the theme of the application.
         primarySwatch: colorSwatch,
-        textTheme: GoogleFonts.kalamTextTheme(
+        textTheme: GoogleFonts.itimTextTheme(
           Theme.of(context).textTheme.apply(
                 fontSizeFactor: 1.1,
                 fontSizeDelta: 2.0,
               ),
+
+          // c itimTextTheme
+          //d shortStack
+          // e delius
         ),
         primaryTextTheme: GoogleFonts.ralewayTextTheme(),
       ),
