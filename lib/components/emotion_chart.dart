@@ -28,15 +28,6 @@ class EmotionChart extends StatelessWidget {
   Widget build(BuildContext context) {
     return new charts.BarChart(seriesList,
         animate: animate,
-        behaviors: [
-          // Add the sliding viewport behavior to have the viewport center on the
-          // domain that is currently selected.
-          new charts.SlidingViewport(),
-          // A pan and zoom behavior helps demonstrate the sliding viewport
-          // behavior by allowing the data visible in the viewport to be adjusted
-          // dynamically.
-          new charts.PanAndZoomBehavior(),
-        ],
         vertical: false,
         primaryMeasureAxis: new charts.NumericAxisSpec(
           tickProviderSpec: charts.StaticNumericTickProviderSpec([
@@ -56,7 +47,7 @@ class EmotionChart extends StatelessWidget {
     return [
       new charts.Series<EmotionLog, String>(
         id: 'Emotion',
-        colorFn: (_, __) => charts.MaterialPalette.cyan.shadeDefault.darker,
+        colorFn: (_, __) => charts.MaterialPalette.cyan.shadeDefault,
         domainFn: (EmotionLog emotion, _) =>
             DateFormat('dd (KK:mm a)').format(emotion.dateTime).toString(),
         measureFn: (EmotionLog emotion, _) => emotion.scale,

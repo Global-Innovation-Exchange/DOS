@@ -26,10 +26,6 @@ class MyApp extends StatelessWidget {
                 fontSizeFactor: 1.1,
                 fontSizeDelta: 2.0,
               ),
-
-          // c itimTextTheme
-          //d shortStack
-          // e delius
         ),
         primaryTextTheme: GoogleFonts.ralewayTextTheme(),
       ),

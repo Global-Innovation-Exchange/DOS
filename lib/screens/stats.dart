@@ -7,6 +7,7 @@ import 'package:dos/models/emotion_source.dart';
 import 'package:dos/screens/credits.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../database.dart';
@@ -41,6 +42,19 @@ class _StatScreenState extends State<StatScreen> {
           constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
           child: Column(
             children: <Widget>[
+              Container(
+                  //color: themeForegroundColor,
+                  alignment: Alignment.topLeft,
+                  margin: EdgeInsets.only(left: 16, top: 20),
+                  child: Text(
+                      "  Report of " +
+                          DateFormat('MMM yyy')
+                              .format(DateTime.now())
+                              .toString(),
+                      style: Theme.of(context).primaryTextTheme.subtitle1.apply(
+                            fontSizeFactor: 1.6,
+                            //color: themeColor,
+                          ))),
               DaysLoggedRow(stats: stats),
               TrendingTagsRow(stats: stats),
               SourceRow(stats: stats),
@@ -316,15 +330,17 @@ class JournalCountRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final numOfLog = stats.jounralCount;
-    final int numOfLogWithSource = numOfLog[0];
-    final int numOfLogWithTags = numOfLog[1];
-    final int numOfLogWithAudio = numOfLog[2];
-    final int numOfLogWithJournal = numOfLog[3];
+    final int numOfLogs = numOfLog[0];
+    final int numOfLogWithSource = numOfLog[1];
+    final int numOfLogWithTags = numOfLog[2];
+    final int numOfLogWithAudio = numOfLog[3];
+    final int numOfLogWithJournal = numOfLog[4];
     return StatRowContainer(
       title: "Journal Counts",
       child: Wrap(
         spacing: 1,
         children: [
+          _buildIcon(MdiIcons.emoticon, numOfLogs, context),
           _buildIcon(MdiIcons.tag, numOfLogWithTags, context),
           _buildIcon(
               MdiIcons.headDotsHorizontalOutline, numOfLogWithSource, context),
@@ -457,6 +473,7 @@ class _StatResult {
   }
 
   get jounralCount {
+    int numOfLogs = logs.length;
     int numOfLogWithSource = 0;
     int numOfLogWithTags = 0;
     int numOfLogWithAudio = 0;
@@ -469,6 +486,7 @@ class _StatResult {
           (log.journal != null && log.journal.length > 0) ? 1 : 0;
     });
     return [
+      numOfLogs,
       numOfLogWithSource,
       numOfLogWithTags,
       numOfLogWithAudio,
