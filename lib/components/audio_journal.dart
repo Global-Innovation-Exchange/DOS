@@ -46,12 +46,18 @@ class _AudioJournalState extends State<AudioJournal> {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Record"),
+        title: Text("Record",
+            style: Theme.of(context).primaryTextTheme.subtitle1.apply(
+                  fontSizeFactor: 1.3,
+                )),
         content: Text(
-            "There is existing an audio jorunal. If you record, the existing audio jorunal will be overwritten."),
+            "There is existing an audio jorunal. If you record, the existing audio jorunal will be overwritten.",
+            style: Theme.of(context).primaryTextTheme.subtitle1.apply(
+                  fontSizeFactor: 1.3,
+                )),
         actions: <Widget>[
           FlatButton(
-            child: Text("Record"),
+            child: Text("RECORD"),
             onPressed: () async {
               await _recorder.startRecorder(uri: _log.tempAudioPath);
               Navigator.of(context).pop();
@@ -61,7 +67,7 @@ class _AudioJournalState extends State<AudioJournal> {
             },
           ),
           FlatButton(
-              child: Text("Cancel"),
+              child: Text("CANCEL"),
               onPressed: () {
                 Navigator.of(context).pop();
               }),

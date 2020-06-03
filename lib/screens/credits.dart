@@ -11,6 +11,11 @@ class CreditScreen extends StatelessWidget {
       body: ListView(
         children: <Widget>[
           PackageCredit(
+            name: 'Team DOS Members',
+            license:
+                'Amal Abualrahi, Chuck Scott, Dominick Mendoza, Steven Guh',
+          ),
+          PackageCredit(
             name: 'emoji (Eggy)',
             license:
                 'Designed by Freepik from Flaticon, Licensee: user17759594',
